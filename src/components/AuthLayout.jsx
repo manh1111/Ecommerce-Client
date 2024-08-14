@@ -39,17 +39,8 @@ const AuthLayout = () => {
   };
 
   const handleLoginWithGoogle = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/v1/api/auth/google", {
-        method: "POST",
-      });
-
-      console.log("responseeeeeeeeeee", response);
-    } catch (error) {
-      console.error("Google sign-in error:", error);
-      toast.error("An unexpected error occurred during Google sign-in.");
-    }
-  };
+    window.location.href = 'http://localhost:8080/v1/api/auth/google/callback';
+  }
   const onReject = (err) => {
     toast.error(err);
   };
