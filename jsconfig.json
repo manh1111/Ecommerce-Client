@@ -5,6 +5,7 @@
         "paths": {
             "@components/*": [ "components/*"],
             "@layout/*": [ "layout/*"],
+            "@api/*": [ "api/*" ],
             "@ui/*": [ "ui/*" ],
             "@pages/*": [ "pages/*" ],
             "@assets/*": [ "assets/*" ],
@@ -15,7 +16,7 @@
             "@utils/*": [ "utils/*" ],
             "@widgets/*": [ "widgets/*" ],
             "@contexts/*": [ "contexts/*" ],
-            "@constants/*": [ "constants/*" ]
+            "@constants/*": [ "constants/*" ],
         }
     }
 }

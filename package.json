@@ -2,13 +2,7 @@
   "name": "shop_point",
   "version": "1.0.0",
   "private": true,
-  "author": "merkulove <hello@merkulov.design> (https://1.envato.market/tf-merkulove)",
-  "contributors": [
-    {
-      "name": "Lilit L.",
-      "email": "lilit@merkulov.design"
-    }
-  ],
+  "contributors": [],
   "dependencies": {
     "@emotion/styled": "^11.10.5",
     "@googlemaps/react-wrapper": "^1.1.35",
@@ -59,7 +53,9 @@
     "tailwindcss": "^3.3.2",
     "vite": "^4.4.3",
     "vite-plugin-babel-macros": "^1.0.6",
-    "vite-plugin-svgr": "^3.2.0"
+    "vite-plugin-svgr": "^3.2.0",
+    "keen-slider": "^6.8.6",
+    "axios": "^1.7.2"
   },
   "scripts": {
     "start": "vite --host",

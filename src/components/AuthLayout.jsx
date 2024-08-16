@@ -18,6 +18,7 @@ import classNames from "classnames";
 import media from "@assets/login.webp";
 import google from "@assets/icons/google.png";
 import facebook from "@assets/icons/facebook.png";
+import { signIn } from "@api/auth";
 
 const AuthLayout = () => {
   const { width } = useWindowSize();
@@ -34,10 +35,15 @@ const AuthLayout = () => {
     },
   });
 
-  const onSubmit = () => {
-    navigate("/");
+  const onSubmit = async (data) => {
+    try {
+      const response = await signIn(data.email, data.password);
+      console.log("Sign in successful:", response.data);
+      navigate("/");
+    } catch (err) {
+      toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
+    }
   };
-
   const handleLoginWithGoogle = async () => {
     window.location.href = 'http://localhost:8080/v1/api/auth/google/callback';
   }
@@ -55,7 +61,8 @@ const AuthLayout = () => {
         <div className="flex flex-col justify-center items-center lg:p-[60px]">
           <Logo imgClass="w-[60px]" textClass="text-[28px]" />
           <p className="text-center tracking-[0.2px] font-semibold text-lg leading-6 max-w-[540px] my-7 mx-auto">
-           Discover trends, track your orders effortlessly, and enhance your shopping experience.
+            Discover trends, track your orders effortlessly, and enhance your
+            shopping experience.
           </p>
           <img className="max-w-[780px]" src={media} alt="media" />
         </div>
@@ -69,7 +76,9 @@ const AuthLayout = () => {
         >
           <div className="flex flex-col gap-2.5 text-center">
             <h1>Welcome back!</h1>
-            <p className="lg:max-w-[300px] m-auto 4xl:max-w-[unset]">  Explore our latest offerings and enjoy your shopping experience.
+            <p className="lg:max-w-[300px] m-auto 4xl:max-w-[unset]">
+              {" "}
+              Explore our latest offerings and enjoy your shopping experience.
             </p>
           </div>
           <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
@@ -112,7 +121,13 @@ const AuthLayout = () => {
               <button className="text-btn" onClick={handlePasswordReminder}>
                 Forgot Password?
               </button>
-              <button className="btn btn--primary w-full">Log In</button>
+              <button
+                className="btn btn--primary w-full"
+                onSubmit={onSubmit}
+                onReject={onReject}
+              >
+                Log In
+              </button>
             </div>
           </form>
           <div>
@@ -127,12 +142,7 @@ const AuthLayout = () => {
                 <img className="icon" src={google} alt="Google" />
                 Google
               </div>
-              <LoginSocialFacebook
-                className="btn btn--social"
-                appId={import.meta.env.VITE_FB_APP_ID}
-                onReject={onReject}
-                onResolve={onSubmit}
-              >
+              <LoginSocialFacebook className="btn btn--social">
                 <img className="icon" src={facebook} alt="Facebook" />
                 Facebook
               </LoginSocialFacebook>
