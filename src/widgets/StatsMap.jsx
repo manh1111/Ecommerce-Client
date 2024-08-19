@@ -27,9 +27,9 @@ const CustomMarker = ({position, index, data}) => {
         className: 'custom-icon',
         iconAnchor: [10, 10],
         html: `
-            <div class="relative w-5 h-5">
-                <span class="block w-5 h-5 rounded-full animate-ping-slow bg-${colors[index % colors.length]}"></span>
-                <span class="dot bg-${colors[index % colors.length]}"></span>
+            <div className="relative w-5 h-5">
+                <span className="block w-5 h-5 rounded-full animate-ping-slow bg-${colors[index % colors.length]}"></span>
+                <span className="dot bg-${colors[index % colors.length]}"></span>
             </div>
         `,
     });

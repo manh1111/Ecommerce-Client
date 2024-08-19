@@ -69,62 +69,62 @@ const App = () => {
   }, []);
 
   return (
-    <SidebarProvider>
-      <ThemeProvider theme={{ theme: theme }}>
-        <ThemeStyles />
-        <ToastContainer
-          theme={theme}
-          autoClose={2000}
-          style={{ padding: "20px" }}
-        />
-        {width < 1280 && withSidebar && <AppBar />}
-        <div className={`app ${!withSidebar ? "fluid" : ""}`} ref={appRef}>
-          <ScrollToTop />
-          {withSidebar && <Sidebar />}
-          <div className="app_content">
-            {width >= 1280 && withSidebar && <AppBar />}
-            <Suspense fallback={<Loader />}>
-              <div className="main">
-                <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/sign-up" element={<SignUp />} />
-                  <Route path="/" element={<MainPage />} />
-                  {/* <Route path="/salesAnalytics" element={<SalesAnalytics />} />
-                  <Route path="sellers-list" element={<SellersList />} />
-                  <Route path="sellers-table" element={<SellersTable />} />
-                  <Route path="sellers-grid" element={<SellersGrid />} />
-                  <Route
-                    path="products-management"
-                    element={<ProductsManagement />}
-                  />
-                  <Route path="seller-profile" element={<SellerProfile />} />
-                  <Route
-                    path="revenue-by-period"
-                    element={<RevenueByPeriod />}
-                  />
-                  <Route path="top-products" element={<TopProducts />} />
-                  <Route path="products-grid" element={<ProductsGrid />} />
-                  <Route path="product-editor" element={<ProductEditor />} />
-                  <Route path="banners" element={<Banners />} />
-                  <Route path="orders" element={<Orders />} />
-                  <Route path="statistics" element={<Statistics />} />
-                  <Route path="reviews" element={<Reviews />} />
-                  <Route path="customers" element={<Customers />} />
-                  <Route path="transactions" element={<Transactions />} />
-                  <Route
-                    path="general-settings"
-                    element={<GeneralSettings />}
-                  />
-                  <Route path="connected-apps" element={<ConnectedApps />} /> */}
-                  <Route path="*" element={<Navigate to="/404" />} />
-                  <Route path="/404" element={<PageNotFound />} />
-                </Routes>
-              </div>
-            </Suspense>
+      <SidebarProvider>
+        <ThemeProvider theme={{ theme: theme }}>
+          <ThemeStyles />
+          <ToastContainer
+            theme={theme}
+            autoClose={2000}
+            style={{ padding: "20px" }}
+          />
+          {width < 1280 && withSidebar && <AppBar />}
+          <div className={`app ${!withSidebar ? "fluid" : ""}`} ref={appRef}>
+            <ScrollToTop />
+            {withSidebar && <Sidebar />}
+            <div className="app_content">
+              {width >= 1280 && withSidebar && <AppBar />}
+              <Suspense fallback={<Loader />}>
+                <div className="main">
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/sign-up" element={<SignUp />} />
+                    <Route path="/" element={<MainPage />} />
+                    {/* <Route path="/salesAnalytics" element={<SalesAnalytics />} />
+                    <Route path="sellers-list" element={<SellersList />} />
+                    <Route path="sellers-table" element={<SellersTable />} />
+                    <Route path="sellers-grid" element={<SellersGrid />} />
+                    <Route
+                      path="products-management"
+                      element={<ProductsManagement />}
+                    />
+                    <Route path="seller-profile" element={<SellerProfile />} />
+                    <Route
+                      path="revenue-by-period"
+                      element={<RevenueByPeriod />}
+                    />
+                    <Route path="top-products" element={<TopProducts />} />
+                    <Route path="products-grid" element={<ProductsGrid />} />
+                    <Route path="product-editor" element={<ProductEditor />} />
+                    <Route path="banners" element={<Banners />} />
+                    <Route path="orders" element={<Orders />} />
+                    <Route path="statistics" element={<Statistics />} />
+                    <Route path="reviews" element={<Reviews />} />
+                    <Route path="customers" element={<Customers />} />
+                    <Route path="transactions" element={<Transactions />} />
+                    <Route
+                      path="general-settings"
+                      element={<GeneralSettings />}
+                    />
+                    <Route path="connected-apps" element={<ConnectedApps />} /> */}
+                    <Route path="*" element={<Navigate to="/404" />} />
+                    <Route path="/404" element={<PageNotFound />} />
+                  </Routes>
+                </div>
+              </Suspense>
+            </div>
           </div>
-        </div>
-      </ThemeProvider>
-    </SidebarProvider>
+        </ThemeProvider>
+      </SidebarProvider>
   );
 };
 

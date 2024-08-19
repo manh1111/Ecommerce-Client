@@ -199,7 +199,7 @@ const AppBar = () => {
           onClose={() => setMessagesPanelOpen(false)}
         />
       </div>
-      <div className="flex border-2 border-gray-400 p-4 rounded-lg items-center gap-8 bg-white p-4">
+      <div className="flex border-2 border-gray-400 p-4 rounded-lg items-center gap-8 bg-white overflow-x-hidden">
         <div className="text-gray-800 font-semibold text-[#003EA1] text-lg whitespace-nowrap">
           Cam kết
         </div>

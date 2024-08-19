@@ -5,8 +5,34 @@ import SellerProfilesGrid from '@widgets/SellerProfilesGrid';
 import Gallery from '@components/Gallery/Gallery';
 import QuickLinks from '@components/QuickLink';
 import Carousel from '@components/Carousel/Carousel';
+import { getCookie } from '@utils/cookie';
+
+import { jwtDecode } from "jwt-decode";
+
+// Decode JWT Token to get User Info
+if (getCookie("user_login")) {
+  const token = JSON.parse(getCookie("user_login"));
+  try {
+    const dataInforUser = jwtDecode(token);
+    console.log("Data Infor User:", dataInforUser);
+  } catch (error) {
+    console.error("Invalid token", error);
+  }
+}
 
 const MainPage = () => {
+  //   const { data: session } = useSessionStorage();
+  //   let dataInforUser;
+  //   if (getCookie("user_login")) {
+  //     dataInforUser = JSON.parse(getCookie("user_login"));
+  //     console.log(" dataInforUser  dataInforUser ", dataInforUser);
+  //   } else if (session?.user_login) {
+  //     dataInforUser = session?.user_login;
+  //     console.log(" dataInforUser  dataInforUser ", dataInforUser);
+  //   } else {
+  //     dataInforUser = null;
+  // }
+  
   return (
     <>
       <PageHeader title="Discover" changePageName={false} />
@@ -28,18 +54,18 @@ const MainPage = () => {
       </div>
 
       <div className="section my-5">
-        <div class="flex justify-between items-center p-4">
-          <div class="text-center">
-            <span class="text-3xl  text-blue-600 font-bold gradient-text">
+        <div className="flex justify-between items-center p-4">
+          <div className="text-center">
+            <span className="text-3xl  text-blue-600 font-bold gradient-text">
               Tìm kiếm hàng đầu
             </span>
           </div>
           <a
             href="/top_products"
-            class="inline-block px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+            className="inline-block px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
           >
             Xem tất cả
-            <svg viewBox="0 0 11 11" class="inline-block w-4 h-4 ml-2">
+            <svg viewBox="0 0 11 11" className="inline-block w-4 h-4 ml-2">
               <path
                 fill="white"
                 d="m2.5 11c .1 0 .2 0 .3-.1l6-5c .1-.1.2-.3.2-.4s-.1-.3-.2-.4l-6-5c-.2-.2-.5-.1-.7.1s-.1.5.1.7l5.5 4.6-5.5 4.6c-.2.2-.2.5-.1.7.1.1.3.2.4.2z"

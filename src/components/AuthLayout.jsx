@@ -1,27 +1,30 @@
-
-// components
+import { useState, useEffect } from "react";
 import Logo from "@components/Logo";
 import { LoginSocialFacebook } from "reactjs-social-login";
 import { toast } from "react-toastify";
 import Spring from "@components/Spring";
 import PasswordInput from "@components/PasswordInput";
-
-// hooks
 import { useForm, Controller } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useWindowSize } from "react-use";
-
-// utils
 import classNames from "classnames";
-
-// assets
 import media from "@assets/login.webp";
 import google from "@assets/icons/google.png";
 import facebook from "@assets/icons/facebook.png";
 import { signIn } from "@api/auth";
+import { setCookie } from "@utils/cookie";
+import { useDispatch } from "react-redux";
+import {
+  CHANGE_STATUS_AUTH,
+  CHANGE_VALUE_TOKEN,
+} from "@redux/slice/auth/authSlice";
 
 const AuthLayout = () => {
   const { width } = useWindowSize();
+  const [googleLoginAttempt, setGoogleLoginAttempt] = useState(false);
+  const expirationHours = 3;
+  const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
   const {
     register,
@@ -35,24 +38,52 @@ const AuthLayout = () => {
     },
   });
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const accessToken = searchParams.get("access_token");
+    
+    if (accessToken) {
+      dispatch(CHANGE_STATUS_AUTH(true));
+      dispatch(CHANGE_VALUE_TOKEN(accessToken));
+      setCookie("token", accessToken, expirationHours);
+      setCookie("user_login", accessToken);
+      navigate("/");
+    } else if (googleLoginAttempt) {
+      toast.error("Không thể đăng nhập bằng Google!");
+      setGoogleLoginAttempt(false);
+    }
+  }, [location.search, googleLoginAttempt, dispatch, navigate]);
+
   const onSubmit = async (data) => {
     try {
       const response = await signIn(data.email, data.password);
-      console.log("Sign in successful:", response.data);
+      dispatch(CHANGE_STATUS_AUTH(true));
+      dispatch(
+        CHANGE_VALUE_TOKEN(response?.data?.metadata?.tokens.accessToken)
+      );
+      setCookie(
+        "token",
+        response?.data?.metadata?.tokens.accessToken,
+        expirationHours
+      );
+      setCookie("user_login", response?.data?.metadata?.tokens.accessToken);
       navigate("/");
     } catch (err) {
       toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
     }
   };
-  const handleLoginWithGoogle = async () => {
-    window.location.href = 'http://localhost:8080/v1/api/auth/google/callback';
-  }
-  const onReject = (err) => {
-    toast.error(err);
+
+  const handleLoginWithGoogle = () => {
+    setGoogleLoginAttempt(true);
+    window.location.href = "http://localhost:8080/v1/api/auth/google/callback";
   };
 
   const handlePasswordReminder = (e) => {
     e.preventDefault();
+  };
+
+  const handleSignUp = () => {
+    navigate("/sign-up");
   };
 
   return (
@@ -77,7 +108,6 @@ const AuthLayout = () => {
           <div className="flex flex-col gap-2.5 text-center">
             <h1>Welcome back!</h1>
             <p className="lg:max-w-[300px] m-auto 4xl:max-w-[unset]">
-              {" "}
               Explore our latest offerings and enjoy your shopping experience.
             </p>
           </div>
@@ -121,11 +151,7 @@ const AuthLayout = () => {
               <button className="text-btn" onClick={handlePasswordReminder}>
                 Forgot Password?
               </button>
-              <button
-                className="btn btn--primary w-full"
-                onSubmit={onSubmit}
-                onReject={onReject}
-              >
+              <button className="btn btn--primary w-full" type="submit">
                 Log In
               </button>
             </div>
@@ -149,7 +175,9 @@ const AuthLayout = () => {
             </div>
             <div className="flex justify-center gap-2.5 leading-none">
               <p>Don’t have an account?</p>
-              <button className="text-btn">Sign Up</button>
+              <button className="text-btn" onClick={handleSignUp}>
+                Sign Up
+              </button>
             </div>
           </div>
         </Spring>

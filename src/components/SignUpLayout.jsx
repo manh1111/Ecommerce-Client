@@ -41,12 +41,10 @@ const SignUpLayout = () => {
   const validate = (values) => {
     const errors = {};
 
-    // Kiểm tra trường name
     if (!values.name || values.name.length <= 5) {
       errors.name = "Phải chứa ít nhất 5 ký tự";
     }
 
-    // Kiểm tra trường phoneNumber
     if (!values.phoneNumber) {
       errors.phoneNumber = "Yêu cầu số điện thoại";
     } else if (!/^\d+$/.test(values.phoneNumber)) {
@@ -55,7 +53,6 @@ const SignUpLayout = () => {
       errors.phoneNumber = "Phải chứa ít nhất 8 số";
     }
 
-    // Kiểm tra trường email
     if (!values.email) {
       errors.email = "Yêu cầu email";
     } else if (
@@ -64,14 +61,12 @@ const SignUpLayout = () => {
       errors.email = "Email không hợp lệ";
     }
 
-    // Kiểm tra trường password
     if (!values.password) {
       errors.password = "Yêu cầu mật khẩu";
     } else if (values.password.length < 8) {
       errors.password = "Mật khẩu phải có ít nhất 8 ký tự";
     }
 
-    // Kiểm tra trường password_again
     if (!values.password_again) {
       errors.password_again = "Bắt buộc phải nhập lại mật khẩu";
     } else if (values.password_again !== values.password) {

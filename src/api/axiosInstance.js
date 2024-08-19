@@ -9,6 +9,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   async (config) => {
+    // You can add custom logic here if needed
     return config;
   },
   (error) => Promise.reject(error)
@@ -16,7 +17,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201) {
       return response.data;
     } else {
       console.error(
@@ -29,6 +30,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
+      console.error("Unauthorized access - perhaps redirect to login?");
     }
     return Promise.reject(error);
   }
