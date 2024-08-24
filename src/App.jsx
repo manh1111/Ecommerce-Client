@@ -69,27 +69,27 @@ const App = () => {
   }, []);
 
   return (
-      <SidebarProvider>
-        <ThemeProvider theme={{ theme: theme }}>
-          <ThemeStyles />
-          <ToastContainer
-            theme={theme}
-            autoClose={2000}
-            style={{ padding: "20px" }}
-          />
-          {width < 1280 && withSidebar && <AppBar />}
-          <div className={`app ${!withSidebar ? "fluid" : ""}`} ref={appRef}>
-            <ScrollToTop />
-            {withSidebar && <Sidebar />}
-            <div className="app_content">
-              {width >= 1280 && withSidebar && <AppBar />}
-              <Suspense fallback={<Loader />}>
-                <div className="main">
-                  <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/sign-up" element={<SignUp />} />
-                    <Route path="/" element={<MainPage />} />
-                    {/* <Route path="/salesAnalytics" element={<SalesAnalytics />} />
+    <SidebarProvider>
+      <ThemeProvider theme={{ theme: theme }}>
+        <ThemeStyles />
+        <ToastContainer
+          theme={theme}
+          autoClose={2000}
+          style={{ padding: "20px" }}
+        />
+        {width < 1280 && withSidebar && <AppBar />}
+        <div className={`app ${!withSidebar ? "fluid" : ""}`} ref={appRef}>
+          <ScrollToTop />
+          {withSidebar && <Sidebar />}
+          <div className="app_content">
+            {width >= 1280 && withSidebar && <AppBar />}
+            <Suspense fallback={<Loader />}>
+              <div className="main">
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/sign-up" element={<SignUp />} />
+                  <Route path="/" element={<MainPage />} />
+                  {/* <Route path="/salesAnalytics" element={<SalesAnalytics />} />
                     <Route path="sellers-list" element={<SellersList />} />
                     <Route path="sellers-table" element={<SellersTable />} />
                     <Route path="sellers-grid" element={<SellersGrid />} />
@@ -110,21 +110,21 @@ const App = () => {
                     <Route path="statistics" element={<Statistics />} />
                     <Route path="reviews" element={<Reviews />} />
                     <Route path="customers" element={<Customers />} />
-                    <Route path="transactions" element={<Transactions />} />
-                    <Route
-                      path="general-settings"
-                      element={<GeneralSettings />}
-                    />
-                    <Route path="connected-apps" element={<ConnectedApps />} /> */}
-                    <Route path="*" element={<Navigate to="/404" />} />
-                    <Route path="/404" element={<PageNotFound />} />
-                  </Routes>
-                </div>
-              </Suspense>
-            </div>
+                    <Route path="transactions" element={<Transactions />} /> */}
+                  <Route path="connected-apps" element={<ConnectedApps />} />
+                  <Route
+                    path="general-settings"
+                    element={<GeneralSettings />}
+                  />
+                  <Route path="*" element={<Navigate to="/404" />} />
+                  <Route path="/404" element={<PageNotFound />} />
+                </Routes>
+              </div>
+            </Suspense>
           </div>
-        </ThemeProvider>
-      </SidebarProvider>
+        </div>
+      </ThemeProvider>
+    </SidebarProvider>
   );
 };
 

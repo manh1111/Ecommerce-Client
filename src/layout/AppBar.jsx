@@ -12,6 +12,8 @@ import { useWindowSize } from "react-use";
 import { useNavigate } from "react-router-dom";
 import { LOCALES } from "@constants/options";
 
+import avatar from "@assets/avatar.webp";
+
 const LocaleMenu = ({ active, setActive }) => {
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -170,13 +172,18 @@ const AppBar = () => {
                   onClick={() => navigate("/general-settings")}
                   aria-label="Account menu"
                 >
-                  <i className="icon-user-solid" />
+                  <img
+                    className="relative rounded-full w-full h-full"
+                    src={avatar}
+                    alt="Maria Smith"
+                  />
                 </button>
                 <span className="badge-online" />
               </div>
             </div>
           </div>
         </Headroom>
+
         {width < 768 && (
           <ModalBase
             open={searchModalOpen}
@@ -199,6 +206,7 @@ const AppBar = () => {
           onClose={() => setMessagesPanelOpen(false)}
         />
       </div>
+
       <div className="flex border-2 border-gray-400 p-4 rounded-lg items-center gap-8 bg-white overflow-x-hidden">
         <div className="text-gray-800 font-semibold text-[#003EA1] text-lg whitespace-nowrap">
           Cam kết

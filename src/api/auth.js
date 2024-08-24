@@ -33,3 +33,4 @@ export const signUp = async (userName, full_name, phoneNumber, email, password) 
   );
   return result;
 };
+

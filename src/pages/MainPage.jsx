@@ -6,7 +6,6 @@ import Gallery from '@components/Gallery/Gallery';
 import QuickLinks from '@components/QuickLink';
 import Carousel from '@components/Carousel/Carousel';
 import { getCookie } from '@utils/cookie';
-
 import { jwtDecode } from "jwt-decode";
 
 // Decode JWT Token to get User Info
