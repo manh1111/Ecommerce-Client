@@ -12,6 +12,11 @@ import { useWindowSize } from "react-use";
 import { useNavigate } from "react-router-dom";
 import { LOCALES } from "@constants/options";
 
+import avatar from "@assets/avatar.webp";
+import { checkAvailableLogin } from "@utils/auth";
+import { getCookie } from "@utils/cookie";
+import { jwtDecode } from "jwt-decode";
+
 const LocaleMenu = ({ active, setActive }) => {
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -45,15 +50,13 @@ const AppBar = () => {
   const [notificationsPanelOpen, setNotificationsPanelOpen] = useState(false);
   const [messagesPanelOpen, setMessagesPanelOpen] = useState(false);
   const [locale, setLocale] = useState("en-EN");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to check if the user is logged in
   const { width } = useWindowSize();
   const { theme, toggleTheme } = useTheme();
   const { setOpen } = useSidebar();
+  const isAuthenticated = checkAvailableLogin();
 
   const activeLocale = LOCALES.find((l) => l.value === locale);
-
-  useEffect(() => {
-    setSearchModalOpen(false);
-  }, [width]);
 
   const infoItems = [
     {
@@ -77,6 +80,16 @@ const AppBar = () => {
       text: "Giá siêu rẻ",
     },
   ];
+
+  let dataInforUser;
+  if (getCookie("user_login")) {
+    const token = JSON.parse(getCookie("user_login"));
+    try {
+      dataInforUser = jwtDecode(token);
+    } catch (error) {
+      console.error("Invalid token", error);
+    }
+  }
 
   return (
     <>
@@ -167,16 +180,25 @@ const AppBar = () => {
                 <button
                   className="h-8 w-8 rounded-full bg-accent text-widget text-sm flex items-center
                                         justify-center relative xl:w-11 xl:h-11 xl:text-lg"
-                  onClick={() => navigate("/general-settings")}
+                  onClick={() =>
+                    isAuthenticated
+                      ? navigate("/general-settings")
+                      : navigate("/login")
+                  }
                   aria-label="Account menu"
                 >
-                  <i className="icon-user-solid" />
+                  <img
+                    className="relative rounded-full w-full h-full"
+                    src={dataInforUser?.avatar ? dataInforUser?.avatar : avatar}
+                    alt="avatar"
+                  />
                 </button>
                 <span className="badge-online" />
               </div>
             </div>
           </div>
         </Headroom>
+
         {width < 768 && (
           <ModalBase
             open={searchModalOpen}
@@ -199,7 +221,7 @@ const AppBar = () => {
           onClose={() => setMessagesPanelOpen(false)}
         />
       </div>
-      <div className="flex border-2 border-gray-400 p-4 rounded-lg items-center gap-8 bg-white p-4">
+      <div className="flex border-2 border-gray-400 p-4 rounded-lg items-center gap-8 bg-white overflow-x-hidden">
         <div className="text-gray-800 font-semibold text-[#003EA1] text-lg whitespace-nowrap">
           Cam kết
         </div>
