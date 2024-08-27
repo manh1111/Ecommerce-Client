@@ -38,11 +38,13 @@ const SellersList = lazy(() => import("@pages/SellersList"));
 const SellersTable = lazy(() => import("@pages/SellersTable"));
 const SellersGrid = lazy(() => import("@pages/SellersGrid"));
 const SellerProfile = lazy(() => import("@pages/SellerProfile"));
+const Shop = lazy(() => import("@pages/Shop"));
 const RevenueByPeriod = lazy(() => import("@pages/RevenueByPeriod"));
 const TopProducts = lazy(() => import("@pages/TopProducts"));
 const ProductsGrid = lazy(() => import("@pages/ProductsGrid"));
 const ProductsManagement = lazy(() => import("@pages/ProductsManagement"));
 const ProductEditor = lazy(() => import("@pages/EditProduct"));
+const StartSelling = lazy(() => import("@pages/StartSelling"));
 const Banners = lazy(() => import("@pages/Banners"));
 const Orders = lazy(() => import("@pages/Orders"));
 const Statistics = lazy(() => import("@pages/Statistics"));
@@ -89,34 +91,39 @@ const App = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/sign-up" element={<SignUp />} />
                   <Route path="/" element={<MainPage />} />
-                  {/* <Route path="/salesAnalytics" element={<SalesAnalytics />} />
-                    <Route path="sellers-list" element={<SellersList />} />
-                    <Route path="sellers-table" element={<SellersTable />} />
-                    <Route path="sellers-grid" element={<SellersGrid />} />
-                    <Route
-                      path="products-management"
-                      element={<ProductsManagement />}
-                    />
-                    <Route path="seller-profile" element={<SellerProfile />} />
-                    <Route
-                      path="revenue-by-period"
-                      element={<RevenueByPeriod />}
-                    />
-                    <Route path="top-products" element={<TopProducts />} />
-                    <Route path="products-grid" element={<ProductsGrid />} />
-                    <Route path="product-editor" element={<ProductEditor />} />
-                    <Route path="banners" element={<Banners />} />
-                    <Route path="orders" element={<Orders />} />
-                    <Route path="statistics" element={<Statistics />} />
-                    <Route path="reviews" element={<Reviews />} />
-                    <Route path="customers" element={<Customers />} />
-                    <Route path="transactions" element={<Transactions />} /> */}
+                  <Route path="/salesAnalytics" element={<SalesAnalytics />} />
+                  <Route path="sellers-list" element={<SellersList />} />
+                  <Route path="sellers-table" element={<SellersTable />} />
+                  <Route path="sellers-grid" element={<SellersGrid />} />
+                  <Route
+                    path="products-management"
+                    element={<ProductsManagement />}
+                  />
+                  <Route path="seller-profile" element={<SellerProfile />} />
+                  <Route
+                    path="revenue-by-period"
+                    element={<RevenueByPeriod />}
+                  />
+                  <Route path="top-products" element={<TopProducts />} />
+                  <Route path="products-grid" element={<ProductsGrid />} />
+                  <Route path="product-editor" element={<ProductEditor />} />
+                  <Route path="banners" element={<Banners />} />
+                  <Route path="orders" element={<Orders />} />
+                  <Route path="statistics" element={<Statistics />} />
+                  <Route path="reviews" element={<Reviews />} />
+                  <Route path="customers" element={<Customers />} />
+                  <Route path="transactions" element={<Transactions />} />
                   <Route path="connected-apps" element={<ConnectedApps />} />
                   <Route
                     path="general-settings"
                     element={<GeneralSettings />}
                   />
+                  <Route
+                    path="shop"
+                    element={<Shop />}
+                  />
                   <Route path="*" element={<Navigate to="/404" />} />
+                  <Route path="/start-selling" element={<StartSelling />} />
                   <Route path="/404" element={<PageNotFound />} />
                 </Routes>
               </div>

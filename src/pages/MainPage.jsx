@@ -20,17 +20,6 @@ if (getCookie("user_login")) {
 }
 
 const MainPage = () => {
-  //   const { data: session } = useSessionStorage();
-  //   let dataInforUser;
-  //   if (getCookie("user_login")) {
-  //     dataInforUser = JSON.parse(getCookie("user_login"));
-  //     console.log(" dataInforUser  dataInforUser ", dataInforUser);
-  //   } else if (session?.user_login) {
-  //     dataInforUser = session?.user_login;
-  //     console.log(" dataInforUser  dataInforUser ", dataInforUser);
-  //   } else {
-  //     dataInforUser = null;
-  // }
   
   return (
     <>
@@ -83,6 +72,12 @@ const MainPage = () => {
           <h1 className="flex-1 text-center lg:text-left">TOP PRODUCT</h1>
         </div>
         <TopProducts hasTitle={false} />
+      </div>
+
+      <div className="section">
+        <a target="_self" href="#">
+          <img className="banner-image" src="https://cf.shopee.vn/file/vn-11134258-7r98o-lylx97r9vezl4e" alt="Banner" />   
+        </a>
       </div>
     </>
   );
