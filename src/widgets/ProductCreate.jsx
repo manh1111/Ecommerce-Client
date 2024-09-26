@@ -9,6 +9,7 @@ import {
   STOCK_STATUS_OPTIONS,
   UNITS_OPTIONS,
 } from "@constants/options";
+
 import { createCategories, getCategories } from "@api/categorie";
 
 const ProductCreate = () => {
@@ -16,6 +17,8 @@ const ProductCreate = () => {
   const [isCategoryEmpty, setIsCategoryEmpty] = useState(true);
   const [newCategoryName, setNewCategoryName] = useState("");
 
+  // Fetch all categories from API
+  // Fetch all categories from API
   // Fetch all categories from API
   useEffect(() => {
     const loadCategories = async () => {
