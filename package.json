@@ -62,7 +62,7 @@
   },
   "scripts": {
     "start": "vite --host",
-    "build": "vite build --output public",
+    "build": "vite build --outDir public",
     "serve": "vite preview"
   },
   "eslintConfig": {
