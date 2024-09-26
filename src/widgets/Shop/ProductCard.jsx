@@ -5,11 +5,11 @@ const ProductCard = ({ product }) => {
     <div className="flex flex-col bg-white cursor-pointer h-full">
       <div className="relative w-full pt-[100%]"> 
         <img
-          src={product.imageSrc}
+          src={product?.imageSrc}
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute bottom-0 left-0 w-full h-full">
-          <img src={product.promotionOverlaySrc} className="w-full h-full object-cover" alt="custom-overlay" />
+          <img src={product?.promotionOverlaySrc} className="w-full h-full object-cover" alt="custom-overlay" />
         </div>
         <div className="absolute bottom-0 right-0 flex pr-1 pb-1">
           <div
@@ -26,7 +26,7 @@ const ProductCard = ({ product }) => {
               alt="flag-label"
               className="mr-0.5 mb-0.5 w-[150px] h-sp14"
             />
-            {product.altText}
+            {product?.altText}
           </div>
           <div className="flex items-center">
             <div className="flex-shrink min-w-0 mr-1 truncate text-shopee-primary flex items-center font-medium">
@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
               </div>
             </div>
             <div className="text-shopee-primary font-medium bg-shopee-pink py-0.5 px-1 text-sp10/3 h-4 rounded-[2px] shrink-0 mr-1">
-              {product.discount}
+              {product?.discount}
             </div>
           </div>
         </div>
@@ -49,15 +49,6 @@ const ProductCard = ({ product }) => {
               <div className="text-sp10 leading-4 h-4 mx-1 truncate">{product.promotionText}</div>
               <svg className="w-1 h-4 absolute right-0 top-0 transform rotate-180" viewBox="-0.25 -0.25 4 16" fill="none">
                 <path d="M4 0h-3q-1 0 -1 1v13.5q0 1 1 1h3" stroke="currentColor" stroke-width="0.5" fill="transparent"></path>
-              </svg>
-            </div>
-            <div className="pointer-events-none text-ellipsis overflow-hidden h-4 flex-grow-0 flex-shrink-1 flex flex-row justify-start items-stretch">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 4 16" className="flex-none h-full -mr-px">
-                <path d="M4 0h-3q-1 0 -1 1a1.2 1.5 0 0 1 0 3v0.333a1.2 1.5 0 0 1 0 3v0.333a1.2 1.5 0 0 1 0 3v0.333a1.2 1.5 0 0 1 0 3q0 1 1 1h3" stroke-width="1" transform="" stroke="#F69113" fill="#F69113"></path>
-              </svg>
-              <div className="truncate bg-shopee-voucher-yellow text-white leading-4 text-sp10 px-px">{product.voucherText}</div>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 4 16" className="rotate-180 flex-none h-full -ml-px">
-                <path d="M4 0h-3q-1 0 -1 1a1.2 1.5 0 0 1 0 3v0.333a1.2 1.5 0 0 1 0 3v0.333a1.2 1.5 0 0 1 0 3v0.333a1.2 1.5 0 0 1 0 3q0 1 1 1h3" stroke-width="1" transform="" stroke="#F69113" fill="#F69113"></path>
               </svg>
             </div>
           </div>

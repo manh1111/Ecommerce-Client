@@ -1,35 +1,22 @@
-// GA
 import ReactGA from "react-ga4";
-
-// utils
 import { lazy, Suspense } from "react";
-
-// styles
 import "@styles/index.scss";
 import "react-toastify/dist/ReactToastify.min.css";
 import ThemeStyles from "@styles/theme";
-
-// fonts
 import "@fonts/icomoon/icomoon.woff";
-
-// contexts
 import { SidebarProvider } from "@contexts/sidebarContext";
 import { ThemeProvider } from "styled-components";
-
-// hooks
 import { useTheme } from "@contexts/themeContext";
 import { useEffect, useRef } from "react";
 import { useWindowSize } from "react-use";
-
-// components
 import ScrollToTop from "@components/ScrollToTop";
 import Loader from "@components/Loader";
 import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Sidebar from "@layout/Sidebar";
 import AppBar from "@layout/AppBar";
+import CreaterProduct from "@pages/CreaterProduct";
 
-// pages
 const Login = lazy(() => import("@pages/Login"));
 const SignUp = lazy(() => import("@pages/SignUp"));
 const SalesAnalytics = lazy(() => import("@pages/SalesAnalytics"));
@@ -39,6 +26,7 @@ const SellersTable = lazy(() => import("@pages/SellersTable"));
 const SellersGrid = lazy(() => import("@pages/SellersGrid"));
 const SellerProfile = lazy(() => import("@pages/SellerProfile"));
 const Shop = lazy(() => import("@pages/Shop"));
+const Product = lazy(() => import("@pages/Product"));
 const RevenueByPeriod = lazy(() => import("@pages/RevenueByPeriod"));
 const TopProducts = lazy(() => import("@pages/TopProducts"));
 const ProductsGrid = lazy(() => import("@pages/ProductsGrid"));
@@ -60,7 +48,10 @@ const App = () => {
   const appRef = useRef(null);
   const { theme } = useTheme();
   const path = useLocation().pathname;
-  const withSidebar = path !== "/login" && path !== "/404" && path !== "/sign-up"; ;
+
+  // Kiểm tra nếu đường dẫn không chứa 'login' hoặc 'sign-up'
+  const withSidebar =
+    path !== "/login" && path !== "/404" && path !== "/sign-up";
 
   // Google Analytics init
   const gaKey = import.meta.env.VITE_GA;
@@ -86,42 +77,42 @@ const App = () => {
           <div className="app_content">
             {width >= 1280 && withSidebar && <AppBar />}
             <Suspense fallback={<Loader />}>
-              <div className="main">
+              <div className={withSidebar ? "main" : ""}>
                 <Routes>
                   <Route path="/login" element={<Login />} />
                   <Route path="/sign-up" element={<SignUp />} />
                   <Route path="/" element={<MainPage />} />
                   <Route path="/salesAnalytics" element={<SalesAnalytics />} />
-                  <Route path="sellers-list" element={<SellersList />} />
-                  <Route path="sellers-table" element={<SellersTable />} />
-                  <Route path="sellers-grid" element={<SellersGrid />} />
+                  <Route path="/sellers-list" element={<SellersList />} />
+                  <Route path="/sellers-table" element={<SellersTable />} />
+                  <Route path="/sellers-grid" element={<SellersGrid />} />
                   <Route
-                    path="products-management"
+                    path="/products-management"
                     element={<ProductsManagement />}
                   />
-                  <Route path="seller-profile" element={<SellerProfile />} />
+                  <Route path="/seller-profile" element={<SellerProfile />} />
                   <Route
-                    path="revenue-by-period"
+                    path="/revenue-by-period"
                     element={<RevenueByPeriod />}
                   />
-                  <Route path="top-products" element={<TopProducts />} />
-                  <Route path="products-grid" element={<ProductsGrid />} />
-                  <Route path="product-editor" element={<ProductEditor />} />
-                  <Route path="banners" element={<Banners />} />
-                  <Route path="orders" element={<Orders />} />
-                  <Route path="statistics" element={<Statistics />} />
-                  <Route path="reviews" element={<Reviews />} />
-                  <Route path="customers" element={<Customers />} />
-                  <Route path="transactions" element={<Transactions />} />
-                  <Route path="connected-apps" element={<ConnectedApps />} />
+                  <Route path="/top-products" element={<TopProducts />} />
+                  <Route path="/products-grid" element={<ProductsGrid />} />
+                  <Route path="/product-editor" element={<ProductEditor />} />
+                  <Route path="/product-creater" element={<CreaterProduct />} />
+                  <Route path="/category" element={<ProductEditor />} />
+                  <Route path="/banners" element={<Banners />} />
+                  <Route path="/orders" element={<Orders />} />
+                  <Route path="/statistics" element={<Statistics />} />
+                  <Route path="/reviews" element={<Reviews />} />
+                  <Route path="/customers" element={<Customers />} />
+                  <Route path="/transactions" element={<Transactions />} />
+                  <Route path="/connected-apps" element={<ConnectedApps />} />
                   <Route
-                    path="general-settings"
+                    path="/general-settings"
                     element={<GeneralSettings />}
                   />
-                  <Route
-                    path="shop"
-                    element={<Shop />}
-                  />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/product" element={<Product />} />
                   <Route path="*" element={<Navigate to="/404" />} />
                   <Route path="/start-selling" element={<StartSelling />} />
                   <Route path="/404" element={<PageNotFound />} />

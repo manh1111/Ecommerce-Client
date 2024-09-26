@@ -16,6 +16,8 @@ import avatar from "@assets/avatar.webp";
 import { checkAvailableLogin } from "@utils/auth";
 import { getCookie } from "@utils/cookie";
 import { jwtDecode } from "jwt-decode";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+
 
 const LocaleMenu = ({ active, setActive }) => {
   return (
@@ -92,7 +94,7 @@ const AppBar = () => {
   }
 
   return (
-    <>
+    <div className="fixed bg-white w-full px-5 py-5 z-50">
       <div className="mb-5 w-full">
         <Headroom style={{ zIndex: 999 }}>
           <div className="flex items-center justify-between">
@@ -148,7 +150,7 @@ const AppBar = () => {
                   onClick={() => setNotificationsPanelOpen(true)}
                   aria-label="Notifications"
                 >
-                  <i className="icon-bell-solid" />
+                  <i className="fas fa-shopping-cart" />
                 </button>
                 <span
                   className="absolute w-3 h-3 rounded-full bg-red -top-1.5 -right-1.5 border-[2px] border-body
@@ -241,7 +243,7 @@ const AppBar = () => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 
