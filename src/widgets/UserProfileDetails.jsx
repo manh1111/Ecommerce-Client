@@ -22,7 +22,8 @@ const UserProfileDetails = () => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [cities, setCities] = useState([]);
   const [shopData, setShopData] = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState({}); // Initialize as an empty object
+  const [showShopDetails, setShowShopDetails] = useState(false);
 
   useEffect(() => {
     const token = getCookie("user_login");
@@ -36,7 +37,6 @@ const UserProfileDetails = () => {
     }
   }, []);
 
-  
   const {
     register,
     handleSubmit,
@@ -76,17 +76,19 @@ const UserProfileDetails = () => {
       };
 
       fetchShopData();
+    } else {
+      populateUserFields(userInfo);
     }
   }, [userInfo]);
 
   const populateShopFields = (shopData) => {
-    setValue("shopName", shopData.shop_name);
-    setValue("pickupAddress", shopData.address);
-    setValue("sellerEmail", shopData.owner_id.email);
-    setValue("sellerPhone", shopData.phone_number);
-    setValue("userName", shopData.owner_id.userName);
-    setValue("email", shopData.owner_id.email);
-    setValue("phone", shopData.owner_id.phoneNumber);
+    setValue("shopName", shopData.shop_name || "");
+    setValue("pickupAddress", shopData.address || "");
+    setValue("sellerEmail", shopData.owner_id.email || "");
+    setValue("sellerPhone", shopData.phone_number || "");
+    setValue("userName", shopData.owner_id.userName || "");
+    setValue("email", shopData.owner_id.email || "");
+    setValue("phone", shopData.owner_id.phoneNumber || "");
 
     const country = countryList()
       .getData()
@@ -101,10 +103,10 @@ const UserProfileDetails = () => {
     setValue("userName", userInfo.userName || "");
     setValue("email", userInfo.email || "");
     setValue("phone", userInfo.phoneNumber || "");
-    setValue("shopName", ""); 
-    setValue("pickupAddress", ""); 
-    setValue("sellerEmail", ""); 
-    setValue("sellerPhone", ""); 
+    setValue("shopName", "");
+    setValue("pickupAddress", "");
+    setValue("sellerEmail", "");
+    setValue("sellerPhone", "");
   };
 
   const getCountriesOptions = () => {
@@ -137,274 +139,270 @@ const UserProfileDetails = () => {
 
   return (
     <Spring className="card flex flex-col gap-[30px] md:gap-12 md:row-start-2 md:col-span-2 md:!pb-[50px] xl:row-start-1 xl:col-start-2 xl:col-span-1">
-      {!roleNames.includes("shop") && (
+      {
+        !showShopDetails &&
         <div className="flex flex-col gap-5">
-          <h5>My Profile Details</h5>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid gap-4 md:grid-cols-1 md:gap-5">
-              <div className="grid gap-4">
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="userName">
-                    Name
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.userName,
-                    })}
-                    type="text"
-                    id="userName"
-                    placeholder={userInfo?.userName || "Name"}
-                    {...register("userName", { required: true })}
-                  />
-                  {errors.userName && (
-                    <p className="error-message">Name is required</p>
-                  )}
-                </div>
+        <h5>My Profile Details</h5>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="grid gap-4 md:grid-cols-1 md:gap-5">
+            <div className="grid gap-4">
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="userName">
+                  Name
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.userName,
+                  })}
+                  type="text"
+                  id="userName"
+                  placeholder={userInfo.userName || "Name"}
+                  {...register("userName", { required: true })}
+                />
+                {errors.userName && (
+                  <p className="error-message">Name is required</p>
+                )}
+              </div>
 
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="email">
-                    Email
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.email,
-                    })}
-                    type="text"
-                    id="email"
-                    placeholder={userInfo?.email || "Email"}
-                    {...register("email", {
-                      required: true,
-                      pattern: /^\S+@\S+$/i,
-                    })}
-                  />
-                  {errors.email && (
-                    <p className="error-message">Valid email is required</p>
-                  )}
-                </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="email">
+                  Email
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.email,
+                  })}
+                  type="text"
+                  id="email"
+                  placeholder={userInfo.email || "Email"}
+                  {...register("email", {
+                    required: true,
+                    pattern: /^\S+@\S+$/i,
+                  })}
+                />
+                {errors.email && (
+                  <p className="error-message">Valid email is required</p>
+                )}
+              </div>
 
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="phone">
-                    Phone Number
-                  </label>
-                  <Controller
-                    name="phone"
-                    control={control}
-                    render={({ field }) => (
-                      <PatternFormat
-                        value={field.value}
-                        format="+#-###-###-####"
-                        placeholder={userInfo?.phoneNumber || "Phone Number"}
-                        className={classNames("field-input", {
-                          "field-input--error": errors.phone,
-                        })}
-                        getInputRef={field.ref}
-                      />
-                    )}
-                  />
-                  {errors.phone && (
-                    <p className="error-message">Phone number is required</p>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="phone">
+                  Phone Number
+                </label>
+                <Controller
+                  name="phone"
+                  control={control}
+                  render={({ field }) => (
+                    <PatternFormat
+                      value={field.value}
+                      format="+#-###-###-####"
+                      placeholder={userInfo.phoneNumber || "Phone Number"}
+                      className={classNames("field-input", {
+                        "field-input--error": errors.phone,
+                      })}
+                      getInputRef={field.ref}
+                    />
                   )}
-                </div>
+                />
+                {errors.phone && (
+                  <p className="error-message">Phone number is required</p>
+                )}
+              </div>
 
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="gender">
-                    Gender
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="gender">
+                  Gender
+                </label>
+                <div className="flex gap-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      value="Male"
+                      {...register("gender", { required: true })}
+                      className="field-radio"
+                    />
+                    <span className="ml-2">Male</span>
                   </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Male"
-                        {...register("gender", { required: true })}
-                        className="field-radio"
-                      />
-                      <span className="ml-2">Male</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Female"
-                        {...register("gender", { required: true })}
-                        className="field-radio"
-                      />
-                      <span className="ml-2">Female</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Other"
-                        {...register("gender", { required: true })}
-                        className="field-radio"
-                      />
-                      <span className="ml-2">Other</span>
-                    </label>
-                  </div>
-                  {errors.gender && (
-                    <p className="error-message">Gender is required</p>
-                  )}
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      value="Female"
+                      {...register("gender", { required: true })}
+                      className="field-radio"
+                    />
+                    <span className="ml-2">Female</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      value="Other"
+                      {...register("gender", { required: true })}
+                      className="field-radio"
+                    />
+                    <span className="ml-2">Other</span>
+                  </label>
                 </div>
+                {errors.gender && (
+                  <p className="error-message">Gender is required</p>
+                )}
+              </div>
 
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="dob">
-                    Date of Birth
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.dob,
-                    })}
-                    type="date"
-                    id="dob"
-                    placeholder="Date of Birth"
-                    {...register("dob", { required: true })}
-                  />
-                  {errors.dob && (
-                    <p className="error-message">Date of birth is required</p>
-                  )}
-                </div>
+              <div className="field-wrapper">
+                <label className="field-label" htmlFor="dob">
+                  Date of Birth
+                </label>
+                <input
+                  className={classNames("field-input", {
+                    "field-input--error": errors.dob,
+                  })}
+                  type="date"
+                  id="dob"
+                  placeholder="Date of Birth"
+                  {...register("dob", { required: true })}
+                />
+                {errors.dob && (
+                  <p className="error-message">Date of birth is required</p>
+                )}
               </div>
             </div>
+          </div>
 
-            <div className="flex justify-between mt-2.5">
-              <button className="text-btn" type="button">
-                Change password
-              </button>
-              <button
-                className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
-                type="submit"
-              >
-                Update information
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+          <div className="flex justify-between mt-2.5">
+            <button className="text-btn" type="button">
+              Change Password
+            </button>
+            <button
+              className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
+              type="submit"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>}
 
       {roleNames.includes("shop") && (
-        <div className="mt-8">
-          <h5>Shop Details</h5>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid gap-4 md:grid-cols-1 md:gap-5">
-              <div className="grid gap-4">
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="shopName">
-                    Shop Name
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.shopName,
-                    })}
-                    type="text"
-                    id="shopName"
-                    placeholder="Shop Name"
-                    {...register("shopName", { required: true })}
-                  />
-                  {errors.shopName && (
-                    <p className="error-message">Shop name is required</p>
-                  )}
-                </div>
-
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="pickupAddress">
-                    Pickup Address
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.pickupAddress,
-                    })}
-                    type="text"
-                    id="pickupAddress"
-                    placeholder="Pickup Address"
-                    {...register("pickupAddress", { required: true })}
-                  />
-                  {errors.pickupAddress && (
-                    <p className="error-message">Pickup address is required</p>
-                  )}
-                </div>
-
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="sellerEmail">
-                    Seller Email
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.sellerEmail,
-                    })}
-                    type="text"
-                    id="sellerEmail"
-                    placeholder="Seller Email"
-                    {...register("sellerEmail", {
-                      required: true,
-                      pattern: /^\S+@\S+$/i,
-                    })}
-                  />
-                  {errors.sellerEmail && (
-                    <p className="error-message">Valid email is required</p>
-                  )}
-                </div>
-
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="sellerPhone">
-                    Seller Phone Number
-                  </label>
-                  <Controller
-                    name="sellerPhone"
-                    control={control}
-                    render={({ field }) => (
-                      <PatternFormat
-                        value={field.value}
-                        format="+#-###-###-####"
-                        placeholder="Seller Phone Number"
-                        className={classNames("field-input", {
-                          "field-input--error": errors.sellerPhone,
-                        })}
-                        getInputRef={field.ref}
-                      />
+        <>
+          <div className="flex justify-end">
+            <button
+              className="btn btn--secondary mt-5 w-1/3"
+              onClick={() => setShowShopDetails(!showShopDetails)}
+            >
+              {showShopDetails
+                ? "Switch to Profile Details"
+                : "Switch to Shop Details"}
+            </button>
+          </div>
+          {showShopDetails && (
+            <div className="mt-5">
+              <h5>Shop Information</h5>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="grid gap-4">
+                  <div className="field-wrapper">
+                    <label className="field-label" htmlFor="shopName">
+                      Shop Name
+                    </label>
+                    <input
+                      className={classNames("field-input", {
+                        "field-input--error": errors.shopName,
+                      })}
+                      type="text"
+                      id="shopName"
+                      placeholder={shopData?.shop_name || "Shop Name"}
+                      {...register("shopName", { required: true })}
+                    />
+                    {errors.shopName && (
+                      <p className="error-message">Shop name is required</p>
                     )}
-                  />
-                  {errors.sellerPhone && (
-                    <p className="error-message">Phone number is required</p>
-                  )}
+                  </div>
+
+                  <div className="field-wrapper">
+                    <label className="field-label" htmlFor="pickupAddress">
+                      Pickup Address
+                    </label>
+                    <input
+                      className={classNames("field-input", {
+                        "field-input--error": errors.pickupAddress,
+                      })}
+                      type="text"
+                      id="pickupAddress"
+                      placeholder={shopData?.address || "Pickup Address"}
+                      {...register("pickupAddress", { required: true })}
+                    />
+                    {errors.pickupAddress && (
+                      <p className="error-message">
+                        Pickup address is required
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="field-wrapper">
+                    <label className="field-label" htmlFor="sellerEmail">
+                      Seller Email
+                    </label>
+                    <input
+                      className={classNames("field-input", {
+                        "field-input--error": errors.sellerEmail,
+                      })}
+                      type="text"
+                      id="sellerEmail"
+                      placeholder={shopData?.owner_id?.email || "Seller Email"}
+                      {...register("sellerEmail", {
+                        required: true,
+                        pattern: /^\S+@\S+$/i,
+                      })}
+                    />
+                    {errors.sellerEmail && (
+                      <p className="error-message">
+                        Valid seller email is required
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="field-wrapper">
+                    <label className="field-label" htmlFor="sellerPhone">
+                      Seller Phone Number
+                    </label>
+                    <Controller
+                      name="sellerPhone"
+                      control={control}
+                      render={({ field }) => (
+                        <PatternFormat
+                          value={field.value}
+                          format="+#-###-###-####"
+                          placeholder={
+                            shopData?.phone_number || "Seller Phone Number"
+                          }
+                          className={classNames("field-input", {
+                            "field-input--error": errors.sellerPhone,
+                          })}
+                          getInputRef={field.ref}
+                        />
+                      )}
+                    />
+                    {errors.sellerPhone && (
+                      <p className="error-message">
+                        Seller phone number is required
+                      </p>
+                    )}
+                  </div>
                 </div>
 
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="country">
-                    Country
-                  </label>
-                  <Select
-                    options={getCountriesOptions()}
-                    value={selectedCountry}
-                    onChange={handleCountryChange}
-                    placeholder="Select country"
-                  />
+                <div className="flex justify-between mt-2.5">
+                  <button className="text-btn" type="button">
+                    Change Shop Password
+                  </button>
+                  <button
+                    className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
+                    type="submit"
+                  >
+                    Save Shop Changes
+                  </button>
                 </div>
-
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="city">
-                    City
-                  </label>
-                  <Select
-                    options={cities}
-                    value={selectedCity}
-                    onChange={(option) => setSelectedCity(option)}
-                    placeholder="Select city"
-                  />
-                </div>
-              </div>
+              </form>
             </div>
-
-            <div className="flex justify-between mt-2.5">
-              <button className="text-btn" type="button">
-                Change password
-              </button>
-              <button
-                className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
-                type="submit"
-              >
-                Update information
-              </button>
-            </div>
-          </form>
-        </div>
+          )}
+        </>
       )}
     </Spring>
   );

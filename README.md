@@ -73,7 +73,7 @@ This dashboard template uses environment variables to store the API keys and oth
 
 ```bash
 VITE_FB_APP_ID=<your_facebook_app_id>
-VITE_GOOGLE_APP_ID=<your_google_app_id>
+# VITE_GOOGLE_APP_ID=<your_google_app_id>
 VITE_MAP_KEY=<your_google_maps_key>
 VITE_GA=<your_google_analytics_key>
 ```

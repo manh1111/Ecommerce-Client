@@ -2,8 +2,11 @@ import { useKeenSlider } from "keen-slider/react";
 import Arrow from "./Arrow";
 import { Link } from "react-router-dom";
 
-function Gallery() {
-  const items = [
+function Gallery({ slidesPerView = 3, items = [] }) {
+  // Accept items prop
+
+  // Default items if none are provided
+  const defaultItems = [
     {
       banner:
         "https://photo-zmp3.zmdcdn.me/banner/1/4/5/3/1453793acd6e99638c757e7db976e01f.jpg",
@@ -31,7 +34,8 @@ function Gallery() {
     },
   ];
 
-  const img = items.map((item) => ({
+  // Use provided items or fallback to default items
+  const img = (items.length > 0 ? items : defaultItems).map((item) => ({
     src: item.banner,
     href: item.link,
   }));
@@ -40,9 +44,13 @@ function Gallery() {
     return (
       <div className="flex justify-center items-center" key={index}>
         <div className={`keen-slider__slide number-slide${index + 1}`}>
-          <Link to="/">
+          <Link to={item.href}>
             <figure className="flex items-center justify-around w-full">
-              <img src={item.src} alt="" className="w-full h-full rounded-lg" />
+              <img
+                src={item.src}
+                alt=""
+                className="w-full h-full max-h-80 rounded-lg"
+              />
             </figure>
           </Link>
         </div>
@@ -55,7 +63,7 @@ function Gallery() {
       loop: true,
       mode: "free",
       slides: {
-        perView: 3,
+        perView: slidesPerView,
         spacing: 25,
       },
     },
@@ -93,6 +101,7 @@ function Gallery() {
       },
     ]
   );
+
   return (
     <div className="relative pt-8 group">
       <div className="absolute top-1/2 left-0 transform -translate-y-1/2 cursor-pointer z-10 opacity-0 group-hover:opacity-100">

@@ -13,7 +13,7 @@ const SellerOverview = ({
   joinDate,
 }) => {
   return (
-    <div className=" widgets-grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-6 items-center p-6 bg-white shadow-lg rounded-lg mx-auto">
+    <div className=" widgets-grid grid-cols-1 md:grid-cols-3 items-center p-6 bg-white shadow-lg rounded-lg mx-auto">
       {/* Header Section */}
       <div
         className="relative w-full h-40 bg-cover bg-center rounded-t-lg overflow-hidden"
@@ -45,7 +45,7 @@ const SellerOverview = ({
       </div>
 
       {/* Details Section */}
-      <div className="w-full h-full flex items-center justify-around bg-gray-100">
+      <div className="w-full h-full flex items-center justify-around bg-gray-100 pl-[50px]">
         <div className="flex flex-col w-full h-full justify-around  gap-y-2">
           <div className="flex w-fit">
             <span className="font-medium text-gray-800">Sản Phẩm:</span>

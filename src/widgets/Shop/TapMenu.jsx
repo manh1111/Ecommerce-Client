@@ -16,12 +16,12 @@ const TabMenu = ({ categories }) => {
             key={category.id}
             className={`cursor-pointer px-4 py-2 ${
               activeTab === category.id
-                ? "text-red-600 font-bold border-b-2 border-red-600"
+                ? "text-red-600 font-bold border-b-4 rounded-sm border-red"
                 : "text-gray-600"
             }`}
             onClick={() => handleTabClick(category.id)}
           >
-            <span>{category.name}</span>
+            <span className="text-2xl">{category.name}</span>
           </a>
         ))}
       </div>
@@ -33,8 +33,8 @@ const TabMenu = ({ categories }) => {
                 key={category.id}
                 className="opacity-100 transition-opacity duration-300"
               >
-                <h2 className="text-2xl font-semibold mb-4">{category.name}</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <h2 className="text-xl font-semibold mb-4">{category.name}</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                   {category.products.map((product) => (
                     <ProductCard
                       key={product.id}

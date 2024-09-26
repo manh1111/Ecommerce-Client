@@ -5,12 +5,11 @@ import { toast } from "react-toastify";
 
 const AddShop = () => {
   const [imagePreview, setImagePreview] = useState(null);
-  const [logo, setLogo] = useState(null); // State to store the logo file
+  const [file, setLogo] = useState(null); // State to store the file
 
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -31,13 +30,12 @@ const AddShop = () => {
       formData.append("phone_number", data.phone_number);
       formData.append("email", data.email);
 
-      // Append the logo file if it exists
-      if (logo) {
-        formData.append("logo", logo);
+      if (file) {
+        formData.append("file", file);
       }
 
-      console.log("Submitting formData:", logo);
-      const result = await createShop(formData); // Pass FormData to createShop
+      console.log("Submitting formData:", formData);
+      const result = await createShop(formData);
       toast.success("Shop created successfully!", {
         autoClose: 1000,
       });
@@ -53,127 +51,136 @@ const AddShop = () => {
     const file = e.target.files[0];
     if (file) {
       setImagePreview(URL.createObjectURL(file));
-      setLogo(file); // Save the file to state
+      setLogo(file);
     } else {
       setImagePreview(null);
-      setLogo(null); // Clear the state if no file is selected
+      setLogo(null);
     }
   };
 
   return (
-    <div className="card flex-1 xl:py-10">
+    <div className="card ">
       <h5 className="mb-[15px]">Create Shop</h5>
-      <form
-        className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,550px)] xl:gap-10"
-        onSubmit={handleSubmit(handleCreateShop)}
-      >
-        <div>
-          <div>
-            <span className="block field-label mb-2.5">Shop Image</span>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            {imagePreview && (
-              <div className="mt-4 w-[150px] h-[150px]">
-                <img
-                  src={imagePreview}
-                  alt="Shop Preview"
-                  className="w-full h-auto object-cover"
+      <div className="w-full flex justify-center">
+        <form
+          className="w-full"
+          onSubmit={handleSubmit(handleCreateShop)}
+        >
+          <div className="flex w-full">
+            <div className="w-full">
+              <div>
+                <span className="block field-label mb-2.5">Shop Image</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
                 />
+                {imagePreview && (
+                  <div className="mt-4 w-[150px] h-[150px]">
+                    <img
+                      src={imagePreview}
+                      alt="Shop Preview"
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                )}
               </div>
-            )}
+
+              <div className="field-wrapper">
+                <label className="field-label text-lg pt-2" htmlFor="shop_name">
+                  Shop Name
+                </label>
+                <input
+                  className="field-input"
+                  id="shop_name"
+                  placeholder="Enter shop name"
+                  {...register("shop_name", { required: true })}
+                />
+                {errors.shop_name && (
+                  <p className="text-red-500">Shop name is required</p>
+                )}
+              </div>
+
+              <div className="field-wrapper">
+                <label className="field-label text-lg pt-2" htmlFor="description">
+                  Description
+                </label>
+                <textarea
+                  className="field-input !h-[160px] !py-[15px] !overflow-y-auto"
+                  id="description"
+                  placeholder="Enter shop description"
+                  {...register("description", { required: true })}
+                />
+                {errors.description && (
+                  <p className="text-red-500">Description is required</p>
+                )}
+              </div>
+            </div>
+
+            <div className="w-full gap-5 pl-8 mt-[55px]">
+              <div className="field-wrapper">
+                <label className="field-label text-lg pt-2" htmlFor="address">
+                  Address
+                </label>
+                <input
+                  className="field-input"
+                  id="address"
+                  placeholder="Enter shop address"
+                  {...register("address", { required: true })}
+                />
+                {errors.address && (
+                  <p className="text-red-500">Address is required</p>
+                )}
+              </div>
+
+              <div className="field-wrapper">
+                <label className="field-label text-lg pt-2" htmlFor="phone_number">
+                  Phone Number
+                </label>
+                <input
+                  className="field-input"
+                  id="phone_number"
+                  placeholder="Enter phone number"
+                  {...register("phone_number", { required: true })}
+                />
+                {errors.phone_number && (
+                  <p className="text-red-500">Phone number is required</p>
+                )}
+              </div>
+
+              <div className="field-wrapper">
+                <label className="field-label text-lg pt-2" htmlFor="email">
+                  Email
+                </label>
+                <input
+                  className="field-input"
+                  id="email"
+                  placeholder="Enter shop email"
+                  {...register("email", {
+                    required: true,
+                    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  })}
+                />
+                {errors.email?.type === "required" && (
+                  <p className="text-red-500">Email is required</p>
+                )}
+                {errors.email?.type === "pattern" && (
+                  <p className="text-red-500">Invalid email format</p>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Other input fields */}
-          <div className="field-wrapper">
-            <label className="field-label" htmlFor="shop_name">
-              Shop Name
-            </label>
-            <input
-              className="field-input"
-              id="shop_name"
-              placeholder="Enter shop name"
-              {...register("shop_name", { required: true })}
-            />
-            {errors.shop_name && (
-              <p className="text-red-500">Shop name is required</p>
-            )}
+          <div className="flex items-center justify-end xl:col-span-2">
+            <button
+              className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
+              type="submit"
+            >
+              Create Shop
+            </button>
           </div>
-
-          <div className="field-wrapper">
-            <label className="field-label" htmlFor="description">
-              Description
-            </label>
-            <textarea
-              className="field-input !h-[160px] !py-[15px] !overflow-y-auto"
-              id="description"
-              placeholder="Enter shop description"
-              {...register("description", { required: true })}
-            />
-            {errors.description && (
-              <p className="text-red-500">Description is required</p>
-            )}
-          </div>
-
-          <div className="field-wrapper">
-            <label className="field-label" htmlFor="address">
-              Address
-            </label>
-            <input
-              className="field-input"
-              id="address"
-              placeholder="Enter shop address"
-              {...register("address", { required: true })}
-            />
-            {errors.address && (
-              <p className="text-red-500">Address is required</p>
-            )}
-          </div>
-
-          <div className="field-wrapper">
-            <label className="field-label" htmlFor="phone_number">
-              Phone Number
-            </label>
-            <input
-              className="field-input"
-              id="phone_number"
-              placeholder="Enter phone number"
-              {...register("phone_number", { required: true })}
-            />
-            {errors.phone_number && (
-              <p className="text-red-500">Phone number is required</p>
-            )}
-          </div>
-
-          <div className="field-wrapper">
-            <label className="field-label" htmlFor="email">
-              Email
-            </label>
-            <input
-              className="field-input"
-              id="email"
-              placeholder="Enter shop email"
-              {...register("email", {
-                required: true,
-                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              })}
-            />
-            {errors.email?.type === "required" && (
-              <p className="text-red-500">Email is required</p>
-            )}
-            {errors.email?.type === "pattern" && (
-              <p className="text-red-500">Invalid email format</p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex items-center justify-end xl:col-span-2">
-          <button
-            className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
-            type="submit"
-          >
-            Create Shop
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
