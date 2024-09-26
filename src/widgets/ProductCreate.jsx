@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getCategories, createCategories } from "@api/Categorie"; // Cập nhật với API mới
 import Select from "@ui/Select";
 import { toast } from "react-toastify";
 import { useForm, Controller } from "react-hook-form";
@@ -11,11 +10,15 @@ import {
   UNITS_OPTIONS,
 } from "@constants/options";
 
+import { createCategories, getCategories } from "@api/categorie";
+
 const ProductCreate = () => {
   const [categories, setCategories] = useState([]);
   const [isCategoryEmpty, setIsCategoryEmpty] = useState(true);
   const [newCategoryName, setNewCategoryName] = useState("");
 
+  // Fetch all categories from API
+  // Fetch all categories from API
   // Fetch all categories from API
   useEffect(() => {
     const loadCategories = async () => {
