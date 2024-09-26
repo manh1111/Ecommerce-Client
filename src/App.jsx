@@ -31,7 +31,7 @@ const RevenueByPeriod = lazy(() => import("@pages/RevenueByPeriod"));
 const TopProducts = lazy(() => import("@pages/TopProducts"));
 const ProductsGrid = lazy(() => import("@pages/ProductsGrid"));
 const ProductsManagement = lazy(() => import("@pages/ProductsManagement"));
-const ProductEditor = lazy(() => import("@pages/EditProduct"));
+// const ProductEditor = lazy(() => import("@pages/EditProduct"));
 const StartSelling = lazy(() => import("@pages/StartSelling"));
 const Banners = lazy(() => import("@pages/Banners"));
 const Orders = lazy(() => import("@pages/Orders"));
@@ -97,9 +97,9 @@ const App = () => {
                   />
                   <Route path="/top-products" element={<TopProducts />} />
                   <Route path="/products-grid" element={<ProductsGrid />} />
-                  <Route path="/product-editor" element={<ProductEditor />} />
+                  {/* <Route path="/product-editor" element={<ProductEditor />} /> */}
                   <Route path="/product-creater" element={<CreaterProduct />} />
-                  <Route path="/category" element={<ProductEditor />} />
+                  {/* <Route path="/category" element={<ProductEditor />} /> */}
                   <Route path="/banners" element={<Banners />} />
                   <Route path="/orders" element={<Orders />} />
                   <Route path="/statistics" element={<Statistics />} />
