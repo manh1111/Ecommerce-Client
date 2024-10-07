@@ -1,50 +1,9 @@
-// components/NotificationsPanel.jsx
-
-// Import necessary modules and components
 import React, { useState, useEffect } from "react";
-import useMeasure from "react-use-measure";
+import { useMeasure } from "react-use";
 import DrawerBase from "@ui/DrawerBase";
-
-// Sample notifications data
-const notificationsData = [
-  {
-    id: 1,
-    image: "https://placehold.co/60x60",
-    title: "Chân váy nàng thơ JOLIE 8 mảnh, chân váy xòe dáng dài chữ...",
-    category: "Đồ thời trang",
-    label: "Yêu thích",
-    oldPrice: "₫385.000",
-    price: "₫249.000",
-    total: "₫249.000",
-    timestamp: 1632981600,
-    stock: 1,
-  },
-  {
-    id: 2,
-    image: "https://placehold.co/60x60",
-    title: "Máy lọc không khí Sharp PureAir 2024",
-    category: "Điện tử",
-    label: "Khuyến mãi",
-    oldPrice: "₫2.000.000",
-    price: "₫1.800.000",
-    total: "₫1.800.000",
-    timestamp: 1632981200,
-    stock: 1,
-  },
-  {
-    id: 3,
-    image: "https://placehold.co/60x60",
-    title: "Bộ đồ gia đình Villeroy & Boch",
-    category: "Gia dụng",
-    label: "Mới",
-    oldPrice: "₫500.000",
-    price: "₫450.000",
-    total: "₫450.000",
-    timestamp: 1632981800,
-    stock: 1,
-  },
-  // Add more products as needed
-];
+import { getCookie } from "@utils/cookie";
+import { getCart } from "@api/cart";
+import { getProductById } from "@api/product";
 
 const NotificationsPanel = ({ open, onOpen, onClose }) => {
   // Measure header and footer heights for dynamic sizing
@@ -53,27 +12,79 @@ const NotificationsPanel = ({ open, onOpen, onClose }) => {
 
   // State management
   const [filter, setFilter] = useState("all");
-  const [notifications, setNotifications] = useState(notificationsData);
+  const [notifications, setNotifications] = useState([]);
   const [selectedIds, setSelectedIds] = useState(new Set());
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Extract unique categories for dynamic filters
-  const categories = [
-    "all",
-    ...new Set(notificationsData.map((item) => item.category)),
-  ];
+  const token = JSON.parse(getCookie("user_login"));
 
-  // Reset states when the panel is opened
+  // Reset states and fetch cart data when the panel is opened
   useEffect(() => {
     if (open) {
       setFilter("all");
       setSelectedIds(new Set());
+      fetchCartData();
     }
   }, [open]);
+
+  // Fetch cart items and then get product details for each item
+  const fetchCartData = async () => {
+    setLoading(true);
+    try {
+      const cartItems = await getCart(); // Fetch cart items (product IDs and names)
+      // Fetch product details for each item in the cart
+      const detailedItems = await Promise.all(
+        cartItems.map(async (item) => {
+          try {
+            const productDetails = await getProductById(item.product_id);
+            // Construct the notification object with required fields
+            return {
+              id: item.product_id,
+              title: productDetails.product_name,
+              category: productDetails.product_category || "Uncategorized",
+              image: productDetails.product_img[0],
+              price: productDetails.product_price.toLocaleString("vi-VN") + "₫",
+              oldPrice: productDetails.product_old_price
+                ? productDetails.product_old_price.toLocaleString("vi-VN") + "₫"
+                : null,
+              total:
+                (
+                  productDetails.product_price * (item.quantity || 1)
+                ).toLocaleString("vi-VN") + "₫",
+              label: "New",
+              timestamp: Date.now(),
+              stock: productDetails.product_quantity,
+              quantity: item.quantity || 1,
+            };
+          } catch (err) {
+            console.error("Error fetching product details:", err);
+            return null; // Exclude the item if there's an error
+          }
+        })
+      );
+      // Filter out any null items (in case of errors)
+      const validItems = detailedItems.filter((item) => item !== null);
+      setNotifications(validItems);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching cart data:", error);
+      setError("Failed to load cart data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Extract unique categories for dynamic filters
+  const categories = [
+    "all",
+    ...new Set(notifications.map((item) => item.category)),
+  ];
 
   // Handle category filter change
   const handleFilterChange = (category) => {
     setFilter(category);
-    setSelectedIds(new Set()); // Reset selections on filter change
+    setSelectedIds(new Set());
   };
 
   // Handle "Select All" checkbox
@@ -109,9 +120,10 @@ const NotificationsPanel = ({ open, onOpen, onClose }) => {
               ...item,
               quantity: Math.max(1, (item.quantity || 1) + delta),
               total:
-                parsePrice(item.price) *
-                Math.max(1, (item.quantity || 1) + delta),
-              stock: Math.max(1, (item.quantity || 1) + delta),
+                (
+                  parsePrice(item.price) *
+                  Math.max(1, (item.quantity || 1) + delta)
+                ).toLocaleString("vi-VN") + "₫",
             }
           : item
       )
@@ -158,6 +170,14 @@ const NotificationsPanel = ({ open, onOpen, onClose }) => {
     filteredData().length > 0 &&
     filteredData().every((item) => selectedIds.has(item.id));
 
+  // Calculate total price of selected items
+  const calculateTotalPrice = () => {
+    return Array.from(selectedIds).reduce((total, id) => {
+      const item = notifications.find((notification) => notification.id === id);
+      return total + (item ? parsePrice(item.total) : 0);
+    }, 0);
+  };
+
   return (
     <DrawerBase
       anchor="right"
@@ -182,133 +202,161 @@ const NotificationsPanel = ({ open, onOpen, onClose }) => {
 
       {/* Main Content */}
       <div className="p-4">
-        {/* Category Filters */}
-        <div className="mb-4">
-          <label className="mr-2 font-semibold">Lọc theo danh mục:</label>
-          {categories.map((category) => (
-            <button
-              key={category}
-              className={`mr-2 mb-2 px-3 py-1 rounded ${
-                filter === category
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-              onClick={() => handleFilterChange(category)}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-
-        {/* Cart Header */}
-        <div className="flex items-center border-b pb-2">
-          <input
-            type="checkbox"
-            className="mr-2"
-            checked={isAllSelected}
-            onChange={handleSelectAll}
-          />
-          <span className="font-semibold w-1/3">Sản Phẩm</span>
-          <span className="font-semibold w-1/6 text-center">Đơn Giá</span>
-          <span className="font-semibold w-1/6 text-center">Số Lượng</span>
-          <span className="font-semibold w-1/6 text-center">Số Tiền</span>
-          <span className="font-semibold w-1/6 text-center">Thao Tác</span>
-        </div>
-
-        {/* Cart Items */}
-        <div
-          className="h-[60vh] overflow-y-auto mt-2"
-          style={{
-            height: `calc(100vh - ${headerHeight + footerHeight + 200}px)`, // Adjusted for header and footer
-          }}
-        >
-          {filteredData().length === 0 ? (
-            <p className="text-center text-gray-500 mt-4">Giỏ hàng trống.</p>
-          ) : (
-            filteredData()
-              .sort((a, b) => b.timestamp - a.timestamp)
-              .map((notification) => (
-                <div
-                  className="flex items-center py-4 border-b"
-                  key={notification.id}
+        {loading ? (
+          <p className="text-center">Đang tải giỏ hàng...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">{error}</p>
+        ) : (
+          <>
+            {/* Category Filters */}
+            <div className="mb-4">
+              <label className="mr-2 font-semibold">Lọc theo danh mục:</label>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  className={`mr-2 mb-2 px-3 py-1 rounded ${
+                    filter === category
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                  onClick={() => handleFilterChange(category)}
                 >
-                  <input
-                    type="checkbox"
-                    className="mr-2"
-                    checked={selectedIds.has(notification.id)}
-                    onChange={() => handleSelectOne(notification.id)}
-                  />
-                  <img
-                    src={notification.image}
-                    alt={notification.title}
-                    className="w-16 h-16 object-cover mr-4"
-                  />
-                  <div className="flex-1">
-                    <div className="font-semibold">
-                      {notification.title.length > 15
-                        ? `${notification.title.slice(0, 15)}...`
-                        : notification.title}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      Phân Loại Hàng:{" "}
-                      <span className="font-semibold">
-                        {notification.category}
-                      </span>
-                    </div>
-                    <div className="mt-2">
-                      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded mr-2">
-                        {notification.label}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col text-end w-1/6 font-semibold">
-                    {notification.oldPrice && (
-                      <span className="line-through text-gray-500">
-                        {notification.oldPrice}
-                      </span>
-                    )}
-                    <span className="text-lg text-red-500">
-                      {notification.price}
-                    </span>
-                  </div>
-                  <div className="text-end w-1/6 font-semibold">
-                    <button
-                      className="bg-gray-200 px-2 py-1 rounded"
-                      onClick={() => handleQuantityChange(notification.id, -1)}
-                    >
-                      -
-                    </button>
-                    <span className="mx-2">{notification.stock}</span>
-                    <button
-                      className="bg-gray-200 px-2 py-1 rounded"
-                      onClick={() => handleQuantityChange(notification.id, 1)}
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div className="text-end w-1/6 font-semibold">
-                    {notification.total}
-                  </div>
-                  <button
-                    className="text-rose-500 font-semibold w-1/6"
-                    onClick={() => handleRemoveItem(notification.id)}
-                  >
-                    Xóa
-                  </button>
-                </div>
-              ))
-          )}
-        </div>
+                  {category}
+                </button>
+              ))}
+            </div>
 
-        {/* Footer */}
-        <div className="mt-4 flex justify-between items-center" ref={footerRef}>
+            {/* Cart Header */}
+            <div className="flex items-center border-b pb-2">
+              <input
+                type="checkbox"
+                className="mr-2"
+                checked={isAllSelected}
+                onChange={handleSelectAll}
+              />
+              <span className="font-semibold w-1/3">Sản Phẩm</span>
+              <span className="font-semibold w-1/6 text-center">Đơn Giá</span>
+              <span className="font-semibold w-1/6 text-center">Số Lượng</span>
+              <span className="font-semibold w-1/6 text-center">Số Tiền</span>
+              <span className="font-semibold w-1/6 text-center">Thao Tác</span>
+            </div>
+
+            {/* Cart Items */}
+            <div
+              className="h-[60vh] overflow-y-auto mt-2"
+              style={{
+                height: `calc(100vh - ${headerHeight + footerHeight + 200}px)`,
+              }}
+            >
+              {filteredData().length === 0 ? (
+                <p className="text-center text-gray-500 mt-4">
+                  Giỏ hàng trống.
+                </p>
+              ) : (
+                filteredData()
+                  .sort((a, b) => b.timestamp - a.timestamp)
+                  .map((notification) => (
+                    <div
+                      className="flex items-center py-4 border-b"
+                      key={notification.id}
+                    >
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={selectedIds.has(notification.id)}
+                        onChange={() => handleSelectOne(notification.id)}
+                      />
+                      <img
+                        src={notification.image}
+                        alt={notification.title}
+                        className="w-16 h-16 object-cover mr-4"
+                      />
+                      <div className="flex-1">
+                        <div className="font-semibold">
+                          {notification.title.length > 15
+                            ? `${notification.title.slice(0, 15)}...`
+                            : notification.title}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Phân Loại Hàng:{" "}
+                          <span className="font-semibold">
+                            {notification.category}
+                          </span>
+                        </div>
+                        <div className="mt-2">
+                          <span className="bg-red-500 text-white text-xs px-2 py-1 rounded mr-2">
+                            {notification.label}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col text-end w-1/6 font-semibold">
+                        {notification.oldPrice && (
+                          <span className="line-through text-gray-500">
+                            {notification.oldPrice}
+                          </span>
+                        )}
+                        <span className="text-lg text-red-500">
+                          {notification.price}
+                        </span>
+                      </div>
+                      <div className="text-end w-1/6 font-semibold flex items-center">
+                        <button
+                          className="bg-gray-200 px-2 py-1 rounded"
+                          onClick={() =>
+                            handleQuantityChange(notification.id, -1)
+                          }
+                        >
+                          -
+                        </button>
+                        <span className="mx-2">
+                          {notification.quantity || 1}
+                        </span>
+                        <button
+                          className="bg-gray-200 px-2 py-1 rounded"
+                          onClick={() =>
+                            handleQuantityChange(notification.id, 1)
+                          }
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div className="w-1/6 font-semibold text-red-500 text-center">
+                        {notification.total}
+                      </div>
+                      <div className="text-end w-1/6">
+                        <button
+                          className="text-red-500"
+                          onClick={() => handleRemoveItem(notification.id)}
+                        >
+                          Xóa
+                        </button>
+                      </div>
+                    </div>
+                  ))
+              )}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="pt-6 pb-4 px-6 border-t bg-white" ref={footerRef}>
+        <div className="flex justify-between items-center">
+          <span className="font-semibold">
+            Tổng tiền:{" "}
+            <span className="text-red-500">
+              {calculateTotalPrice().toLocaleString("vi-VN")}₫
+            </span>
+          </span>
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className={`bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition ${
+              selectedIds.size === 0 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             onClick={handlePurchase}
+            disabled={selectedIds.size === 0}
           >
             Mua Hàng
           </button>
-          <p className="font-semibold">Tổng số sản phẩm: {selectedIds.size}</p>
         </div>
       </div>
     </DrawerBase>

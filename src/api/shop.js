@@ -1,6 +1,9 @@
 import axiosInstance from "@api/axiosInstance";
 import { getCookie } from "@utils/cookie";
 
+// Get the base API URL from environment variables
+const REACT_APP_URL_PRO_API = "https://ecommerce-server-0mcc.onrender.com/v1/api/";
+
 export const GetOwnShop = async () => {
   try {
     let token = null;
@@ -11,14 +14,13 @@ export const GetOwnShop = async () => {
       throw new Error("No authentication token found");
     }
 
-    const response = await axiosInstance.get(
-      "http://localhost:8080/v1/api/shop/view-own",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    // Use environment variable for the base API URL
+    const response = await axiosInstance.get(`${REACT_APP_URL_PRO_API}shop/view-own`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return response.data;
   } catch (error) {
     console.error("Error fetching shop data:", error);
@@ -38,20 +40,21 @@ export const createShop = async (formData) => {
       throw new Error("No authentication token found");
     }
 
+    // Configure headers to handle formData
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data", // Use multipart/form-data for FormData
+        "Content-Type": "multipart/form-data", // Required for FormData
       },
     };
 
+    // Use environment variable for the base API URL
     const response = await axiosInstance.post(
-      "http://localhost:8080/v1/api/shop/create",
+      `${REACT_APP_URL_PRO_API}shop/create`,
       formData,
       config
     );
 
-    // Return the response data
     return response.data;
   } catch (error) {
     console.error("Error creating shop:", error);
