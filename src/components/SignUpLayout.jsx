@@ -16,9 +16,10 @@ import classNames from "classnames";
 import media from "@assets/login.webp";
 
 //api
-import { signUp } from "@api/auth";
+// import { signUp } from "@api/auth";
 import { useState } from "react";
 import { SendOTP, VerifyUser } from "@api/otp";
+import { signUp } from "@api/auth";
 
 const SignUpLayout = () => {
   const [isConfirming, setIsConfirming] = useState(false);
