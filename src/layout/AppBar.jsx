@@ -167,7 +167,7 @@ const AppBar = () => {
                   onClick={() => setMessagesPanelOpen(true)}
                   aria-label="Messages"
                 >
-                  <i className="icon-message-solid" />
+                  <i className="fas fa-truck" title="Theo dõi đơn hàng" />
                 </button>
                 <span
                   className="absolute w-3 h-3 rounded-full bg-green -top-1.5 -right-1.5 border-[2px] border-body

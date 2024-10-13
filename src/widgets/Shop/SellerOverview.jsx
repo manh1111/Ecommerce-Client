@@ -1,9 +1,11 @@
 import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const SellerOverview = ({
   backgroundUrl,
   sellerName,
-  lastOnline,
+  Desc,
   avatarUrl,
   productCount,
   followerCount,
@@ -12,8 +14,43 @@ const SellerOverview = ({
   rating,
   joinDate,
 }) => {
+  const [timeSinceJoined, setTimeSinceJoined] = useState("");
+  useEffect(() => {
+    const calculateTimeSinceJoined = () => {
+      const joinedDate = new Date(joinDate);
+      const currentDate = new Date();
+      const timeDifference = currentDate - joinedDate; // Difference in milliseconds
+      const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
+
+      let timeDisplay = "";
+
+      if (daysDifference > 365) {
+        const years = Math.floor(daysDifference / 365); // Calculate years
+        timeDisplay = `${years} year${years > 1 ? "s" : ""}`; // Return years
+      } else if (daysDifference > 30) {
+        const months = Math.floor(daysDifference / 30); // Calculate months
+        timeDisplay = `${months} month${months > 1 ? "s" : ""}`; // Return months
+      } else {
+        timeDisplay =
+          daysDifference > 0
+            ? `${daysDifference} day${daysDifference > 1 ? "s" : ""}`
+            : "Joined today";
+      }
+
+      setTimeSinceJoined(timeDisplay);
+    };
+
+    // Initial calculation when the component mounts
+    calculateTimeSinceJoined();
+
+    // Set an interval to update every 24 hours (1 day)
+    const interval = setInterval(calculateTimeSinceJoined, 1000 * 60 * 60 * 24);
+
+    // Clean up the interval when the component is unmounted
+    return () => clearInterval(interval);
+  }, [joinDate]);
   return (
-    <div className=" widgets-grid grid-cols-1 md:grid-cols-3 items-center p-6 bg-white shadow-lg rounded-lg mx-auto">
+    <div className=" widgets-grid grid-cols-1 md:grid-cols-2 items-center p-6 bg-white shadow-lg rounded-lg mx-auto">
       {/* Header Section */}
       <div
         className="relative w-full h-40 bg-cover bg-center rounded-t-lg overflow-hidden"
@@ -31,7 +68,7 @@ const SellerOverview = ({
             <h1 className="text-xl font-semibold text-gray-800">
               {sellerName}
             </h1>
-            <p className="text-sm text-gray-600">{lastOnline}</p>
+            <h4 className="text-sm text-[#ccc]">{Desc}</h4>
           </div>
           <div className="flex gap-2">
             <button className="px-4 py-2 text-sm font-semibold text-white bg-red rounded-lg hover:bg-red-700 transition">
@@ -49,34 +86,7 @@ const SellerOverview = ({
         <div className="flex flex-col w-full h-full justify-around  gap-y-2">
           <div className="flex w-fit">
             <span className="font-medium text-gray-800">Sản Phẩm:</span>
-            <span className="text-red ml-2 font-semibold">
-              {productCount}
-            </span>
-          </div>
-          <div className="flex w-fit">
-            <span className="font-medium text-gray-800">Người Theo Dõi:</span>
-            <span className="text-red ml-2 font-semibold">
-              {followerCount}
-            </span>
-          </div>
-          <div className="flex w-fit">
-            <span className="font-medium text-gray-800">Đang Theo Dõi:</span>
-            <span className="text-red ml-2 font-semibold">
-              {followingCount}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full h-full flex items-center justify-around bg-gray-100">
-        <div className="flex flex-col w-full h-full justify-around  gap-y-2">
-          <div className="flex w-fit">
-            <span className="font-medium text-gray-800">
-              Tỉ Lệ Phản Hồi Chat:
-            </span>
-            <span className="text-red ml-2 font-semibold">
-              {chatResponseRate}
-            </span>
+            <span className="text-red ml-2 font-semibold">{productCount}</span>
           </div>
           <div className="flex items-center">
             <span className="font-medium text-gray-800">Đánh Giá:</span>
@@ -84,7 +94,9 @@ const SellerOverview = ({
           </div>
           <div className="flex items-center">
             <span className="font-medium text-gray-800">Tham Gia:</span>
-            <span className="text-red ml-2 font-semibold">{joinDate}</span>
+            <span className="text-red ml-2 font-semibold">
+              {timeSinceJoined}
+            </span>
           </div>
         </div>
       </div>

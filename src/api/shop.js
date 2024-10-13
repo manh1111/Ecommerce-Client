@@ -28,6 +28,19 @@ export const GetOwnShop = async () => {
   }
 };
 
+export const GetAllShop = async () => {
+  try {
+    const response = await axiosInstance.get(
+      `${REACT_APP_URL_PRO_API}shop/all`
+    );
+
+    return response;
+  } catch (error) {
+    console.error("Error fetching shop data:", error);
+    throw error;
+  }
+};
+
 export const createShop = async (formData) => {
   console.log("FormData in createShop:", formData);
 
@@ -61,3 +74,17 @@ export const createShop = async (formData) => {
     throw error;
   }
 };
+
+export const getShopById = async (id) => {
+  try {
+    const response = await axiosInstance.get(
+      `${REACT_APP_URL_PRO_API}shop/${id}`
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product data:", error);
+    throw error;
+  }
+};
+

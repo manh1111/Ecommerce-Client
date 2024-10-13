@@ -111,7 +111,7 @@ const App = () => {
                     path="/general-settings"
                     element={<GeneralSettings />}
                   />
-                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/shop/:id" element={<Shop />} />
                   <Route path="/product" element={<Product />} />
                   <Route path="*" element={<Navigate to="/404" />} />
                   <Route path="/start-selling" element={<StartSelling />} />

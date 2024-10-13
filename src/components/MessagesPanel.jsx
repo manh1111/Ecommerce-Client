@@ -1,5 +1,4 @@
 // components
-import MessageItem from '@components/MessageItem';
 import FilterItem from '@ui/FilterItem';
 import DrawerBase from '@ui/DrawerBase';
 
@@ -8,13 +7,15 @@ import useMeasure from 'react-use-measure';
 import {useState, useEffect} from 'react';
 
 // constants
-import {MESSAGE_OPTIONS} from '@constants/options';
+import { ORDER_SORT_OPTIONS, PRODUCT_CATEGORIES} from '@constants/options';
 
 // utils
 import dayjs from 'dayjs';
 
 // data placeholder
 import messages from '@db/messages';
+import OrdersTable from '@widgets/OrdersTable';
+import Select from '@ui/Select';
 
 const step = 6;
 
@@ -48,50 +49,53 @@ const MessagesPanel = ({open, onOpen, onClose}) => {
         if (filter === 'archived') return archivedMessages
     }
     
-    const sortedData = () => filteredData().sort((a, b) => dayjs(b.createdAt).diff(dayjs(a.createdAt)));
-
+    const [category, setCategory] = useState(PRODUCT_CATEGORIES[0]);
+    const [sort, setSort] = useState(ORDER_SORT_OPTIONS[0]);
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-[26px] md:col-span-2">
+      <Select
+        value={category}
+        options={PRODUCT_CATEGORIES}
+        onChange={setCategory}
+        placeholder="Product category"
+      />
+      <Select
+        value={sort}
+        options={ORDER_SORT_OPTIONS}
+        onChange={setSort}
+        placeholder="Default sorting"
+      />
+    </div>;
     return (
-        <DrawerBase open={open} onOpen={onOpen} onClose={onClose} anchor="right">
-            <div className="py-8 px-[30px] pb-4" ref={headerRef}>
-                <div className="flex justify-between items-center">
-                    <h5>Messages</h5>
-                    <button className="text-accent text-lg transition hover:text-red"
-                            onClick={onClose}
-                            aria-label="Close messages panel">
-                        <i className="icon-circle-xmark-regular"/>
-                    </button>
-                </div>
-                <div className="flex mt-[18px]">
-                    {
-                        MESSAGE_OPTIONS.map((item, index) => (
-                            <FilterItem
-                                key={index}
-                                text={item.label}
-                                value={item.value}
-                                active={filter}
-                                qty={getQty(item.value)}
-                                onClick={() => setFilter(item.value)}
-                            />
-                        ))
-                    }
-                </div>
-            </div>
-            <div className="h-full overflow-y-auto flex-1" style={{height: `calc(100vh - ${headerHeight + footerHeight}px)`}}>
-                {
-                    sortedData().slice(0, displayed).map((message, index) => (
-                        <MessageItem key={`${message.id}-${filter}`} message={message} index={index}/>
-                    ))
-                }
-            </div>
-            <div className="p-[30px]" ref={footerRef}>
-                <button className="btn btn--secondary w-full"
-                        onClick={handleLoadMore}
-                        disabled={displayed >= filteredData().length}>
-                    Load More
-                </button>
-            </div>
-        </DrawerBase>
-    )
+      <DrawerBase open={open} onOpen={onOpen} onClose={onClose} anchor="right">
+        <div className="py-8 px-[30px] pb-4" ref={headerRef}>
+          <div className="flex justify-between items-center">
+            <h5>Đơn hàng</h5>
+            <button
+              className="text-accent text-lg transition hover:text-red"
+              onClick={onClose}
+              aria-label="Close messages panel"
+            >
+              <i className="icon-circle-xmark-regular" />
+            </button>
+          </div>
+        </div>
+        <div
+          className="h-full overflow-y-auto flex-1"
+          style={{ height: `calc(100vh - ${headerHeight + footerHeight}px)` }}
+        >
+          <OrdersTable category={category} sort={sort} />
+        </div>
+        <div className="p-[30px]" ref={footerRef}>
+          <button
+            className="btn btn--secondary w-full"
+            onClick={handleLoadMore}
+            disabled={displayed >= filteredData().length}
+          >
+            Load More
+          </button>
+        </div>
+      </DrawerBase>
+    );
 }
 
 export default MessagesPanel
