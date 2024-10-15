@@ -8,9 +8,6 @@ const SellerOverview = ({
   Desc,
   avatarUrl,
   productCount,
-  followerCount,
-  followingCount,
-  chatResponseRate,
   rating,
   joinDate,
 }) => {
@@ -26,15 +23,15 @@ const SellerOverview = ({
 
       if (daysDifference > 365) {
         const years = Math.floor(daysDifference / 365); // Calculate years
-        timeDisplay = `${years} year${years > 1 ? "s" : ""}`; // Return years
+        timeDisplay = `${years} năm trước`; // Return years
       } else if (daysDifference > 30) {
         const months = Math.floor(daysDifference / 30); // Calculate months
-        timeDisplay = `${months} month${months > 1 ? "s" : ""}`; // Return months
+        timeDisplay = `${months} tháng trước`; // Return months
       } else {
         timeDisplay =
           daysDifference > 0
             ? `${daysDifference} day${daysDifference > 1 ? "s" : ""}`
-            : "Joined today";
+            : "Tham gia hôm nay";
       }
 
       setTimeSinceJoined(timeDisplay);

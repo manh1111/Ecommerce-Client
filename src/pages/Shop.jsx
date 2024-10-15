@@ -17,6 +17,7 @@ import { getShopById } from '@api/shop';
 const Shop = () => {
   const [shop, setShop] = useState([]);
   const [catalogs, setCatalogs] = useState([]);
+  const [categories, setCategories] = useState([]);
   const { id } = useParams();
   const getRandomNumber = (min, max) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
@@ -33,162 +34,53 @@ const Shop = () => {
   };
 
   useEffect(() => {
-    const fetchShopData = async () => {
+    const fetchData = async () => {
       try {
+        // Fetch shop details
         const shopDetails = await getShopById(id);
         setShop(shopDetails);
+
+        // Fetch catalogs
+        const catalogData = await getCatalogByShopId(id);
+        setCatalogs(catalogData);
+
+        const productPromises = catalogData?.map(async (catalog) => {
+          const catalogId = catalog._id;
+          const products = await getProductsByCatalogShop(id, catalogId);
+          return { catalog, products }; 
+        });
+
+        const catalogsWithProducts = await Promise.all(productPromises);
+
+        const categories = catalogsWithProducts.map(
+          ({ catalog, products }) => ({
+            id: catalog._id, 
+            name: catalog.catalog_name, 
+            products: products.map((product) => ({
+              id: product._id,
+              imageSrc: product.product_img[0],
+              altText: product.product_name, 
+              price: `${product.product_price.toLocaleString()} VND`, 
+              discount: "0%", 
+              rating: 4.8, 
+              soldCount: product.product_quantity, 
+              promotionText: "Khuyến mãi đặc biệt", 
+              voucherText: "Giảm giá", 
+              promotionOverlaySrc: "https://example.com/overlay.png", 
+            })),
+          })
+        );
+
+        setCategories(categories); 
+        console.log(categories); 
       } catch (error) {
-        console.error("Error fetching shop data:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    const fetchCatalogData = async () => {
-      try {
-        const catalog = await getCatalogByShopId(id);
-        setCatalogs(catalog); // Cập nhật catalogs tại đây
-        console.log(catalog);
-      } catch (error) {
-        console.error("Error fetching catalog data:", error);
-      }
-    };
+    fetchData();
+  }, [id]);
 
-    fetchShopData();
-    fetchCatalogData();
-  }, [id]); // Chỉ gọi fetchShopData và fetchCatalogData khi id thay đổi
-
-  useEffect(() => {
-    const fetchProductsForCatalogs = async () => {
-      const productPromises = catalogs?.map(async (catalog) => {
-        const catalogId = catalog._id;
-        console.log("catalogId", catalogId);
-        return await getProductsByCatalogShop(id, catalogId);
-      });
-
-      try {
-        const products = await Promise.all(productPromises);
-        console.log(products);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    // Chỉ gọi fetchProductsForCatalogs khi catalogs có dữ liệu
-    if (catalogs?.length > 0) {
-      fetchProductsForCatalogs();
-    }
-  }, [catalogs, id]); // Theo dõi sự thay đổi của catalogs và id
-
-  const categories = [
-    {
-      id: 1,
-      name: "Electronics",
-      products: [
-        {
-          imageSrc:
-            "https://down-tx-vn.img.susercontent.com/dcd3186046be5caa22dc1fe07e8c76c5_tn.webp",
-          altText:
-            "Lovito Áo thun dây rút trơn thông thường cho nữ áo kiểu áo đi chơi LNA27322 (Hồng)",
-          promotionOverlaySrc:
-            "https://down-vn.img.susercontent.com/file/vn-11134258-7r98o-lzaej1859qch70",
-          price: "111.000",
-          discount: "31%",
-          rating: 4.8,
-          soldCount: "14,7k",
-          promotionText: "Rẻ Vô Địch",
-          voucherText: "19% Giảm",
-        },
-        {
-          imageSrc:
-            "https://down-tx-vn.img.susercontent.com/dcd3186046be5caa22dc1fe07e8c76c5_tn.webp",
-          altText:
-            "Lovito Áo thun dây rút trơn thông thường cho nữ áo kiểu áo đi chơi LNA27322 (Hồng)",
-          promotionOverlaySrc:
-            "https://down-vn.img.susercontent.com/file/vn-11134258-7r98o-lzaej1859qch70",
-          price: "111.000",
-          discount: "31%",
-          rating: 4.8,
-          soldCount: "14,7k",
-          promotionText: "Rẻ Vô Địch",
-          voucherText: "19% Giảm",
-        },
-        ,
-        {
-          imageSrc:
-            "https://down-tx-vn.img.susercontent.com/dcd3186046be5caa22dc1fe07e8c76c5_tn.webp",
-          altText:
-            "Lovito Áo thun dây rút trơn thông thường cho nữ áo kiểu áo đi chơi LNA27322 (Hồng)",
-          promotionOverlaySrc:
-            "https://down-vn.img.susercontent.com/file/vn-11134258-7r98o-lzaej1859qch70",
-          price: "111.000",
-          discount: "31%",
-          rating: 4.8,
-          soldCount: "14,7k",
-          promotionText: "Rẻ Vô Địch",
-          voucherText: "19% Giảm",
-        },
-        ,
-        {
-          imageSrc:
-            "https://down-tx-vn.img.susercontent.com/dcd3186046be5caa22dc1fe07e8c76c5_tn.webp",
-          altText:
-            "Lovito Áo thun dây rút trơn thông thường cho nữ áo kiểu áo đi chơi LNA27322 (Hồng)",
-          promotionOverlaySrc:
-            "https://down-vn.img.susercontent.com/file/vn-11134258-7r98o-lzaej1859qch70",
-          price: "111.000",
-          discount: "31%",
-          rating: 4.8,
-          soldCount: "14,7k",
-          promotionText: "Rẻ Vô Địch",
-          voucherText: "19% Giảm",
-        },
-        {
-          imageSrc:
-            "https://down-tx-vn.img.susercontent.com/dcd3186046be5caa22dc1fe07e8c76c5_tn.webp",
-          altText:
-            "Lovito Áo thun dây rút trơn thông thường cho nữ áo kiểu áo đi chơi LNA27322 (Hồng)",
-          promotionOverlaySrc:
-            "https://down-vn.img.susercontent.com/file/vn-11134258-7r98o-lzaej1859qch70",
-          price: "111.000",
-          discount: "31%",
-          rating: 4.8,
-          soldCount: "14,7k",
-          promotionText: "Rẻ Vô Địch",
-          voucherText: "19% Giảm",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Clothing",
-      products: [
-        {
-          id: 201,
-          name: "T-Shirt",
-          imageUrl: "https://example.com/tshirt.jpg",
-          price: "$19",
-          discount: "5%",
-          rating: 4.3,
-          soldCount: 200,
-          promotionText: "Limited Edition!",
-          voucherText: "Get $5 off",
-          promotionOverlaySrc: "https://example.com/overlay.png",
-        },
-        {
-          id: 202,
-          name: "Jeans",
-          imageUrl: "https://example.com/jeans.jpg",
-          price: "$49",
-          discount: "10%",
-          rating: 4.6,
-          soldCount: 150,
-          promotionText: "Best Seller!",
-          voucherText: "Get $10 off",
-          promotionOverlaySrc: "https://example.com/overlay.png",
-        },
-        // Thêm các sản phẩm khác vào đây
-      ],
-    },
-  ];
 
   const defaultProducts = [
     {

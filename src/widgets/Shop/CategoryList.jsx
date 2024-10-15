@@ -177,7 +177,7 @@ const CategoryList = ({ categories = [] }) => {
             }
             return (
               <div key={category.id} className="my-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                   {category.products.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}

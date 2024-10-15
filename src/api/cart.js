@@ -1,8 +1,9 @@
 import axiosInstance from "@api/axiosInstance";
+import { checkToken } from "@utils/auth";
 import { getCookie } from "@utils/cookie";
 
 // Access the base URL from the environment variables
-const REACT_APP_URL_PRO_API = "https://ecommerce-server-0mcc.onrender.com/v1/api/";
+const REACT_APP_URL_PRO_API = import.meta.env.VITE_URL_PRO_API;
 
 export const getCart = async () => {
   try {
@@ -33,3 +34,24 @@ export const getCart = async () => {
     throw error;
   }
 };
+
+export const addCart = async (id, quantity = 1) => {
+  const config = checkToken("application/json");
+  try {
+    const result = await axiosInstance.post(
+      `${REACT_APP_URL_PRO_API}cart`,
+      {
+        productId: id,
+        quantity,
+      },
+      config
+    );
+
+    console.log(config);
+    return result; 
+  } catch (error) {
+    console.error("Error adding product to cart:", error);
+    throw error;
+  }
+};
+

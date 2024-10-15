@@ -1,19 +1,24 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
   return (
-    <div className="flex flex-col bg-white cursor-pointer h-full border-2 border-gray-200 rounded-lg hover:border-blue-500">
+    <div
+      onClick={() => navigate(`/product/${product.id}`)}
+      className="flex flex-col bg-white cursor-pointer h-full border-2 border-gray-200 rounded-lg hover:border-blue-500"
+    >
       <div className="relative w-full pt-[100%]">
         <img
           src={product?.imageSrc}
           className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
         />
         <div className="absolute bottom-0 left-0 w-full h-full rounded-t-lg">
-          <img
+          {/* <img
             src={product?.promotionOverlaySrc}
             className="w-full h-full object-cover rounded-t-lg"
             alt="custom-overlay"
-          />
+          /> */}
         </div>
         <div className="absolute bottom-0 right-0 flex pr-1 pb-1">
           <div
@@ -28,11 +33,9 @@ const ProductCard = ({ product }) => {
       <div className="p-2 flex-1 flex flex-col justify-between">
         <div className="space-y-1 mb-1 flex-1 flex flex-col justify-between h-fit">
           <div className="whitespace-normal line-clamp-2 break-words h-fit text-sm">
-            <img
-              src="https://deo.shopeemobile.com/shopee/modules-federation/live/0/shopee__item-card-standard-v2/0.1.35/pc/f7b68952a53e41162ad3.png"
-              alt="flag-label"
-              className="mr-0.5 mb-0.5 w-[150px] h-fit"
-            />
+            <div className="mr-0.5 mb-0.5 w-fit bg-blue-700 p-1 rounded-lg text-base text-white h-fit uppercase ">
+              Xử lý bởi ShopPoint
+            </div>
             <div className="text-xl font-semibold py-1">{product?.altText}</div>
           </div>
           <div className="flex items-center">
@@ -104,7 +107,6 @@ const ProductCard = ({ product }) => {
     </div>
   );
 };
-
 
 const App = ({ product }) => {
   return (
