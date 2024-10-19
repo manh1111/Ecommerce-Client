@@ -1,16 +1,30 @@
 import axiosInstance from "@api/axiosInstance";
-import { getCookie } from "@utils/cookie";
+import { checkToken } from "@utils/auth";
 
 // Get the base API URL from environment variables
 const REACT_APP_URL_PRO_API = import.meta.env.VITE_URL_PRO_API;
 
-export const createOrder = async (orders, ) => {
+export const createOrder = async (
+  orders,
+  paymentMethod,
+  paymentGateway,
+  shippingAddress
+) => {
   try {
-    // Use the environment variable for the base API URL
-    const response = await axiosInstance.post(`${REACT_APP_URL_PRO_API}category/create`);
+    const config = checkToken("application/json");
+    const response = await axiosInstance.post(
+      `${REACT_APP_URL_PRO_API}order`,
+      {
+        orders,
+        paymentMethod,
+        paymentGateway,
+        shippingAddress,
+      },
+      config
+    );
     return response.data;
   } catch (error) {
-    console.error("Failed to create categories:", error);
+    console.error("Failed to create order:", error);
     throw error;
   }
 };

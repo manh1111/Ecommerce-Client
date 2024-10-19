@@ -23,3 +23,9 @@
   height: 60px;
   animation: spin-y 1s linear infinite;
 }
+
+.ant-modal {
+  z-index: 1050; 
+  position: fixed;
+}
+

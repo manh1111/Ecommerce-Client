@@ -17,6 +17,7 @@ import Sidebar from "@layout/Sidebar";
 import AppBar from "@layout/AppBar";
 import CreaterProduct from "@pages/CreaterProduct";
 import Loading from "@components/Loading";
+import Checkout from "./pages/Checkout";
 
 const Login = lazy(() => import("@pages/Login"));
 const SignUp = lazy(() => import("@pages/SignUp"));
@@ -109,6 +110,7 @@ const App = () => {
                   <Route path="/customers" element={<Customers />} />
                   <Route path="/transactions" element={<Transactions />} />
                   <Route path="/connected-apps" element={<ConnectedApps />} />
+                  <Route path="/Checkout" element={<Checkout />} />
                   <Route
                     path="/general-settings"
                     element={<GeneralSettings />}
