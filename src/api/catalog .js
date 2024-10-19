@@ -1,5 +1,4 @@
 import axiosInstance from "@api/axiosInstance";
-import { getCookie } from "@utils/cookie";
 
 // Get the base API URL from environment variables
 const REACT_APP_URL_PRO_API =

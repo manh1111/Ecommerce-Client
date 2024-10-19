@@ -31,7 +31,7 @@ const TabMenu = ({ categories }) => {
           </a>
         ))}
       </div>
-      <div className="p-6">
+      <div className="">
         {categories?.map(
           (category) =>
             activeTab === category.id && (
@@ -40,7 +40,7 @@ const TabMenu = ({ categories }) => {
                 className="opacity-100 transition-opacity duration-300"
               >
                 {/* <h2 className="text-xl font-semibold mb-4">{category.name}</h2> */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {category.products.map((product) => (
                     <ProductCard
                       key={product.id}
@@ -58,7 +58,7 @@ const TabMenu = ({ categories }) => {
                       }}
                     />
                   ))}
-                </div>
+                </div> */}
               </div>
             )
         )}

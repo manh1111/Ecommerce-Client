@@ -4,7 +4,7 @@ import { getCookie } from "@utils/cookie";
 // Get the base API URL from environment variables
 const REACT_APP_URL_PRO_API = import.meta.env.VITE_URL_PRO_API;
 
-export const createCategories = async () => {
+export const createOrder = async (orders, ) => {
   try {
     // Use the environment variable for the base API URL
     const response = await axiosInstance.post(`${REACT_APP_URL_PRO_API}category/create`);

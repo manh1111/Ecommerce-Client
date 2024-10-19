@@ -2,7 +2,7 @@ import axiosInstance from "@api/axiosInstance";
 import { getCookie } from "@utils/cookie";
 
 // Get the base API URL from environment variables
-const REACT_APP_URL_PRO_API = "https://ecommerce-server-0mcc.onrender.com/v1/api/";
+const REACT_APP_URL_PRO_API = import.meta.env.VITE_URL_PRO_API;
 
 export const GetOwnShop = async () => {
   try {
@@ -42,7 +42,6 @@ export const GetAllShop = async () => {
 };
 
 export const createShop = async (formData) => {
-  console.log("FormData in createShop:", formData);
 
   try {
     let token = null;

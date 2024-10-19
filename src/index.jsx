@@ -5,15 +5,17 @@ import {BrowserRouter} from 'react-router-dom';
 import {ThemeProvider} from '@contexts/themeContext';
 import { Provider } from 'react-redux';
 import { store } from '@redux/store';
+import { SearchProductProvider } from '@contexts/searchProductContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <ThemeProvider>
-      <Provider store={store}>
-        <App />
-      </Provider>
-      ;
+      <SearchProductProvider>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </SearchProductProvider>
     </ThemeProvider>
   </BrowserRouter>
 );

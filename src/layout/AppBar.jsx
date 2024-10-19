@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Search from "@ui/Search";
 import Headroom from "react-headroom";
 import CustomTooltip from "@ui/CustomTooltip";
-import NotificationsPanel from "@components/NotificationsPanel";
+import CartPanel from "@components/CartPanel";
 import MessagesPanel from "@components/MessagesPanel";
 import Logo from "@components/Logo";
 import ModalBase from "@ui/ModalBase";
@@ -49,7 +49,7 @@ const LocaleMenu = ({ active, setActive }) => {
 const AppBar = () => {
   const navigate = useNavigate();
   const [searchModalOpen, setSearchModalOpen] = useState(false);
-  const [notificationsPanelOpen, setNotificationsPanelOpen] = useState(false);
+  const [notificationsPanelOpen, setCartPanelOpen] = useState(false);
   const [messagesPanelOpen, setMessagesPanelOpen] = useState(false);
   const [locale, setLocale] = useState("en-EN");
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to check if the user is logged in
@@ -147,7 +147,7 @@ const AppBar = () => {
               <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
                 <button
                   className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={() => setNotificationsPanelOpen(true)}
+                  onClick={() => setCartPanelOpen(true)}
                   aria-label="Notifications"
                 >
                   <i className="fas fa-shopping-cart" />
@@ -212,10 +212,10 @@ const AppBar = () => {
             </div>
           </ModalBase>
         )}
-        <NotificationsPanel
+        <CartPanel
           open={notificationsPanelOpen}
-          onOpen={() => setNotificationsPanelOpen(true)}
-          onClose={() => setNotificationsPanelOpen(false)}
+          onOpen={() => setCartPanelOpen(true)}
+          onClose={() => setCartPanelOpen(false)}
         />
         <MessagesPanel
           open={messagesPanelOpen}

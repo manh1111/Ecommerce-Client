@@ -11,13 +11,16 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 //api
 import { getCatalogByShopId } from '@api/catalog ';
-import { getProductsByCatalogShop } from "@api/product";
+import { getProductsByCatalogShop, getAllProductsShopId } from "@api/product";
 import { getShopById } from '@api/shop';
+import Loading from '@components/Loading';
 
 const Shop = () => {
   const [shop, setShop] = useState([]);
   const [catalogs, setCatalogs] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [allProduct, setAllProduct] = useState([])
+  const [loading, setLoading] = useState(true);
   const { id } = useParams();
   const getRandomNumber = (min, max) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
@@ -36,6 +39,7 @@ const Shop = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true); // Set loading to true before fetching data
         // Fetch shop details
         const shopDetails = await getShopById(id);
         setShop(shopDetails);
@@ -47,40 +51,60 @@ const Shop = () => {
         const productPromises = catalogData?.map(async (catalog) => {
           const catalogId = catalog._id;
           const products = await getProductsByCatalogShop(id, catalogId);
-          return { catalog, products }; 
+          return { catalog, products };
         });
 
         const catalogsWithProducts = await Promise.all(productPromises);
 
         const categories = catalogsWithProducts.map(
           ({ catalog, products }) => ({
-            id: catalog._id, 
-            name: catalog.catalog_name, 
+            id: catalog._id,
+            name: catalog.catalog_name,
             products: products.map((product) => ({
               id: product._id,
               imageSrc: product.product_img[0],
-              altText: product.product_name, 
-              price: `${product.product_price.toLocaleString()} VND`, 
-              discount: "0%", 
-              rating: 4.8, 
-              soldCount: product.product_quantity, 
-              promotionText: "Khuyến mãi đặc biệt", 
-              voucherText: "Giảm giá", 
-              promotionOverlaySrc: "https://example.com/overlay.png", 
+              altText: product.product_name,
+              price: `${product.product_price.toLocaleString()} VND`,
+              discount: "0%",
+              rating: 4.8,
+              soldCount: product.product_quantity,
+              promotionText: "Khuyến mãi đặc biệt",
+              voucherText: "Giảm giá",
+              promotionOverlaySrc: "https://example.com/overlay.png",
             })),
           })
         );
 
-        setCategories(categories); 
-        console.log(categories); 
+        const products = await getAllProductsShopId(id);
+        
+        const listProducts = products.productsWithCounts.map((product) => ({
+          id: product._id,
+          imageSrc: product.product_img[0],
+          altText: product.product_name,
+          price: `${product.product_price.toLocaleString()} VND`,
+          discount: "0%",
+          rating: 4.8,
+          soldCount: product.product_quantity,
+          promotionText: "Khuyến mãi đặc biệt",
+          voucherText: "Giảm giá",
+          promotionOverlaySrc: "https://example.com/overlay.png",
+        }));
+        setAllProduct(listProducts);
+        setCategories(categories);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false); // Set loading to false after data fetching
       }
     };
 
     fetchData();
   }, [id]);
 
+   if (loading) {
+     return <Loading />;
+  }
+  
 
   const defaultProducts = [
     {
@@ -194,7 +218,6 @@ const Shop = () => {
       },
     ],
   };
-
   const productData3 = {
     imageSrc:
       "https://down-bs-vn.img.susercontent.com/cn-11134210-7r98o-lyx29jigffduc5.webp",
@@ -230,6 +253,8 @@ const Shop = () => {
     ],
   };
 
+  console.log("allProduct", allProduct);
+  console.log("categories", categories);
   return (
     <>
       <div className="w-full">
@@ -262,7 +287,7 @@ const Shop = () => {
 
       <div className="category flex flex-row mt-5">
         <CategoryMenu categories={categories} />
-        <CategoryList categories={categories} />
+        <CategoryList categories={allProduct} />
       </div>
     </>
   );

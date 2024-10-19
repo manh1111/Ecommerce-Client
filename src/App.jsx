@@ -16,6 +16,7 @@ import { ToastContainer } from "react-toastify";
 import Sidebar from "@layout/Sidebar";
 import AppBar from "@layout/AppBar";
 import CreaterProduct from "@pages/CreaterProduct";
+import Loading from "@components/Loading";
 
 const Login = lazy(() => import("@pages/Login"));
 const SignUp = lazy(() => import("@pages/SignUp"));
@@ -27,6 +28,7 @@ const SellersGrid = lazy(() => import("@pages/SellersGrid"));
 const SellerProfile = lazy(() => import("@pages/SellerProfile"));
 const Shop = lazy(() => import("@pages/Shop"));
 const Product = lazy(() => import("@pages/Product"));
+const SearchPage = lazy(() => import("@pages/SearchPage"));
 const RevenueByPeriod = lazy(() => import("@pages/RevenueByPeriod"));
 const TopProducts = lazy(() => import("@pages/TopProducts"));
 const ProductsGrid = lazy(() => import("@pages/ProductsGrid"));
@@ -76,7 +78,7 @@ const App = () => {
           {withSidebar && <Sidebar />}
           <div className="app_content">
             {width >= 1280 && withSidebar && <AppBar />}
-            <Suspense fallback={<Loader />}>
+            <Suspense fallback={<Loading />}>
               <div className={withSidebar ? "main" : ""}>
                 <Routes>
                   <Route path="/login" element={<Login />} />
@@ -113,6 +115,7 @@ const App = () => {
                   />
                   <Route path="/shop/:id" element={<Shop />} />
                   <Route path="/product/:id" element={<Product />} />
+                  <Route path="/search" element={<SearchPage />} />
                   <Route path="*" element={<Navigate to="/404" />} />
                   <Route path="/start-selling" element={<StartSelling />} />
                   <Route path="/404" element={<PageNotFound />} />

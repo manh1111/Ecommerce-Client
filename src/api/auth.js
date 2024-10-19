@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-const REACT_APP_URL_PRO_API = "https://ecommerce-server-0mcc.onrender.com/v1/api/";
+const REACT_APP_URL_PRO_API = import.meta.env.VITE_URL_PRO_API;
 
 export const signInWithGoogle = async () => {
   try {

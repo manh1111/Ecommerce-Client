@@ -1,4 +1,5 @@
 import axiosInstance from "@api/axiosInstance";
+import { checkToken } from "@utils/auth";
 import { getCookie } from "@utils/cookie";
 
 // Get the base API URL from environment variables
@@ -33,10 +34,12 @@ export const getProductById = async (id) => {
 
 export const getProductsByCatalogShop = async (shopId, catalogId) => {
   try {
+     const config = checkToken("application/json");
 
     // Fetch product by ID with token in Authorization header
     const response = await axiosInstance.get(
       `${REACT_APP_URL_PRO_API}product/shop/${shopId}/catalog/${catalogId}`,
+      config
     );
 
     return response.data;
@@ -44,4 +47,31 @@ export const getProductsByCatalogShop = async (shopId, catalogId) => {
     console.error("Error fetching product data:", error);
     throw error;
   }
+};
+
+export const getAllProductsShopId = async (shopId) => {
+  try {
+    const config = checkToken("application/json");
+
+    // Fetch product by ID with token in Authorization header
+    const response = await axiosInstance.get(
+      `${REACT_APP_URL_PRO_API}product/shop/${shopId}`,
+      config
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product data:", error);
+    throw error;
+  }
+};
+
+export const searchProduct = async (query) => {
+  const result = await axiosInstance.post(
+    `${REACT_APP_URL_PRO_API}product/search`,
+    {
+      query,
+    }
+  );
+  return result;
 };

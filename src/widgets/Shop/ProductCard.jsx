@@ -40,7 +40,7 @@ const ProductCard = ({ product }) => {
           </div>
           <div className="flex items-center">
             <div className="flex-shrink min-w-0 mr-1 truncate text-xl flex items-center">
-              ₫ {product.price}
+              ₫ {product?.price}
             </div>
             <div className="bg-rose-100 font-medium text-[#EE4D2D] p-1 ml-5">
               - {product?.discount}
@@ -66,7 +66,7 @@ const ProductCard = ({ product }) => {
                 ></path>
               </svg>
               <div className="text-sp10 leading-4 h-4 mx-1 truncate">
-                {product.promotionText}
+                {product?.promotionText}
               </div>
               <svg
                 className="w-1 h-4 absolute right-0 top-0 transform rotate-180"
@@ -96,9 +96,9 @@ const ProductCard = ({ product }) => {
             </div>
             <div className="ml-1 h-sp10 scale-x-50 border-l border-shopee-black9"></div>
             <div className="w-full flex flex-row justify-between">
-              <div className="text-base flex-none">{product.rating}</div>
+              <div className="text-base flex-none">{product?.rating}</div>
               <div className="text-base flex-none truncate text-shopee-black87 min-h-4">
-                Đã bán {product.soldCount}
+                Đã bán {product?.soldCount}
               </div>
             </div>
           </div>
