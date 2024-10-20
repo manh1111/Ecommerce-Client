@@ -37,14 +37,14 @@ const PageHeader = ({ title, changePageName = true }) => {
             Data Refresh
             <i className="icon icon-arrows-rotate-regular text-[20px] group-hover:animate-spin-slow" />
           </button>
-          <div
+          {/* <div
             className="h-11 bg-body flex items-center justify-center rounded-md px-9 font-heading font-bold
                     text-header text-sm border border-input-border lg:w-[310px]"
           >
             {dayjs(currentTime).format(`${dateFormat} HH`)}
             <span className="animate-pulse-fast">:</span>
             {dayjs(currentTime).format("mm A")}
-          </div>
+          </div> */}
         </div>
       )}
     </>

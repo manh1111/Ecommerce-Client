@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import Search from "@ui/Search";
 import Headroom from "react-headroom";
 import CustomTooltip from "@ui/CustomTooltip";
-import NotificationsPanel from "@components/NotificationsPanel";
-import MessagesPanel from "@components/MessagesPanel";
+import CartPanel from "@components/CartPanel";
+import OrdersPanel from "@components/OrdersPanel";
 import Logo from "@components/Logo";
 import ModalBase from "@ui/ModalBase";
 import { useTheme } from "@contexts/themeContext";
@@ -17,7 +17,6 @@ import { checkAvailableLogin } from "@utils/auth";
 import { getCookie } from "@utils/cookie";
 import { jwtDecode } from "jwt-decode";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-
 
 const LocaleMenu = ({ active, setActive }) => {
   return (
@@ -49,8 +48,9 @@ const LocaleMenu = ({ active, setActive }) => {
 const AppBar = () => {
   const navigate = useNavigate();
   const [searchModalOpen, setSearchModalOpen] = useState(false);
-  const [notificationsPanelOpen, setNotificationsPanelOpen] = useState(false);
-  const [messagesPanelOpen, setMessagesPanelOpen] = useState(false);
+  const [notificationsPanelOpen, setCartPanelOpen] = useState(false);
+  const [messagesPanelOpen, setOrdersPanelOpen] = useState(false);
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false); // State for login prompt
   const [locale, setLocale] = useState("en-EN");
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to check if the user is logged in
   const { width } = useWindowSize();
@@ -59,29 +59,6 @@ const AppBar = () => {
   const isAuthenticated = checkAvailableLogin();
 
   const activeLocale = LOCALES.find((l) => l.value === locale);
-
-  const infoItems = [
-    {
-      icon: "https://salt.tikicdn.com/ts/upload/96/76/a3/16324a16c76ee4f507d5777608dab831.png",
-      text: "100% hàng thật",
-    },
-    {
-      icon: "https://salt.tikicdn.com/ts/upload/0b/f2/19/c03ae8f46956eca66845fb9aaadeca1e.png",
-      text: "Hoàn 200% nếu hàng giả",
-    },
-    {
-      icon: "https://salt.tikicdn.com/ts/upload/3a/f4/7d/86ca29927e9b360dcec43dccb85d2061.png",
-      text: "30 ngày đổi trả",
-    },
-    {
-      icon: "https://salt.tikicdn.com/ts/upload/04/c8/6f/3ec1db7c9ac4099df6b31da715614b0e.png",
-      text: "Giao nhanh 2h",
-    },
-    {
-      icon: "https://salt.tikicdn.com/ts/upload/6a/81/06/0675ef5512c275a594d5ec1d58c37861.png",
-      text: "Giá siêu rẻ",
-    },
-  ];
 
   let dataInforUser;
   if (getCookie("user_login")) {
@@ -93,12 +70,30 @@ const AppBar = () => {
     }
   }
 
+  const roleNames = dataInforUser?.roleNames || [];
+
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      setLoginPromptOpen(true);
+    } else {
+      setCartPanelOpen(true);
+    }
+  };
+
+  const handleMessagesClick = () => {
+    if (!isAuthenticated) {
+      setLoginPromptOpen(true); // Open login prompt
+    } else {
+      setOrdersPanelOpen(true); // Open messages panel
+    }
+  };
+
   return (
-    <div className="fixed bg-white w-full px-5 py-5 z-50">
+    <div className="fixed top-0 left-0 w-full px-5 py-5 z-50 bg-white">
       <div className="mb-5 w-full">
-        <Headroom style={{ zIndex: 999 }}>
+        <div style={{ zIndex: 999 }}>
           <div className="flex items-center justify-between">
-            {width < 1920 && (
+            {roleNames.includes("shop") && width < 1920 && (
               <button
                 className="icon text-2xl leading-none"
                 aria-label="Open sidebar"
@@ -147,7 +142,7 @@ const AppBar = () => {
               <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
                 <button
                   className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={() => setNotificationsPanelOpen(true)}
+                  onClick={handleCartClick} // Use the new function here
                   aria-label="Notifications"
                 >
                   <i className="fas fa-shopping-cart" />
@@ -164,17 +159,17 @@ const AppBar = () => {
               <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
                 <button
                   className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={() => setMessagesPanelOpen(true)}
+                  onClick={handleMessagesClick} // Use the new function here
                   aria-label="Messages"
                 >
-                  <i className="icon-message-solid" />
+                  <i className="fas fa-truck" title="Theo dõi đơn hàng" />
                 </button>
                 <span
                   className="absolute w-3 h-3 rounded-full bg-green -top-1.5 -right-1.5 border-[2px] border-body
                                       xl:w-6 xl:h-6 xl:-top-5 xl:-right-4 xl:flex xl:items-center xl:justify-center"
                 >
                   <span className="hidden text-xs font-bold text-white dark:text-[#00193B] xl:block">
-                    2
+                    5
                   </span>
                 </span>
               </div>
@@ -199,50 +194,42 @@ const AppBar = () => {
               </div>
             </div>
           </div>
-        </Headroom>
-
-        {width < 768 && (
-          <ModalBase
-            open={searchModalOpen}
-            onClose={() => setSearchModalOpen(false)}
-          >
-            <div className="card max-w-[360px] w-full">
-              <h3 className="mb-3">Search</h3>
-              <Search placeholder="What are you looking for?" />
-            </div>
-          </ModalBase>
-        )}
-        <NotificationsPanel
-          open={notificationsPanelOpen}
-          onOpen={() => setNotificationsPanelOpen(true)}
-          onClose={() => setNotificationsPanelOpen(false)}
-        />
-        <MessagesPanel
-          open={messagesPanelOpen}
-          onOpen={() => setMessagesPanelOpen(true)}
-          onClose={() => setMessagesPanelOpen(false)}
-        />
-      </div>
-      <div className="flex border-2 border-gray-400 p-4 rounded-lg items-center gap-8 bg-white overflow-x-hidden">
-        <div className="text-gray-800 font-semibold text-[#003EA1] text-lg whitespace-nowrap">
-          Cam kết
         </div>
-        {infoItems.map((item, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <img
-              src={item.icon}
-              alt={`icon-${index}`}
-              className="w-[25px] h-[25px]"
-            />
-            <div className="text-gray-800 font-medium text-sm whitespace-nowrap">
-              {item.text}
-            </div>
-            {index < infoItems.length - 1 && (
-              <div className="w-[2px] bg-gray-400 items-center">|</div>
-            )}
-          </div>
-        ))}
       </div>
+      <ModalBase
+        open={loginPromptOpen}
+        onClose={() => setLoginPromptOpen(false)}
+      >
+        <div className="flex flex-col items-center justify-between p-10 w-[400px] bg-slate-100 rounded-xl">
+          <h2 className="text-xl font-bold">Bạn cần đăng nhập</h2>
+          <p className="mt-2">Vui lòng đăng nhập để tiếp tục.</p>
+          <div className="flex w-full justify-between">
+            <button
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+              onClick={() => {
+                setLoginPromptOpen(false);
+                navigate("/login"); // Redirect to login page
+              }}
+            >
+              Đăng nhập
+            </button>
+            <button
+              className="text-white bg-rose-500 rounded mt-4 px-4 py-2 hover:opacity-80"
+              onClick={() => setLoginPromptOpen(false)}
+            >
+              Hủy
+            </button>
+          </div>
+        </div>
+      </ModalBase>
+      <CartPanel
+        open={notificationsPanelOpen}
+        onClose={() => setCartPanelOpen(false)}
+      />
+      <OrdersPanel
+        open={messagesPanelOpen}
+        onClose={() => setOrdersPanelOpen(false)}
+      />
     </div>
   );
 };

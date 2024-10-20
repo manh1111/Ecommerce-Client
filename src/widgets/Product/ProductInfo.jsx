@@ -1,34 +1,72 @@
 import React, { useState } from "react";
-import { Button, Modal, Skeleton, Spin } from "antd";
+import { Button, Image, Modal, Skeleton, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
+import { addCart } from "@api/cart";
+import { getCookie } from "@utils/cookie";
 
 const VND = new Intl.NumberFormat("vi-VN", {
   style: "currency",
   currency: "VND",
 });
 
-const ProductInfo = ({ product }) => {
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [loadingFavorite, setLoadingFavorite] = useState(false);
+const ProductInfo = ({ product, shopData }) => {
+  const [loadingCart, setLoadingCart] = useState(false);
   const [open, setOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const showModal = () => {
     setOpen(true);
-    toast.info(
-      `Bạn đang mua sản phẩm này với giá ${
-        product.sale_price ? VND.format(product.sale_price) : "Miễn phí"
-      }`
+  };
+
+  const handleCancel = () => setOpen(false);
+
+  const handleAddToCart = async () => {
+    setLoadingCart(true);
+    try {
+      const response = await addCart(product.id, 1);
+      if (response?.status === 200) {
+        toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
+      } else {
+        toast.error("Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      toast.error("Lỗi hệ thống. Vui lòng thử lại sau.");
+    } finally {
+      setLoadingCart(false);
+    }
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? product.mainImage.length - 1 : prevIndex - 1
     );
   };
-  const handleCancel = () => setOpen(false);
-  const handleFavorite = () => {
-    setLoadingFavorite(true);
-    setTimeout(() => {
-      setIsFavorited((prev) => !prev);
-      toast.success(isFavorited ? "Đã bỏ yêu thích" : "Đã thêm vào yêu thích");
-      setLoadingFavorite(false);
-    }, 1000);
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === product.mainImage.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const handleBuyNow = () => {
+    const productData = {
+      shopId: shopData.id,
+      shopName: shopData.sellerName,
+      shopLogo: shopData.avatarUrl,
+      productId: product.id,
+      quantity: 1,
+      price: product.price,
+      productName: product.name,
+      productThumb: product.mainImage[0],
+    };
+
+    // Store the product data in local storage
+    localStorage.setItem("selectedProducts", JSON.stringify([productData]));
+
+    // Redirect to checkout page
+    window.location.href = "/checkout";
   };
 
   if (!product) {
@@ -38,47 +76,47 @@ const ProductInfo = ({ product }) => {
   return (
     <div className="w-full h-full mt-12 px-4 xl:px-8">
       <div className="flex flex-col xl:flex-row gap-8">
-        {/* Ảnh sản phẩm */}
-        <div className="xl:w-1/2 w-full flex flex-col items-center justify-center gap-8">
-          <div className="w-full flex items-center justify-center">
-            <img
-              className="object-contain h-80 xl:h-[400px] w-auto"
-              src={product.mainImage.src}
-              alt={product.mainImage.alt}
-            />
-          </div>
-          <div className="flex items-center justify-around w-full border-t border-gray-300 pt-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm">Chia sẻ:</span>
-              {/* Thêm biểu tượng mạng xã hội ở đây */}
-            </div>
-            <div className="flex items-center gap-2 border-l border-gray-300 pl-4">
-              {loadingFavorite ? (
-                <Spin
-                  indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
-                />
-              ) : isFavorited ? (
-                <svg width="24" height="24" fill="none">
-                  <path
-                    d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 4.16 12 5.57C13.09 4.16 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.03L12 21.35Z"
-                    fill="#F44336"
+        {/* Product Images */}
+        <div className="xl:w-1/2 w-full flex flex-col items-center justify-center gap-8 relative">
+          <div className="w-full flex items-center justify-center relative">
+            {/* Left Arrow for Previous Image */}
+            <button
+              onClick={handlePrevImage}
+              className="z-30 absolute left-0 top-1/2 transform -translate-y-1/2 hover:bg-slate-100 p-2 rounded-full bg-slate-200"
+            >
+              <LeftOutlined style={{ fontSize: "24px" }} />
+            </button>
+
+            <div className="w-11/12">
+              {/* Product Image */}
+              {product?.mainImage?.map((image, index) => (
+                <div
+                  key={index}
+                  className={`w-full flex items-center justify-center ${
+                    index === currentImageIndex ? "block" : "hidden"
+                  }`}
+                >
+                  <Image
+                    className="object-contain min-h-80 xl:h-[400px] h-fit w-fit"
+                    src={image}
+                    alt={`Product Image ${index + 1}`}
                   />
-                </svg>
-              ) : (
-                <svg width="24" height="24" fill="none">
-                  <path
-                    d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 4.16 12 5.57C13.09 4.16 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.03L12 21.35Z"
-                    fill="#F44336"
-                  />
-                </svg>
-              )}
-              <span className="text-xs">{product.favorites}</span>
+                </div>
+              ))}
             </div>
+
+            {/* Right Arrow for Next Image */}
+            <button
+              onClick={handleNextImage}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 hover:bg-slate-100 p-2 rounded-full bg-slate-200"
+            >
+              <RightOutlined style={{ fontSize: "24px" }} />
+            </button>
           </div>
         </div>
 
-        {/* Thông tin sản phẩm */}
-        <div className="xl:w-1/2 w-full flex flex-col gap-6 px-4 xl:px-0">
+        {/* Product Information */}
+        <div className="xl:w-1/2 w-full flex flex-col justify-between gap-6 px-4 xl:px-0">
           <div className="text-2xl font-bold mb-2">{product.name}</div>
           <div className="flex items-center gap-4 mb-4">
             <div className="text-lg font-semibold text-red-600">
@@ -91,15 +129,10 @@ const ProductInfo = ({ product }) => {
               </div>
             )}
           </div>
-          {product.price && (
-            <div className="text-lg text-gray-500 line-through mb-4">
-              {VND.format(product.price)}
-            </div>
-          )}
           <div className="flex flex-col gap-4 mb-6">
             <div className="text-xl font-bold">Chính sách Trả hàng</div>
             <section className="flex items-center gap-4">
-              <img
+              <Image
                 src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/b69402e4275f823f7d47.svg"
                 alt="Return policy"
                 className="w-8 h-8"
@@ -116,25 +149,28 @@ const ProductInfo = ({ product }) => {
             </section>
           </div>
           <div className="flex gap-4">
-            {loadingFavorite ? (
-              <Spin
-                indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
-              />
+            {loadingCart ? (
+              <div className="w-1/2 flex items-center">
+                <Spin
+                  className="w-fit"
+                  indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
+                />
+              </div>
             ) : (
               <Button
                 className="w-1/2"
-                onClick={handleFavorite}
+                onClick={handleAddToCart}
                 shape="round"
                 size="large"
-                style={{ borderColor: isFavorited ? "#F44336" : "#E0E0E0" }}
+                style={{ borderColor: "#E0E0E0" }}
               >
-                {isFavorited ? "Bỏ yêu thích" : "Yêu thích"}
+                Thêm vào giỏ hàng
               </Button>
             )}
             <Button
               className="w-1/2"
               type="primary"
-              onClick={showModal}
+              onClick={handleBuyNow} // Updated to handleBuyNow
               shape="round"
               size="large"
             >
@@ -144,7 +180,7 @@ const ProductInfo = ({ product }) => {
         </div>
       </div>
 
-      {/* Modal xác nhận mua sản phẩm */}
+      {/* Modal for purchase confirmation */}
       <Modal
         title="Xác nhận mua sản phẩm"
         open={open}
@@ -164,7 +200,7 @@ const ProductInfo = ({ product }) => {
         </div>
       </Modal>
 
-      {/* Khối chi tiết sản phẩm */}
+      {/* Product details section */}
       <div className="mt-8">
         <section>
           <h2 className="text-xl font-bold mb-4">CHI TIẾT SẢN PHẨM</h2>

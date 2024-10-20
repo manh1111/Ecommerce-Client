@@ -94,19 +94,6 @@ const OrderCollapseItem = ({order, activeCollapse, handleCollapse}) => {
                             }
                         </td>
                     </tr>
-                    <tr>
-                        <td>Rate</td>
-                        <td>
-                            {
-                                isExtraSmall ?
-                                    order.rating
-                                    :
-                                    <div className="flex justify-center">
-                                        <RatingStars rating={order.rating}/>
-                                    </div>
-                            }
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
             </Collapse>

@@ -9,7 +9,7 @@ const DrawerBase = ({
   onOpen,
   onClose,
   anchor = "left",
-  width = "450px",
+  width = "650px",
   children,
 }) => {
   return (

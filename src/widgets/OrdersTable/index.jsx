@@ -1,94 +1,171 @@
-// components
-import Spring from '@components/Spring';
-import StyledTable from './styles';
-import Pagination from '@ui/Pagination';
-import OrderCollapseItem from '@components/OrderCollapseItem';
-import Empty from '@components/Empty';
+import dayjs from "dayjs";
+import { useState } from "react";
+import { deleteOrderById } from "@api/order";
 
-// hooks
-import usePagination from '@hooks/usePagination';
-import {useEffect, useState} from 'react';
-import {useWindowSize} from 'react-use';
+const OrdersTable = ({ initialOrders = [] }) => {
+  const [orders, setOrders] = useState(initialOrders);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [startDate, setStartDate] = useState(""); // State for start date
+  const [endDate, setEndDate] = useState(""); // State for end date
 
-// constants
-import {ORDERS_COLUMN_DEFS} from '@constants/columnDefs';
+  const handleCancelOrder = async (orderId) => {
+    try {
+      console.log(`Attempting to cancel order ID: ${orderId}`);
+      const res = await deleteOrderById(orderId);
+      console.log("Response from API:", res);
 
-// data placeholder
-import orders from '@db/orders';
-
-const OrdersTable = ({category, sort}) => {
-    const {width} = useWindowSize();
-    const [activeCollapse, setActiveCollapse] = useState('');
-
-    const filteredData = category.value === 'all' ? orders : orders.filter(order => order.category === category.value);
-    const sortedData = () => {
-        switch (sort.value) {
-            default:
-            case 'default':
-                return filteredData;
-            case 'a-z':
-                return filteredData.sort((a, b) => a.product.name.localeCompare(b.product.name));
-            case 'z-a':
-                return filteredData.sort((a, b) => b.product.name.localeCompare(a.product.name));
-            case 'rating-high-to-low':
-                return filteredData.sort((a, b) => b.rating - a.rating);
-            case 'rating-low-to-high':
-                return filteredData.sort((a, b) => a.rating - b.rating);
-        }
+      if (res && res.status === 200) {
+        setOrders((prevOrders) =>
+          prevOrders.filter((order) => order._id !== orderId)
+        );
+        setMessage("Đơn hàng đã được hủy thành công.");
+        setIsError(false);
+      } else {
+        throw new Error("Failed to cancel the order");
+      }
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      setMessage("Có lỗi xảy ra khi hủy đơn hàng.");
+      setIsError(true);
     }
+  };
 
-    const pagination = usePagination(sortedData(), 5);
+  // Filter orders based on selected date range
+  const filteredOrders = orders.filter((order) => {
+    const orderDate = dayjs(order.createdAt);
+    const isAfterStartDate = startDate
+      ? orderDate.isAfter(dayjs(startDate).subtract(1, "day"))
+      : true;
+    const isBeforeEndDate = endDate
+      ? orderDate.isBefore(dayjs(endDate).add(1, "day"))
+      : true;
+    return isAfterStartDate && isBeforeEndDate;
+  });
 
-    // go to first page when period or sort changes and reset active collapse
-    useEffect(() => {
-        pagination.goToPage(0);
-        setActiveCollapse('');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [category, sort]);
+  return (
+    <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
+      {message && (
+        <div
+          className={`mb-4 p-2 text-white ${
+            isError ? "bg-red-500" : "bg-green-500"
+          } rounded-md`}
+        >
+          {message}
+        </div>
+      )}
 
-    // reset active collapse when page or window width changes
-    useEffect(() => {
-        setActiveCollapse('');
-    }, [pagination.currentPage, width]);
+      <div className="mb-4 flex space-x-4">
+        <div className="w-full">
+          <label
+            htmlFor="start-date"
+            className="block text-lg font-medium text-gray-700"
+          >
+            Ngày bắt đầu:
+          </label>
+          <input
+            type="date"
+            id="start-date"
+            className="mt-1 block w-full border-2 border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
+        <div className="w-full">
+          <label
+            htmlFor="end-date"
+            className="block text-lg font-medium text-gray-700"
+          >
+            Ngày kết thúc:
+          </label>
+          <input
+            type="date"
+            id="end-date"
+            className="mt-1 block w-full border-2 border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </div>
+      </div>
 
-    const handleCollapse = (sku) => {
-        if (activeCollapse === sku) {
-            setActiveCollapse('');
-        } else {
-            setActiveCollapse(sku);
-        }
-    }
+      {filteredOrders.length === 0 ? (
+        <p className="text-gray-600 text-center text-red">Không có đơn hàng nào để hiển thị.</p>
+      ) : (
+        filteredOrders.map((order) => (
+          <div
+            key={order._id}
+            className="border-b py-4 px-6 bg-white rounded-lg shadow-md"
+          >
+            <div className="flex justify-between items-start">
+              <div className="w-full">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Mã đơn hàng:{" "}
+                  <span className="text-blue-600">
+                    {order.order_trackingNumber}
+                  </span>
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Ngày tạo: {dayjs(order.createdAt).format("DD/MM/YYYY")}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Địa chỉ giao hàng: {order.order_shipping_address}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Phương thức thanh toán:{" "}
+                  <span className="font-medium">
+                    {order.order_payment_method.toUpperCase()}
+                  </span>
+                </p>
+                <p className="text-sm font-semibold text-gray-800">
+                  Tổng tiền:{" "}
+                  <span className="text-red-600">
+                    {order.order_total_price.toLocaleString()}₫
+                  </span>
+                </p>
+              </div>
+              <div>
+                <button
+                  className={`text-white bg-rose-500 rounded-xl px-4 py-2 ${
+                    order.order_status === "pending"
+                      ? "hover:opacity-80"
+                      : "opacity-50 cursor-not-allowed"
+                  }`}
+                  onClick={() => handleCancelOrder(order._id)}
+                  disabled={order.order_status !== "pending"}
+                >
+                  Hủy đơn hàng
+                </button>
+              </div>
+            </div>
 
-    return (
-        <Spring className="flex flex-col flex-1 w-full">
-            {
-                width >= 768 ?
-                    <StyledTable columns={ORDERS_COLUMN_DEFS}
-                                 dataSource={pagination.currentItems()}
-                                 pagination={false}
-                                 locale={{
-                                     emptyText: <Empty text="No orders found"/>
-                                 }}
-                                 rowKey={record => record.orderNumber}
-                    />
-                    :
-                    <div className="flex flex-1 flex-col gap-5 mb-[26px]">
-                        {
-                            pagination.currentItems().map(order => (
-                                <OrderCollapseItem key={order.sku}
-                                                   order={order}
-                                                   activeCollapse={activeCollapse}
-                                                   handleCollapse={handleCollapse}
-                                />
-                            ))
-                        }
-                    </div>
-            }
-            {
-                pagination.maxPage > 1 && <Pagination pagination={pagination}/>
-            }
-        </Spring>
-    )
-}
+            <div className="mt-4 space-y-2">
+              {order.order_products.map((product) => (
+                <div key={product._id} className="flex items-center">
+                  <img
+                    src={product.product_thumb}
+                    alt={product.product_name}
+                    className="w-14 h-14 object-cover rounded-md shadow"
+                  />
+                  <div className="ml-4">
+                    <h4 className="text-sm font-semibold text-gray-800">
+                      {product.product_name}
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Số lượng:{" "}
+                      <span className="font-medium">{product.quantity}</span> x{" "}
+                      <span className="font-medium">
+                        {product.price.toLocaleString()}₫
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
 
-export default OrdersTable
+export default OrdersTable;
