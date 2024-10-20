@@ -110,13 +110,13 @@ const SellerProfilesGrid = ({ numberOfSellers = 24, fullGrid = true }) => {
               seller={data[0]}
               index={0}
               className="w-1/2 h-full"
-              id={data[0]._id}
+              id={data[0]?._id}
             />
             <SellerGridItem
               seller={data[1]}
               index={1}
               className="w-1/2 h-full"
-              id={data[1]._id}
+              id={data[1]?._id}
             />
           </div>
           <div

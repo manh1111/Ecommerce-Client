@@ -16,9 +16,7 @@ if (getCookie("user_login")) {
   const token = JSON.parse(getCookie("user_login"));
   try {
     const dataInforUser = jwtDecode(token);
-    console.log("Data Infor User:", dataInforUser);
   } catch (error) {
-    console.error("Invalid token", error);
   }
 }
 
@@ -115,7 +113,6 @@ const MainPage = () => {
         {products.map((product, index) => (
           <ProductCard key={index} product={product} />
         ))}
-        {console.log(products)}
       </div>
     </>
   );

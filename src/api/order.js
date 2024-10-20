@@ -41,3 +41,37 @@ export const getCategories = async () => {
 };
 
 
+export const getAllOrder = async (status) => {
+  try {
+    const config = checkToken("application/json");
+
+    const url = `${REACT_APP_URL_PRO_API}order/user${
+      status ? `?status=${status}` : ""
+    }`;
+
+    const response = await axiosInstance.get(url, config);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch orders:", error); 
+    throw error;
+  }
+};
+
+
+export const deleteOrderById = async (orderId) => {
+  try {
+    const config = checkToken("application/json");
+
+    const result = await axiosInstance.put(
+      `${REACT_APP_URL_PRO_API}order/cancel/${orderId}`,
+      {},
+      config
+    );
+
+    console.log(result);
+    return result.data;
+  } catch (error) {
+    console.error("Error cancelling order:", error);
+    throw error;
+  }
+};

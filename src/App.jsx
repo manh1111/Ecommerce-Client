@@ -75,7 +75,7 @@ const App = () => {
         />
         {width < 1280 && withSidebar && <AppBar />}
         <div className={`app ${!withSidebar ? "fluid" : ""}`} ref={appRef}>
-          <ScrollToTop />
+          {/* <ScrollToTop /> */}
           {withSidebar && <Sidebar />}
           <div className="app_content">
             {width >= 1280 && withSidebar && <AppBar />}
