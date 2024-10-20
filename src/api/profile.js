@@ -36,3 +36,15 @@ export const changePassword = async (currentPassword, newPassword) => {
   return result.data;
 };
 
+export const addNewAddress = async (newAddress) => {
+  const config = checkToken("application/json");
+  const result = await axiosInstance.post(
+    `${REACT_APP_URL_PRO_API}profile/address`,
+    {
+      newAddress,
+    },
+    config
+  );
+  return result.data;
+};
+

@@ -272,25 +272,22 @@ const UserProfileDetails = () => {
             </div>
 
             <div className="flex justify-between mt-2.5 w-full">
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="grid gap-4 md:grid-cols-1 md:gap-5 w-full">
-                  {/* Fields for user profile details */}
-                  <div className="flex w-full justify-between mt-2.5">
-                    <button
-                      className="text-btn"
-                      type="button"
-                      onClick={() => setShowPasswordModal(true)} // Show modal on click
-                    >
-                      Change Password
-                    </button>
-                    <button
-                      className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
-                      type="submit"
-                    >
-                      Save Changes
-                    </button>
-                  </div>
+              <form onSubmit={handleSubmit(onSubmit)} className="flex justify-between w-full">
+                <div className="flex w-full justify-between mt-2.5">
+                  <button
+                    className="text-btn"
+                    type="button"
+                    onClick={() => setShowPasswordModal(true)} // Show modal on click
+                  >
+                    Change Password
+                  </button>
                 </div>
+                <button
+                  className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
+                  type="submit"
+                >
+                  Save Changes
+                </button>
               </form>
             </div>
           </form>

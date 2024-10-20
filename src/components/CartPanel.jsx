@@ -7,6 +7,8 @@ import { getProductById } from "@api/product";
 import Loading from "@components/Loading";
 import { createOrder } from "@api/order"; // Import the createOrder function
 import { Image } from "antd";
+import { changeQuantityProduct, deleteProductById } from "../api/cart";
+import { toast } from "react-toastify";
 
 const ProductItem = ({
   product,
@@ -53,7 +55,7 @@ const ProductItem = ({
       </div>
       <div className="text-end w-1/6 flex justify-center">
         <button
-          className="text-red-500 w-fit"
+          className="text-white bg-rose-500 rounded-xl px-4 py-2 hover:opacity-80"
           onClick={() => handleRemoveItem(product.productId)}
         >
           Xóa
@@ -139,31 +141,60 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       return updated;
     });
   };
+  
+  const handleQuantityChange = async (id, delta) => {
+    try {
+      // Find the current product in the list
+      const updatedProduct = listProduct.flatMap((shop) =>
+        shop.products.filter((product) => product.productId === id)
+      )[0];
 
-  const handleQuantityChange = (id, delta) => {
-    setListProduct((prev) => {
-      return prev.map((shop) => {
-        shop.products = shop.products.map((item) =>
-          item.productId === id
-            ? {
-                ...item,
-                quantity: Math.max(1, item.quantity + delta),
-              }
-            : item
-        );
-        return shop;
+      const oldQuantity = updatedProduct.quantity;
+      const newQuantity = oldQuantity + delta;
+
+      // Prevent the quantity from being less than 1
+      if (newQuantity < 1) {
+        toast.error("Số lượng không thể nhỏ hơn 1");
+        return;
+      }
+
+      // Update the product quantity in the backend
+      await changeQuantityProduct(id, newQuantity, oldQuantity);
+      toast.success("Cập nhật số lượng thành công!");
+
+      // Update the product quantity in the state
+      setListProduct((prev) => {
+        return prev.map((shop) => {
+          shop.products = shop.products.map((item) =>
+            item.productId === id
+              ? {
+                  ...item,
+                  quantity: newQuantity,
+                }
+              : item
+          );
+          return shop;
+        });
       });
-    });
+    } catch (error) {
+      toast.error("Cập nhật số lượng thất bại!");
+    }
   };
 
-  const handleRemoveItem = (id) => {
-    setListProduct((prev) => {
-      return prev.map((shop) => {
-        shop.products = shop.products.filter((item) => item.productId !== id);
-        return shop;
+  const handleRemoveItem = async (id) => {
+    try {
+      await deleteProductById(id);
+      setListProduct((prev) => {
+        return prev.map((shop) => {
+          shop.products = shop.products.filter((item) => item.productId !== id);
+          return shop;
+        });
       });
-    });
+    } catch (error) {
+      console.error("Error removing product from cart:", error);
+    }
   };
+
 
   const calculateTotalPrice = () =>
     Array.from(selectedIds).reduce((total, id) => {
@@ -177,6 +208,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       return total + itemTotal;
     }, 0);
 
+  
   const handleBuyNow = async () => {
     const selectedProducts = Array.from(selectedIds)
       .map((id) => {
@@ -186,6 +218,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
             return {
               shopId: shop.shopId,
               shopName: shop.shopName,
+              shopLogo: shop.shopLogo,
               productId: product.productId,
               quantity: product.quantity,
               price: product.product_price,
@@ -200,7 +233,6 @@ const CartPanel = ({ open, onOpen, onClose }) => {
     if (selectedProducts.length === 0) {
       return;
     }
-
     localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
 
     window.location.href = "/checkout";
@@ -276,7 +308,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
           </div>
           <button
             onClick={handleBuyNow}
-            className="text-white bg-rose-500 rounded-xl px-4 py-2 hover:opacity-80"
+            className="text-white bg-blue-500 rounded-xl px-4 py-2 hover:opacity-80"
           >
             Mua ngay
           </button>

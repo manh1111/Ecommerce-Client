@@ -21,7 +21,6 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
   const [addresses, setAddresses] = useState([]); // State to hold the fetched addresses
   const [paymentMethod, setPaymentMethod] = useState("cod"); // Default payment method is COD
   const [loading, setLoading] = useState(false); // Loading state
-
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
@@ -44,7 +43,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
           acc[product.shopId] = {
             shopId: product.shopId,
             shopName: product.shopName,
-            shopLogo: product.productThumb, // Temporary logo
+            shopLogo: product.shopLogo, 
             products: [],
           };
         }
@@ -62,6 +61,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
   const handleBuyNow = async () => {
     try {
       const storedProducts = localStorage.getItem("selectedProducts");
+      console.log("groupedProducts", storedProducts);
       if (storedProducts) {
         const products = JSON.parse(storedProducts);
 
