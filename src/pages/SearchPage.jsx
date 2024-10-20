@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
-import ProductCard from "@widgets/Shop/ProductCard";
-import { getCategories } from "@api/categorie";
-import { useSearchProduct } from "@contexts/searchProductContext";
+import React, { useEffect, useState, useCallback } from "react";
+import ProductCard from "@widgets/Shop/ProductCard"; // Ensure this component is memoized
+import { getCategories } from "@api/categorie"; // API to get categories
+import { searchProduct } from "@api/product"; // Import the searchProduct function
+import { useSearchProduct } from "@contexts/searchProductContext"; // Custom hook for product search
+
 const SearchPage = () => {
   const {
     searchTerm,
-    searchProducts,
+    setSearchTerm,
     filteredProducts,
-    filterByCategory,
     sortProducts,
     loadMoreProducts,
+    updateProductList,
   } = useSearchProduct();
 
   const [categories, setCategories] = useState([]);
@@ -18,14 +20,9 @@ const SearchPage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const [activeCategory, setActiveCategory] = useState(null);
-
-  console.log("filteredProducts", filteredProducts);
-  const truncateText = (text, maxLength) =>
-    text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  const [activeCategory, setActiveCategory] = useState("");
 
   useEffect(() => {
-    // Fetch categories from API
     const fetchCategories = async () => {
       try {
         const catalogData = await getCategories();
@@ -41,31 +38,79 @@ const SearchPage = () => {
     fetchCategories();
   }, []);
 
-  const handleSortOptionClick = (option) => {
-    setPriceSortOption(option);
-    sortProducts(option === "Giá thấp đến cao" ? "price-asc" : "price-desc");
+  const searchProducts = useCallback(async (term, categoryId, page, sortBy) => {
+    try {
+      const data = await searchProduct({
+        searchQuery: term,
+        category: categoryId,
+        page,
+        limit: itemsPerPage,
+        sortBy, // Pass the sortBy parameter
+      });
+
+      updateProductList(data.productsWithCounts || []);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeCategory) {
+      // Determine the sortBy value based on the selected sort option
+      const sortByMap = {
+        "Phổ biến": "sold_count",
+        "Mới nhất": "-createdAt",
+        "Giá thấp đến cao": "price_asc",
+        "Giá cao đến thấp": "price_desc",
+      };
+
+      const sortBy = sortByMap[selectedSortOption];
+      searchProducts(searchTerm, activeCategory, currentPage, sortBy);
+    }
+  }, [
+    searchTerm,
+    activeCategory,
+    currentPage,
+    selectedSortOption,
+    searchProducts,
+  ]);
+
+  const handleSortOptionClick = useCallback((option) => {
+    setSelectedSortOption(option);
     setDropdownOpen(false);
     setCurrentPage(1);
-  };
+  }, []);
 
-  const handleSearch = (e) => {
-    searchProducts(e.target.value);
+  const handleSearch = useCallback(
+    (e) => {
+      const newSearchTerm = e.target.value;
+      setSearchTerm(newSearchTerm); // Update search term in context
+      setCurrentPage(1);
+    },
+    [setSearchTerm]
+  );
+
+  const handleCategoryClick = useCallback((categoryId) => {
+    setActiveCategory(categoryId);
     setCurrentPage(1);
-  };
+  }, []);
 
-  const handlePageChange = (newPage) => {
-    if (newPage > currentPage) {
-      loadMoreProducts(newPage);
-    }
-    setCurrentPage(newPage);
-  };
+  const handlePageChange = useCallback(
+    (newPage) => {
+      if (newPage > currentPage) {
+        loadMoreProducts(newPage);
+      }
+      setCurrentPage(newPage);
+    },
+    [currentPage, loadMoreProducts]
+  );
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   return (
     <div className="flex flex-row w-full h-full bg-white p-5 relative">
       {/* Sidebar for Categories */}
-      <div className="w-1/3 bg-white p-5">
+      <div className="w-1/4 bg-white p-5">
         <div className="flex items-center pb-2">
           <span className="font-bold text-xl">Danh Mục</span>
         </div>
@@ -78,12 +123,9 @@ const SearchPage = () => {
                   ? "text-red font-bold"
                   : "text-black"
               }`}
-              onClick={() => {
-                setActiveCategory(category._id);
-                filterByCategory(category._id);
-              }}
+              onClick={() => handleCategoryClick(category._id)}
             >
-              {truncateText(category.category_name, 25)}
+              {category.category_name}
             </div>
           ))}
         </div>
@@ -92,31 +134,33 @@ const SearchPage = () => {
       {/* Main Content */}
       <div className="w-full flex flex-col justify-between">
         <div>
-          {/* Search Input */}
+          {/* Search Input
           <input
             type="text"
             value={searchTerm}
             onChange={handleSearch}
             placeholder="Tìm kiếm sản phẩm..."
             className="border p-2 mb-4 w-full"
-          />
+          /> */}
 
           <fieldset className="border-0 p-0 m-0">
-            <legend className="sr-only">Sắp xếp theo</legend>
-            <div className="font-bold mb-2 text-base">Sắp xếp theo</div>
+            <div className="font-bold mb-2 text-xl py-4">Sắp xếp theo</div>
             <div className="flex gap-2 mb-4">
               <section className="flex gap-2">
-                {["Phổ biến", "Mới nhất", "Bán chạy"].map((option) => (
+                {[
+                  "Phổ biến",
+                  "Mới nhất",
+                  "Giá thấp đến cao",
+                  "Giá cao đến thấp",
+                ].map((option) => (
                   <button
                     key={option}
-                    aria-label={option}
-                    aria-pressed={selectedSortOption === option}
                     className={`px-4 py-2 border rounded transition-colors duration-300 ${
                       selectedSortOption === option
                         ? "bg-red text-white border-red"
                         : "bg-transparent border-gray-300 text-gray-700"
                     }`}
-                    onClick={() => setSelectedSortOption(option)}
+                    onClick={() => handleSortOptionClick(option)}
                   >
                     <span aria-hidden="true">{option}</span>
                   </button>
@@ -128,7 +172,6 @@ const SearchPage = () => {
                   role="combobox"
                   aria-controls="price-options"
                   aria-expanded={dropdownOpen}
-                  aria-autocomplete="none"
                   className="flex items-center px-4 py-2 border rounded text-gray-700 bg-transparent border-gray-300 hover:bg-gray-100"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
@@ -143,7 +186,7 @@ const SearchPage = () => {
                       <li key={option}>
                         <button
                           type="button"
-                          className="block px-4 py-2 w-full text-left text-gray-700 hover:bg-gray-100"
+                          className="block px-4 py-2 w-full text-left hover:bg-gray-100"
                           onClick={() => handleSortOptionClick(option)}
                         >
                           {option}
@@ -155,32 +198,30 @@ const SearchPage = () => {
               </section>
             </div>
           </fieldset>
+        </div>
 
-          {/* Products List */}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredProducts.map((product) => (
+        {/* Product List */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {filteredProducts
+            .slice(0, currentPage * itemsPerPage)
+            .map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
         </div>
 
         {/* Pagination Controls */}
         <div className="flex justify-center mt-4">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-4 py-2 border rounded-l bg-gray-200 hover:bg-gray-300"
-          >
-            Previous
-          </button>
-          <span className="flex items-center px-4">{`${currentPage} / ${totalPages}`}</span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 border rounded-r bg-gray-200 hover:bg-gray-300"
-          >
-            Next
-          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              className={`mx-1 px-3 py-1 rounded ${
+                index + 1 === currentPage ? "bg-red text-white" : "bg-gray-200"
+              }`}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
       </div>
     </div>

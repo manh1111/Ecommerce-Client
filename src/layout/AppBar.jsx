@@ -50,9 +50,9 @@ const AppBar = () => {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [notificationsPanelOpen, setCartPanelOpen] = useState(false);
   const [messagesPanelOpen, setOrdersPanelOpen] = useState(false);
-  const [loginPromptOpen, setLoginPromptOpen] = useState(false); // State for login prompt
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false); 
   const [locale, setLocale] = useState("en-EN");
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to check if the user is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const { width } = useWindowSize();
   const { theme, toggleTheme } = useTheme();
   const { setOpen } = useSidebar();
@@ -82,9 +82,9 @@ const AppBar = () => {
 
   const handleMessagesClick = () => {
     if (!isAuthenticated) {
-      setLoginPromptOpen(true); // Open login prompt
+      setLoginPromptOpen(true); 
     } else {
-      setOrdersPanelOpen(true); // Open messages panel
+      setOrdersPanelOpen(true); 
     }
   };
 
@@ -142,7 +142,7 @@ const AppBar = () => {
               <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
                 <button
                   className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={handleCartClick} // Use the new function here
+                  onClick={handleCartClick} 
                   aria-label="Notifications"
                 >
                   <i className="fas fa-shopping-cart" />

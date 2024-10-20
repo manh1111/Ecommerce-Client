@@ -18,10 +18,12 @@ import {
   CHANGE_STATUS_AUTH,
   CHANGE_VALUE_TOKEN,
 } from "@redux/slice/auth/authSlice";
+import Loading from "@components/Loading";
 
 const AuthLayout = () => {
   const { width } = useWindowSize();
   const [googleLoginAttempt, setGoogleLoginAttempt] = useState(false);
+  const [loading, setLoading] = useState(false);
   const expirationHours = 3;
   const dispatch = useDispatch();
   const location = useLocation();
@@ -41,7 +43,7 @@ const AuthLayout = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const accessToken = searchParams.get("access_token");
-    
+
     if (accessToken) {
       dispatch(CHANGE_STATUS_AUTH(true));
       dispatch(CHANGE_VALUE_TOKEN(accessToken));
@@ -55,6 +57,7 @@ const AuthLayout = () => {
   }, [location.search, googleLoginAttempt, dispatch, navigate]);
 
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
       const response = await signIn(data.email, data.password);
       dispatch(CHANGE_STATUS_AUTH(true));
@@ -70,6 +73,8 @@ const AuthLayout = () => {
       navigate("/");
     } catch (err) {
       toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -85,6 +90,8 @@ const AuthLayout = () => {
   const handleSignUp = () => {
     navigate("/sign-up");
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 4xl:grid-cols-[minmax(0,_1030px)_minmax(0,_1fr)]">
@@ -151,8 +158,12 @@ const AuthLayout = () => {
               <button className="text-btn" onClick={handlePasswordReminder}>
                 Forgot Password?
               </button>
-              <button className="btn btn--primary w-full" type="submit">
-                Log In
+              <button
+                className="btn btn--primary w-full"
+                type="submit"
+                disabled={loading} // Disable button when loading
+              >
+                Sign In
               </button>
             </div>
           </form>

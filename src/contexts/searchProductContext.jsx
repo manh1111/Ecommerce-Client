@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { GetAllProduct } from "@api/product";
+import { GetAllProduct, searchProduct } from "@api/product";
 import Loading from "@components/Loading";
 
 const SearchProductContext = createContext(undefined);
@@ -8,108 +8,120 @@ export const SearchProductProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // Added loading state
+  const [loading, setLoading] = useState(true);
 
-  // Fetch products on initial load
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-          const data = await GetAllProduct();
-          const products = data.data.productsWithCounts.map((product) => ({
-            id: product._id,
-            imageSrc: product.product_img[0],
-            altText: product.product_name,
-            price: `${product.product_price.toLocaleString()} VND`,
-            discount: "0%",
-            rating: 4.8,
-            soldCount: product.product_quantity,
-            promotionText: "Khuyến mãi đặc biệt",
-            voucherText: "Giảm giá",
-            promotionOverlaySrc: "https://example.com/overlay.png",
-          }));
-          
-            setProducts(products);
-            setFilteredProducts(products);
+        const response = await GetAllProduct();
+        const productsWithCounts = response.data.productsWithCounts || [];
+
+        const products = productsWithCounts.map((product) => ({
+          id: product._id,
+          imageSrc: product.product_img[0] || "",
+          altText: product.product_name,
+          price: `${product.product_price.toLocaleString()} VND`,
+          discount: "0%",
+          rating: product.product_rating || 0,
+          soldCount: product.product_quantity,
+          promotionText: product.promotionText || "Khuyến mãi đặc biệt",
+          voucherText: product.voucherText || "Giảm giá",
+          promotionOverlaySrc:
+            product.promotionOverlaySrc || "https://example.com/overlay.png",
+        }));
+
+        setProducts(products);
+        setFilteredProducts(products);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
-        setLoading(false); // Stop loading after fetching
+        setLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
 
-  // Search for products based on the search term
-  const searchProducts = (term) => {
-    setSearchTerm(term);
-    if (term) {
-      const filtered = products.filter((product) =>
-        product.name.toLowerCase().includes(term.toLowerCase())
-      );
-      setFilteredProducts(filtered);
-    } else {
-      setFilteredProducts(products);
-    }
-  };
+  const searchProducts = async (searchQuery, categoryId) => {
+    setSearchTerm(searchQuery);
+    setLoading(true);
 
-  // Filter products by category
-  const filterByCategory = (category) => {
-    const filtered = products.filter(
-      (product) => product.category === category
-    );
-    setFilteredProducts(filtered);
-  };
-
-  // Sort products based on the selected criteria
-  const sortProducts = (type) => {
-    let sortedProducts = [...filteredProducts];
-    if (type === "price-asc") {
-      sortedProducts.sort((a, b) => a.price - b.price);
-    } else if (type === "price-desc") {
-      sortedProducts.sort((a, b) => b.price - a.price);
-    }
-    setFilteredProducts(sortedProducts);
-  };
-
-  // Reset filters to show all products
-  const resetFilters = () => {
-    setFilteredProducts(products);
-    setSearchTerm(""); // Optional: Reset search term as well
-  };
-
-  // Load more products for pagination
-  const loadMoreProducts = async (pageNumber) => {
-    setLoading(true); // Set loading before fetching more products
     try {
-      const response = await fetch(`/api/products?page=${pageNumber}`);
-      const newProducts = await response.json();
-      setProducts((prev) => [...prev, ...newProducts]);
-      setFilteredProducts((prev) => [...prev, ...newProducts]);
+      // If the search query is empty, reset filtered products
+      if (searchQuery.trim() === "") {
+        setFilteredProducts(products);
+        return;
+      }
+
+      // Fetch filtered products based on the search query and category
+      const response = await searchProduct({ searchQuery, categoryId });
+      if (
+        response.productsWithCounts &&
+        Array.isArray(response.productsWithCounts)
+      ) {
+        const productsData = response.productsWithCounts;
+
+        const products = productsData.map((product) => ({
+          id: product._id,
+          imageSrc: product.product_img[0] || "",
+          altText: product.product_name,
+          price: `${product.product_price.toLocaleString()} VND`,
+          discount: "0%",
+          rating: product.product_rating || 0,
+          soldCount: product.product_quantity,
+          promotionText: product.promotionText || "",
+          voucherText: product.voucherText || "",
+          promotionOverlaySrc: product.promotionOverlaySrc || "",
+        }));
+
+        console.log("response", products);
+        setFilteredProducts(products); // Update filtered products based on search
+      } else {
+        console.warn("Unexpected response structure:", response.data);
+        setFilteredProducts([]); // Reset filtered products if response is unexpected
+      }
     } catch (error) {
-      console.error("Error loading more products:", error);
+      console.error("Error searching products:", error);
+      setFilteredProducts([]); // Reset filtered products in case of error
     } finally {
-      setLoading(false); // Stop loading after fetching
+      setLoading(false);
     }
+  };
+
+  // Function to update the product list
+  const updateProductList = (newProducts) => {
+    const products = newProducts.map((product) => ({
+      id: product._id,
+      imageSrc: product.product_img[0] || "",
+      altText: product.product_name,
+      price: `${product.product_price.toLocaleString()} VND`,
+      discount: "0%",
+      rating: product.product_rating || 0,
+      soldCount: product.product_quantity,
+      promotionText: product.promotionText || "Khuyến mãi đặc biệt",
+      voucherText: product.voucherText || "Giảm giá",
+      promotionOverlaySrc:
+        product.promotionOverlaySrc || "https://example.com/overlay.png",
+    }));
+
+    setProducts(products);
+    setFilteredProducts(products); // Update filtered products to show new list
   };
 
   return (
     <SearchProductContext.Provider
       value={{
         searchTerm,
+        setSearchTerm,
         searchProducts,
         filteredProducts,
-        filterByCategory,
-        sortProducts,
-        resetFilters,
-        loadMoreProducts,
-        loading, // Expose loading state to consumers
+        loading,
+        updateProductList, // Expose the new function
       }}
     >
-      {loading ? <Loading /> : children}{" "}
-      {/* Show loading indicator */}
+      {loading ? <Loading /> : children}
     </SearchProductContext.Provider>
   );
 };
 
-// Custom hook to use the SearchProductContext
 export const useSearchProduct = () => useContext(SearchProductContext);

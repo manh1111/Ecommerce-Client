@@ -13,6 +13,7 @@ import { SELLER_SORT_OPTIONS } from "@constants/options";
 // utils
 import { sortSellers } from "@utils/helpers";
 import { GetAllShop } from "@api/shop";
+import Loading from "@components/Loading";
 
 const SellerProfilesGrid = ({ numberOfSellers = 24, fullGrid = true }) => {
   const [sort, setSort] = useState(SELLER_SORT_OPTIONS[0]);
@@ -74,7 +75,7 @@ const SellerProfilesGrid = ({ numberOfSellers = 24, fullGrid = true }) => {
     pagination.setCurrentPage(0);
   }, [sort, numberOfSellers]);
 
-  if (loading) return <p>Loading sellers...</p>;
+  if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
 
   return (
