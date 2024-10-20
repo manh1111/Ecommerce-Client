@@ -5,7 +5,7 @@ import { getCart } from "@api/cart";
 import { getShopById } from "@api/shop";
 import { getProductById } from "@api/product";
 import Loading from "@components/Loading";
-import { createOrder } from "@api/order"; // Import the createOrder function
+import { createOrder } from "@api/order"; 
 import { Image } from "antd";
 import { changeQuantityProduct, deleteProductById } from "../api/cart";
 import { toast } from "react-toastify";
@@ -184,16 +184,22 @@ const CartPanel = ({ open, onOpen, onClose }) => {
   const handleRemoveItem = async (id) => {
     try {
       await deleteProductById(id);
+
       setListProduct((prev) => {
         return prev.map((shop) => {
           shop.products = shop.products.filter((item) => item.productId !== id);
           return shop;
         });
       });
+
+      alert("Xóa sản phẩm thành công!");
     } catch (error) {
-      console.error("Error removing product from cart:", error);
+      console.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng:", error);
+
+      alert("Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.");
     }
   };
+
 
 
   const calculateTotalPrice = () =>

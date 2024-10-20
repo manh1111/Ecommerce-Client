@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { Button, Modal, Skeleton, Spin } from "antd";
+import { Button, Image, Modal, Skeleton, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 import { addCart } from "@api/cart";
 import { getCookie } from "@utils/cookie";
+
 const VND = new Intl.NumberFormat("vi-VN", {
   style: "currency",
   currency: "VND",
 });
 
-const ProductInfo = ({ product }) => {
+const ProductInfo = ({ product, shopData }) => {
   const [loadingCart, setLoadingCart] = useState(false);
   const [open, setOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -24,9 +25,7 @@ const ProductInfo = ({ product }) => {
   const handleAddToCart = async () => {
     setLoadingCart(true);
     try {
-      console.log(product.id);
-      const response = await addCart(product.id, 1); 
-      console.log(response)
+      const response = await addCart(product.id, 1);
       if (response?.status === 200) {
         toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
       } else {
@@ -51,6 +50,25 @@ const ProductInfo = ({ product }) => {
     );
   };
 
+  const handleBuyNow = () => {
+    const productData = {
+      shopId: shopData.id,
+      shopName: shopData.sellerName,
+      shopLogo: shopData.avatarUrl,
+      productId: product.id,
+      quantity: 1,
+      price: product.price,
+      productName: product.name,
+      productThumb: product.mainImage[0],
+    };
+
+    // Store the product data in local storage
+    localStorage.setItem("selectedProducts", JSON.stringify([productData]));
+
+    // Redirect to checkout page
+    window.location.href = "/checkout";
+  };
+
   if (!product) {
     return <Skeleton active />;
   }
@@ -64,31 +82,33 @@ const ProductInfo = ({ product }) => {
             {/* Left Arrow for Previous Image */}
             <button
               onClick={handlePrevImage}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-200 hover:bg-gray-500 bg-gray-300 p-2 rounded-full"
+              className="z-30 absolute left-0 top-1/2 transform -translate-y-1/2 hover:bg-slate-100 p-2 rounded-full bg-slate-200"
             >
               <LeftOutlined style={{ fontSize: "24px" }} />
             </button>
 
-            {/* Product Image */}
-            {product?.mainImage?.map((image, index) => (
-              <div
-                key={index}
-                className={`w-full flex items-center justify-center ${
-                  index === currentImageIndex ? "block" : "hidden"
-                }`}
-              >
-                <img
-                  className="object-contain min-h-80 xl:h-[400px] h-fit w-auto"
-                  src={image}
-                  alt={`Product Image ${index + 1}`}
-                />
-              </div>
-            ))}
+            <div className="w-11/12">
+              {/* Product Image */}
+              {product?.mainImage?.map((image, index) => (
+                <div
+                  key={index}
+                  className={`w-full flex items-center justify-center ${
+                    index === currentImageIndex ? "block" : "hidden"
+                  }`}
+                >
+                  <Image
+                    className="object-contain min-h-80 xl:h-[400px] h-fit w-fit"
+                    src={image}
+                    alt={`Product Image ${index + 1}`}
+                  />
+                </div>
+              ))}
+            </div>
 
             {/* Right Arrow for Next Image */}
             <button
               onClick={handleNextImage}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 hover:bg-gray-500 p-2 rounded-full bg-gray-300"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 hover:bg-slate-100 p-2 rounded-full bg-slate-200"
             >
               <RightOutlined style={{ fontSize: "24px" }} />
             </button>
@@ -112,7 +132,7 @@ const ProductInfo = ({ product }) => {
           <div className="flex flex-col gap-4 mb-6">
             <div className="text-xl font-bold">Chính sách Trả hàng</div>
             <section className="flex items-center gap-4">
-              <img
+              <Image
                 src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/b69402e4275f823f7d47.svg"
                 alt="Return policy"
                 className="w-8 h-8"
@@ -130,9 +150,12 @@ const ProductInfo = ({ product }) => {
           </div>
           <div className="flex gap-4">
             {loadingCart ? (
-              <Spin
-                indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
-              />
+              <div className="w-1/2 flex items-center">
+                <Spin
+                  className="w-fit"
+                  indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
+                />
+              </div>
             ) : (
               <Button
                 className="w-1/2"
@@ -147,7 +170,7 @@ const ProductInfo = ({ product }) => {
             <Button
               className="w-1/2"
               type="primary"
-              onClick={showModal}
+              onClick={handleBuyNow} // Updated to handleBuyNow
               shape="round"
               size="large"
             >

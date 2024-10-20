@@ -35,6 +35,7 @@ const Product = () => {
   }
 
   const sellerData = {
+    id: shop._id,
     backgroundUrl: shop.logo || "", 
     Desc: shop.description || "No description available", 
     avatarUrl: shop.logo || "", 
@@ -63,7 +64,7 @@ const Product = () => {
 
   return (
     <div className="bg-white">
-      <ProductInfo product={product} />
+      <ProductInfo product={product} shopData={sellerData} />
       <ShopInfo shopData={sellerData} />
     </div>
   );
