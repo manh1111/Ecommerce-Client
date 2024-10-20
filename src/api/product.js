@@ -66,12 +66,22 @@ export const getAllProductsShopId = async (shopId) => {
   }
 };
 
-export const searchProduct = async (query) => {
+export const searchProduct = async ({
+  searchQuery = "",
+  category = "",
+  page = 1,
+  limit = 10,
+  sortBy = "-createdAt",
+}) => {
   const result = await axiosInstance.post(
     `${REACT_APP_URL_PRO_API}product/search`,
     {
-      query,
+      searchQuery,
+      category,
+      page,
+      limit,
+      sortBy,
     }
   );
-  return result;
+  return result.data;
 };
