@@ -22,7 +22,7 @@ export const createOrder = async (
       },
       config
     );
-    return response.data;
+    return response;
   } catch (error) {
     console.error("Failed to create order:", error);
     throw error;

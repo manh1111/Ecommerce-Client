@@ -109,13 +109,12 @@ const UserProfileDetails = () => {
 
  const handlePasswordSubmit = async (passwordData) => {
    try {
-     
-     console.log(passwordData);
      const { currentPassword, newPassword } = passwordData;
      const res = await changePassword(currentPassword, newPassword);
      console.log("Password change response:", res);
      toast.success("Password changed successfully");
      setShowPasswordModal(false);
+
    } catch (error) {
      toast.error("Failed to change password");
      console.error(error);
@@ -234,24 +233,6 @@ const UserProfileDetails = () => {
                 </div>
 
                 <div className="field-wrapper">
-                  <label className="field-label" htmlFor="Address">
-                    Address
-                  </label>
-                  <input
-                    className={classNames("field-input", {
-                      "field-input--error": errors.Address,
-                    })}
-                    type="text"
-                    id="Address"
-                    placeholder={userInfo?.address || "Address"}
-                    {...register("Address", { required: true })}
-                  />
-                  {errors.Address && (
-                    <p className="error-message">Address is required</p>
-                  )}
-                </div>
-
-                <div className="field-wrapper">
                   <label className="field-label" htmlFor="dob">
                     Date of Birth
                   </label>
@@ -272,16 +253,15 @@ const UserProfileDetails = () => {
             </div>
 
             <div className="flex justify-between mt-2.5 w-full">
-              <form onSubmit={handleSubmit(onSubmit)} className="flex justify-between w-full">
-                <div className="flex w-full justify-between mt-2.5">
-                  <button
-                    className="text-btn"
-                    type="button"
-                    onClick={() => setShowPasswordModal(true)} // Show modal on click
-                  >
-                    Change Password
-                  </button>
-                </div>
+              <div className="flex w-full justify-between mt-2.5">
+                <button
+                  className="text-red font-bold"
+                  onClick={() => setShowPasswordModal(true)} // Show modal on click
+                >
+                  Change Password
+                </button>
+              </div>
+              <form onSubmit={handleSubmit(onSubmit)} className="">
                 <button
                   className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
                   type="submit"

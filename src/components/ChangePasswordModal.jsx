@@ -10,10 +10,8 @@ const ChangePasswordModal = ({ show, onClose, onSubmit }) => {
   const [error, setError] = useState("");
 
   const onFormSubmit = () => {
-    // Reset the error message
     setError("");
 
-    // Basic validation
     if (!currentPassword) {
       setError("Current password is required");
       return;
@@ -23,7 +21,6 @@ const ChangePasswordModal = ({ show, onClose, onSubmit }) => {
       return;
     }
 
-    // Call the onSubmit prop with both current and new passwords
     onSubmit({ currentPassword, newPassword });
   };
 
@@ -42,7 +39,7 @@ const ChangePasswordModal = ({ show, onClose, onSubmit }) => {
       <div className="field-wrapper">
         <label htmlFor="currentPassword">Current Password</label>
         <Input
-          type={showCurrentPassword ? "text" : "password"}
+          // type={showCurrentPassword ? "text" : "password"}
           id="currentPassword"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
