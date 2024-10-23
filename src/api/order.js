@@ -69,7 +69,7 @@ export const deleteOrderById = async (orderId) => {
     );
 
     console.log(result);
-    return result.data;
+    return result;
   } catch (error) {
     console.error("Error cancelling order:", error);
     throw error;
