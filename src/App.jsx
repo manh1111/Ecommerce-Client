@@ -22,6 +22,7 @@ import Checkout from "./pages/Checkout";
 const Login = lazy(() => import("@pages/Login"));
 const SignUp = lazy(() => import("@pages/SignUp"));
 const SalesAnalytics = lazy(() => import("@pages/SalesAnalytics"));
+const ConfirmPayment = lazy(() => import("@pages/ConfirmPayment"));
 const MainPage = lazy(() => import("@pages/MainPage"));
 const SellersList = lazy(() => import("@pages/SellersList"));
 const SellersTable = lazy(() => import("@pages/SellersTable"));
@@ -30,6 +31,8 @@ const SellerProfile = lazy(() => import("@pages/SellerProfile"));
 const Shop = lazy(() => import("@pages/Shop"));
 const Product = lazy(() => import("@pages/Product"));
 const SearchPage = lazy(() => import("@pages/SearchPage"));
+const Address = lazy(() => import("@pages/Address"));
+const ForgotPassword = lazy(() => import("@pages/ForgotPassword"));
 const RevenueByPeriod = lazy(() => import("@pages/RevenueByPeriod"));
 const TopProducts = lazy(() => import("@pages/TopProducts"));
 const ProductsGrid = lazy(() => import("@pages/ProductsGrid"));
@@ -84,6 +87,8 @@ const App = () => {
                 <Routes>
                   <Route path="/login" element={<Login />} />
                   <Route path="/sign-up" element={<SignUp />} />
+                  <Route path="/payment-success" element={<ConfirmPayment />} />
+                  <Route path="/payment-failed" element={<ConfirmPayment />} />
                   <Route path="/" element={<MainPage />} />
                   <Route path="/salesAnalytics" element={<SalesAnalytics />} />
                   <Route path="/sellers-list" element={<SellersList />} />
@@ -118,6 +123,9 @@ const App = () => {
                   <Route path="/shop/:id" element={<Shop />} />
                   <Route path="/product/:id" element={<Product />} />
                   <Route path="/search" element={<SearchPage />} />
+                  <Route path="/address" element={<Address />} />
+                  <Route path="/reset-password" element={<ForgotPassword />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="*" element={<Navigate to="/404" />} />
                   <Route path="/start-selling" element={<StartSelling />} />
                   <Route path="/404" element={<PageNotFound />} />

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import PageHeader from "@layout/PageHeader";
-import { createOrder } from "@api/order"; 
-import { getAllAddresses } from "@api/profile"; 
+import { createOrder } from "@api/order";
+import { getAllAddresses } from "@api/profile";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Component to display shop information
 const ShopInfo = ({ shopName, shopLogo }) => {
@@ -16,20 +18,22 @@ const ShopInfo = ({ shopName, shopLogo }) => {
 };
 
 const Checkout = ({ listProduct = [], selectedIds = [] }) => {
+  let paymentMethod = "cod";
   const [groupedProducts, setGroupedProducts] = useState({});
   const [address, setAddress] = useState("");
-  const [addresses, setAddresses] = useState([]); // State to hold the fetched addresses
-  const [paymentMethod, setPaymentMethod] = useState("cod"); // Default payment method is COD
-  const [loading, setLoading] = useState(false); // Loading state
+  const [addresses, setAddresses] = useState([]);
+  const [paymentGateway, setPaymentGateway] = useState("cod");
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
         const response = await getAllAddresses();
-          setAddresses(response.data || []); 
-          console.log("getAllAddresses", response);
+        setAddresses(response.data || []);
+        console.log("getAllAddresses", response);
       } catch (error) {
         console.error("Failed to fetch addresses:", error);
-        alert("Không thể tải danh sách địa chỉ. Vui lòng thử lại.");
+        toast.error("Không thể tải danh sách địa chỉ. Vui lòng thử lại.");
       }
     };
 
@@ -43,7 +47,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
           acc[product.shopId] = {
             shopId: product.shopId,
             shopName: product.shopName,
-            shopLogo: product.shopLogo, 
+            shopLogo: product.shopLogo,
             products: [],
           };
         }
@@ -59,6 +63,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
   };
 
   const handleBuyNow = async () => {
+    setLoading(true); // Set loading state
     try {
       const storedProducts = localStorage.getItem("selectedProducts");
       console.log("groupedProducts", storedProducts);
@@ -98,7 +103,9 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
         }, {});
 
         const orders = Object.values(groupedOrders);
-        const paymentGateway = ""; // Adjust if needed
+        if (paymentGateway === "MOMO" || paymentGateway === "VNPAY") {
+          paymentMethod = "online";
+        }
         const shippingAddress = address || "456 Đường XYZ, Quận 1, TP.HCM";
 
         console.log("Creating order with data:", {
@@ -114,18 +121,24 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
           paymentGateway,
           shippingAddress
         );
-        console.log("Order created successfully:", response);
-        alert("Đặt hàng thành công!");
+         if (paymentMethod === "online" && response?.paymentUrl) {
+           // Redirect to the payment URL for online payment
+           window.location.href = response.paymentUrl;
+         } else {
+           toast.success("Đặt hàng thành công!");
+        }
+        console.log("response.paymentUrl", response);
       }
     } catch (error) {
-      console.error("Failed to create order:", error);
-      alert("Đặt hàng thất bại, vui lòng thử lại.");
+      toast.error("Đặt hàng thất bại, vui lòng thử lại.");
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
   return (
     <>
-      <PageHeader title="Checkout" />
+      <PageHeader title="Đặt hàng" />
       <div className="container mx-auto p-4">
         {Object.keys(groupedProducts).length > 0 ? (
           <>
@@ -177,7 +190,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
                 {addresses.map((addr, index) => (
                   <option key={index} value={addr.id}>
                     {addr.address}
-                  </option> // Ensure addr.id and addr.address match your data structure
+                  </option> 
                 ))}
               </select>
             </div>
@@ -191,26 +204,26 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
                   <input
                     type="radio"
                     value="cod"
-                    checked={paymentMethod === "cod"}
-                    onChange={() => setPaymentMethod("cod")}
+                    checked={paymentGateway === "cod"}
+                    onChange={() => setPaymentGateway("cod")}
                   />
                   Thanh toán khi nhận hàng (COD)
                 </label>
                 <label>
                   <input
                     type="radio"
-                    value="vnpay"
-                    checked={paymentMethod === "vnpay"}
-                    onChange={() => setPaymentMethod("vnpay")}
+                    value="VNPAY"
+                    checked={paymentGateway === "VNPAY"}
+                    onChange={() => setPaymentGateway("VNPAY")}
                   />
                   VNPAY
                 </label>
                 <label>
                   <input
                     type="radio"
-                    value="momo"
-                    checked={paymentMethod === "momo"}
-                    onChange={() => setPaymentMethod("momo")}
+                    value="MOMO"
+                    checked={paymentGateway === "MOMO"}
+                    onChange={() => setPaymentGateway("MOMO")}
                   />
                   MOMO
                 </label>

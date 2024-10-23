@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 const DocumentTitle = ({title}) => {
     return (
         <Helmet>
-            <title>{title} | React E-commerce Dashboard Template</title>
+            <title>{title} </title>
         </Helmet>
     )
 }

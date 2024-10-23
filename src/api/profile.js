@@ -41,10 +41,43 @@ export const addNewAddress = async (newAddress) => {
   const result = await axiosInstance.post(
     `${REACT_APP_URL_PRO_API}profile/address`,
     {
-      newAddress,
+      id: newAddress.id,
+      userId: newAddress.userId,
+      street: newAddress.street,
+      city: newAddress.city,
+      state: newAddress.state,
+      zipCode: newAddress.zipCode,
+      country: newAddress.country,
     },
     config
   );
   return result.data;
 };
+
+export const forgotPassword = async (email) => {
+  const config = checkToken("application/json");
+  const result = await axiosInstance.post(
+    `${REACT_APP_URL_PRO_API}forgot-password`,
+    {
+      email,
+    },
+    config
+  );
+  return result.data;
+};
+
+export const resetPassword = async ({password, token}) => {
+  const config = checkToken("application/json");
+  const result = await axiosInstance.post(
+    `${REACT_APP_URL_PRO_API}reset-password?token=${token}`,
+    {
+      password,
+    },
+    config
+  );
+  return result.data;
+};
+
+
+
 

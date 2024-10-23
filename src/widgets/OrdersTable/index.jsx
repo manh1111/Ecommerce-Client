@@ -1,35 +1,38 @@
 import dayjs from "dayjs";
 import { useState } from "react";
 import { deleteOrderById } from "@api/order";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const OrdersTable = ({ initialOrders = [] }) => {
   const [orders, setOrders] = useState(initialOrders);
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
-  const [startDate, setStartDate] = useState(""); // State for start date
-  const [endDate, setEndDate] = useState(""); // State for end date
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [isCancelling, setIsCancelling] = useState(false); // Track cancellation state
 
   const handleCancelOrder = async (orderId) => {
-    try {
-      console.log(`Attempting to cancel order ID: ${orderId}`);
-      const res = await deleteOrderById(orderId);
-      console.log("Response from API:", res);
+    const updatedOrders = orders.filter((order) => order._id !== orderId);
+    setOrders(updatedOrders);
 
-      if (res && res.status === 200) {
-        setOrders((prevOrders) =>
-          prevOrders.filter((order) => order._id !== orderId)
-        );
-        setMessage("Đơn hàng đã được hủy thành công.");
-        setIsError(false);
+    try {
+      const res = await deleteOrderById(orderId);
+      if (res.status === 200) {
+        toast.success("Đơn hàng đã được hủy thành công.", {
+          toastId: orderId, // Dùng toastId để đảm bảo không hiển thị nhiều lần
+        });
       } else {
         throw new Error("Failed to cancel the order");
       }
     } catch (error) {
       console.error("Error cancelling order:", error);
-      setMessage("Có lỗi xảy ra khi hủy đơn hàng.");
-      setIsError(true);
+      toast.error("Có lỗi xảy ra khi hủy đơn hàng.", {
+        toastId: "error_" + orderId, // Tạo một toastId khác cho thông báo lỗi
+      });
+
+      setOrders(initialOrders);
     }
   };
+
 
   // Filter orders based on selected date range
   const filteredOrders = orders.filter((order) => {
@@ -45,16 +48,6 @@ const OrdersTable = ({ initialOrders = [] }) => {
 
   return (
     <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
-      {message && (
-        <div
-          className={`mb-4 p-2 text-white ${
-            isError ? "bg-red-500" : "bg-green-500"
-          } rounded-md`}
-        >
-          {message}
-        </div>
-      )}
-
       <div className="mb-4 flex space-x-4">
         <div className="w-full">
           <label
@@ -89,7 +82,9 @@ const OrdersTable = ({ initialOrders = [] }) => {
       </div>
 
       {filteredOrders.length === 0 ? (
-        <p className="text-gray-600 text-center text-red">Không có đơn hàng nào để hiển thị.</p>
+        <p className="text-gray-600 text-center text-red">
+          Không có đơn hàng nào để hiển thị.
+        </p>
       ) : (
         filteredOrders.map((order) => (
           <div
@@ -131,7 +126,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
                       : "opacity-50 cursor-not-allowed"
                   }`}
                   onClick={() => handleCancelOrder(order._id)}
-                  disabled={order.order_status !== "pending"}
+                  disabled={order.order_status !== "pending" || isCancelling}
                 >
                   Hủy đơn hàng
                 </button>

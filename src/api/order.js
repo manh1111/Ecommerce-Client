@@ -22,7 +22,7 @@ export const createOrder = async (
       },
       config
     );
-    return response.data;
+    return response;
   } catch (error) {
     console.error("Failed to create order:", error);
     throw error;
@@ -69,7 +69,7 @@ export const deleteOrderById = async (orderId) => {
     );
 
     console.log(result);
-    return result.data;
+    return result;
   } catch (error) {
     console.error("Error cancelling order:", error);
     throw error;
