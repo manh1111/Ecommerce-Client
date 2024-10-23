@@ -78,6 +78,17 @@ export const resetPassword = async ({password, token}) => {
   return result.data;
 };
 
+export const updateProfileAvatar = async (file) => {
+  const config = checkToken("multipart/form-data");
+  const formData = new FormData();
+  formData.append("file", file);
 
+  const result = await axiosInstance.post(
+    `${REACT_APP_URL_PRO_API}profile/avatar-own`,
+    formData,
+    config
+  );
+  return result.data;
+};
 
 

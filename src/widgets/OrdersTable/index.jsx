@@ -8,30 +8,31 @@ const OrdersTable = ({ initialOrders = [] }) => {
   const [orders, setOrders] = useState(initialOrders);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [isCancelling, setIsCancelling] = useState(false); // Track cancellation state
 
   const handleCancelOrder = async (orderId) => {
+    const updatedOrders = orders.filter((order) => order._id !== orderId);
+    setOrders(updatedOrders);
+
     try {
       const res = await deleteOrderById(orderId);
-
-      if (res && res.status === 200) {
-        toast.success("Đơn hàng đã được hủy thành công.");
-
-        // Remove the canceled order from the list
-        setOrders((prevOrders) => {
-          const updatedOrders = prevOrders.filter(
-            (order) => order._id !== orderId
-          );
-          console.log("Updated Orders After Deletion:", updatedOrders); // Log to check updated orders
-          return updatedOrders;
+      if (res.status === 200) {
+        toast.success("Đơn hàng đã được hủy thành công.", {
+          toastId: orderId, // Dùng toastId để đảm bảo không hiển thị nhiều lần
         });
       } else {
         throw new Error("Failed to cancel the order");
       }
     } catch (error) {
       console.error("Error cancelling order:", error);
-      toast.error("Có lỗi xảy ra khi hủy đơn hàng.");
+      toast.error("Có lỗi xảy ra khi hủy đơn hàng.", {
+        toastId: "error_" + orderId, // Tạo một toastId khác cho thông báo lỗi
+      });
+
+      setOrders(initialOrders);
     }
   };
+
 
   // Filter orders based on selected date range
   const filteredOrders = orders.filter((order) => {
@@ -47,8 +48,6 @@ const OrdersTable = ({ initialOrders = [] }) => {
 
   return (
     <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
-      <ToastContainer />
-
       <div className="mb-4 flex space-x-4">
         <div className="w-full">
           <label
@@ -127,7 +126,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
                       : "opacity-50 cursor-not-allowed"
                   }`}
                   onClick={() => handleCancelOrder(order._id)}
-                  disabled={order.order_status !== "pending"}
+                  disabled={order.order_status !== "pending" || isCancelling}
                 >
                   Hủy đơn hàng
                 </button>
