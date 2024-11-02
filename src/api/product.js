@@ -3,13 +3,13 @@ import { checkToken } from "@utils/auth";
 import { getCookie } from "@utils/cookie";
 
 // Get the base API URL from environment variables
-const REACT_APP_URL_PRO_API =
+const URL_API =
   "https://ecommerce-server-0mcc.onrender.com/v1/api/";
 
 export const GetAllProduct = async () => {
   try {
     const response = await axiosInstance.get(
-      `${REACT_APP_URL_PRO_API}product`
+      `${URL_API}product`
     );
 
     return response;
@@ -22,7 +22,7 @@ export const GetAllProduct = async () => {
 export const getProductById = async (id) => {
   try {
     const response = await axiosInstance.get(
-      `${REACT_APP_URL_PRO_API}product/${id}`
+      `${URL_API}product/${id}`
     );
 
     return response.data;
@@ -38,7 +38,7 @@ export const getProductsByCatalogShop = async (shopId, catalogId) => {
 
     // Fetch product by ID with token in Authorization header
     const response = await axiosInstance.get(
-      `${REACT_APP_URL_PRO_API}product/shop/${shopId}/catalog/${catalogId}`,
+      `${URL_API}product/shop/${shopId}/catalog/${catalogId}`,
       config
     );
 
@@ -55,7 +55,7 @@ export const getAllProductsShopId = async (shopId) => {
 
     // Fetch product by ID with token in Authorization header
     const response = await axiosInstance.get(
-      `${REACT_APP_URL_PRO_API}product/shop/${shopId}`,
+      `${URL_API}product/shop/${shopId}`,
       config
     );
 
@@ -74,7 +74,7 @@ export const searchProduct = async ({
   sortBy = "-createdAt",
 }) => {
   const result = await axiosInstance.post(
-    `${REACT_APP_URL_PRO_API}product/search`,
+    `${URL_API}product/search`,
     {
       searchQuery,
       category,

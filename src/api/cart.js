@@ -3,7 +3,7 @@ import { checkToken } from "@utils/auth";
 import { getCookie } from "@utils/cookie";
 
 // Access the base URL from the environment variables
-const REACT_APP_URL_PRO_API = import.meta.env.VITE_URL_PRO_API;
+const URL_API = import.meta.env.VITE_URL_API;
 
 export const getCart = async () => {
   try {
@@ -21,7 +21,7 @@ export const getCart = async () => {
     }
 
     // Perform the API call using the base URL from the .env file
-    const response = await axiosInstance.get(`${REACT_APP_URL_PRO_API}cart`, {
+    const response = await axiosInstance.get(`${URL_API}cart`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -39,7 +39,7 @@ export const addCart = async (id, quantity = 1) => {
   const config = checkToken("application/json");
   try {
     const result = await axiosInstance.post(
-      `${REACT_APP_URL_PRO_API}cart`,
+      `${URL_API}cart`,
       {
         productId: id,
         quantity,
@@ -59,7 +59,7 @@ export const changeQuantityProduct = async (productId, quantity, old_quantity) =
   const config = checkToken("application/json");
   try {
     const result = await axiosInstance.post(
-      `${REACT_APP_URL_PRO_API}cart/products/quantity`,
+      `${URL_API}cart/products/quantity`,
       {
         productId,
         quantity,
@@ -80,7 +80,7 @@ export const deleteProductById = async (productId) => {
   const config = checkToken("application/json");
   try {
     const result = await axiosInstance.delete(
-      `${REACT_APP_URL_PRO_API}cart/${productId}`, 
+      `${URL_API}cart/${productId}`, 
       config 
     );
 

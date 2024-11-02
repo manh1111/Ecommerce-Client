@@ -1,8 +1,7 @@
 import axiosInstance from "@api/axiosInstance";
 import { getCookie } from "@utils/cookie";
 
-// Get the base API URL from environment variables
-const REACT_APP_URL_PRO_API = import.meta.env.VITE_URL_PRO_API;
+import { URL_API } from "../../src/config/config";
 
 export const GetOwnShop = async () => {
   try {
@@ -15,7 +14,7 @@ export const GetOwnShop = async () => {
     }
 
     // Use environment variable for the base API URL
-    const response = await axiosInstance.get(`${REACT_APP_URL_PRO_API}shop/view-own`, {
+    const response = await axiosInstance.get(`${URL_API}shop/view-own`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -31,7 +30,7 @@ export const GetOwnShop = async () => {
 export const GetAllShop = async () => {
   try {
     const response = await axiosInstance.get(
-      `${REACT_APP_URL_PRO_API}shop/all`
+      `${URL_API}shop/all`
     );
 
     return response;
@@ -62,7 +61,7 @@ export const createShop = async (formData) => {
 
     // Use environment variable for the base API URL
     const response = await axiosInstance.post(
-      `${REACT_APP_URL_PRO_API}shop/create`,
+      `${URL_API}shop/create`,
       formData,
       config
     );
@@ -77,7 +76,7 @@ export const createShop = async (formData) => {
 export const getShopById = async (id) => {
   try {
     const response = await axiosInstance.get(
-      `${REACT_APP_URL_PRO_API}shop/${id}`
+      `${URL_API}shop/${id}`
     );
 
     return response.data;

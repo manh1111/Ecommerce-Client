@@ -1,11 +1,10 @@
 import axiosInstance from "./axiosInstance";
-
-const REACT_APP_URL_PRO_API = import.meta.env.VITE_URL_PRO_API;
+import { URL_API } from "../../src/config/config";
 
 export const signInWithGoogle = async () => {
   try {
     const response = await axiosInstance.get(
-      `${REACT_APP_URL_PRO_API}auth/google/callback`
+      `${URL_API}auth/google/callback`
     );
     return response;
   } catch (err) {
@@ -15,7 +14,8 @@ export const signInWithGoogle = async () => {
 
 export const signIn = async (email, password) => {
   try {
-    const result = await axiosInstance.post(`${REACT_APP_URL_PRO_API}/signin`, {
+    console.log("VITE_URL_API", URL_API);
+    const result = await axiosInstance.post(`${URL_API}/signin`, {
       email: email,
       password: password,
     });
@@ -33,7 +33,7 @@ export const signUp = async (
   password
 ) => {
   try {
-    const result = await axiosInstance.post(`${REACT_APP_URL_PRO_API}signup`, {
+    const result = await axiosInstance.post(`${URL_API}signup`, {
       userName: userName,
       full_name: full_name,
       phoneNumber: phoneNumber,
