@@ -47,6 +47,16 @@ export const addNewAddress = async (newAddress) => {
       state: newAddress.state,
       zipCode: newAddress.zipCode,
       country: newAddress.country,
+      // truyền vào 
+      /**
+       * {
+        "recipient_name": "Nguyễn Thị Hòa",
+        "recipient_phone": "0399731292",
+        "address": "Ngọc Hồi, Hà Nội",
+        "specific_address": "Số 123, đường Ngọc Hà",
+        "isDefault": true // option
+        }
+       */
     },
     config
   );
@@ -65,7 +75,7 @@ export const forgotPassword = async (email) => {
   return result.data;
 };
 
-export const resetPassword = async ({password, token}) => {
+export const resetPassword = async ({ password, token }) => {
   const config = checkToken("application/json");
   const result = await axiosInstance.post(
     `${URL_API}reset-password?token=${token}`,
