@@ -64,7 +64,7 @@
     "start": "cross-env NODE_ENV=pro vite --host",
     "build": "vite build --outDir public",
     "serve": "vite preview",
-    "dev": "cross-env NODE_ENV=dev vite  --host"
+    "dev": "cross-env NODE_ENV=dev vite --host"
   },
   "eslintConfig": {
     "extends": [

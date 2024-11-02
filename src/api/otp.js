@@ -1,11 +1,10 @@
 import { getCookie } from "@utils/cookie";
 import axiosInstance from "./axiosInstance";
 
-// Get the base API URL from environment variables
-const REACT_APP_URL_PRO_API = import.meta.env.VITE_URL_PRO_API;
+import { URL_API } from "../../src/config/config";
 
 export const VerifyUser = async (email, otp) => {
-  const result = await axiosInstance.post(`${REACT_APP_URL_PRO_API}auth/verifyUser`, {
+  const result = await axiosInstance.post(`${URL_API}auth/verifyUser`, {
     email: email,
     otp: otp,
   });
@@ -13,7 +12,7 @@ export const VerifyUser = async (email, otp) => {
 };
 
 export const SendOTP = async (email) => {
-  const result = await axiosInstance.post(`${REACT_APP_URL_PRO_API}otp/send-otp`, {
+  const result = await axiosInstance.post(`${URL_API}otp/send-otp`, {
     email: email,
   });
   return result;
@@ -41,7 +40,7 @@ export const UpLoadLogo = async (file) => {
 
   // Perform the API call to upload the logo
   const result = await axiosInstance.post(
-    `${REACT_APP_URL_PRO_API}upload/shopLogo`,
+    `${URL_API}upload/shopLogo`,
     { file: file },
     config
   );
