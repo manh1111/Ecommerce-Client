@@ -37,29 +37,19 @@ export const changePassword = async (currentPassword, newPassword) => {
 
 export const addNewAddress = async (newAddress) => {
   const config = checkToken("application/json");
+
   const result = await axiosInstance.post(
     `${URL_API}profile/address`,
     {
-      id: newAddress.id,
-      userId: newAddress.userId,
-      street: newAddress.street,
-      city: newAddress.city,
-      state: newAddress.state,
-      zipCode: newAddress.zipCode,
-      country: newAddress.country,
-      // truyền vào 
-      /**
-       * {
-        "recipient_name": "Nguyễn Thị Hòa",
-        "recipient_phone": "0399731292",
-        "address": "Ngọc Hồi, Hà Nội",
-        "specific_address": "Số 123, đường Ngọc Hà",
-        "isDefault": true // option
-        }
-       */
+      recipient_name: newAddress.recipient_name,
+      recipient_phone: newAddress.recipient_phone,
+      address: newAddress.address,
+      specific_address: newAddress.specific_address,
+      isDefault: newAddress.isDefault,
     },
     config
   );
+
   return result.data;
 };
 
@@ -100,4 +90,31 @@ export const updateProfileAvatar = async (file) => {
   return result.data;
 };
 
+export const updateAddress = async (addressId, updatedAddress) => {
+  const config = checkToken("application/json");
+  const result = await axiosInstance.put(
+    `${URL_API}profile/address/${addressId}`,
+    {
+      id: updatedAddress.id,
+      userId: updatedAddress.userId,
+      recipient_name: updatedAddress.recipient_name,
+      recipient_phone: updatedAddress.recipient_phone,
+      specific_address: updatedAddress.specific_address,
+      address: updatedAddress.address,
+      isDefault: updatedAddress.isDefault,
+      zipCode: updatedAddress.zipCode,
+      country: updatedAddress.country,
+    },
+    config
+  );
+  return result.data;
+};
 
+export const deleteAddress = async (addressId) => {
+  const config = checkToken("application/json");
+  const result = await axiosInstance.delete(
+    `${URL_API}profile/address/${addressId}`,
+    config
+  );
+  return result.data;
+};
