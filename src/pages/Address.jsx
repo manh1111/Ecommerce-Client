@@ -1,27 +1,27 @@
 import { getAllAddresses, addNewAddress } from "@api/profile";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Address = () => {
   const [addresses, setAddresses] = useState([]);
   const [newAddress, setNewAddress] = useState({
     id: "",
-    userId: "", // Set this based on your user's context
+    userId: "", // Đặt userId dựa trên ngữ cảnh của ứng dụng
     street: "",
-    province: "", // Tỉnh
-    district: "", // Quận
-    ward: "", // Phường
+    province: "",
+    district: "",
+    ward: "",
     zipCode: "",
     country: "",
   });
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
-
-  // Dữ liệu tỉnh, quận, phường
   const [locationData, setLocationData] = useState({
     provinces: [],
     districts: {},
     wards: {},
   });
+
+  console.log('locationData', locationData);
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -29,24 +29,23 @@ const Address = () => {
         const response = await getAllAddresses();
         setAddresses(response.data || []);
       } catch (error) {
-        console.error("Failed to fetch addresses:", error);
+        console.error("Không thể tải danh sách địa chỉ:", error);
         alert("Không thể tải danh sách địa chỉ. Vui lòng thử lại.");
       }
     };
 
-    // const fetchLocationData = async () => {
-    //   try {
-    //     const response = await fetch("https://provinces.open-api.vn/api/p");
-    //     const provinces = await response.json();
-    //     setLocationData((prev) => ({ ...prev, provinces }));
-    //   } catch (error) {
-    //     console.error("Failed to fetch location data:", error);
-    //     alert("Không thể tải dữ liệu địa chỉ. Vui lòng thử lại.");
-    //   }
-    // };
+    const fetchProvinces = async () => {
+      try {
+        const response = await axios.get("https://provinces.open-api.vn/api/p");
+        setLocationData((prev) => ({ ...prev, provinces: response.data }));
+      } catch (error) {
+        console.error("Không thể tải dữ liệu tỉnh:", error);
+        alert("Không thể tải dữ liệu tỉnh. Vui lòng thử lại.");
+      }
+    };
 
     fetchAddresses();
-    // fetchLocationData();
+    fetchProvinces();
   }, []);
 
   const handleInputChange = (e) => {
@@ -59,77 +58,50 @@ const Address = () => {
 
   const handleProvinceChange = async (e) => {
     const provinceCode = e.target.value;
-      try {
-        const response = await fetch("https://provinces.open-api.vn/api/p");
-        const provinces = await response.json();
-        console.log("first", provinces)
-        setLocationData((prev) => ({ ...prev, provinces }));
-      } catch (error) {
-        console.error("Failed to fetch location data:", error);
-        alert("Không thể tải dữ liệu địa chỉ. Vui lòng thử lại.");
-      }
-
     setNewAddress((prevAddress) => ({
       ...prevAddress,
       province: provinceCode,
       district: "",
       ward: "",
     }));
+
+    try {
+      const response = await axios.get(
+        `https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`
+      );
+      setLocationData((prev) => ({
+        ...prev,
+        districts: { [provinceCode]: response.data.districts },
+      }));
+    } catch (error) {
+      console.error("Không thể tải dữ liệu quận/huyện:", error);
+      alert("Không thể tải dữ liệu quận/huyện. Vui lòng thử lại.");
+    }
   };
 
- const handleDistrictChange = async (e) => {
-   const districtCode = e.target.value;
-   setNewAddress((prevAddress) => ({
-     ...prevAddress,
-     district: districtCode,
-     ward: "",
-   }));
+  const handleDistrictChange = async (e) => {
+    const districtCode = e.target.value;
+    setNewAddress((prevAddress) => ({
+      ...prevAddress,
+      district: districtCode,
+      ward: "",
+    }));
 
-   // Early return if district code or province is not set
-   if (!districtCode || !newAddress.province) return;
+    if (!newAddress.province) return;
 
-   try {
-     const wards = await fetchWardsByDistrict(
-       newAddress.province,
-       districtCode
-     );
-     if (wards) {
-       setLocationData((prevData) => ({
-         ...prevData,
-         wards: {
-           ...prevData.wards,
-           [districtCode]: wards,
-         },
-       }));
-     } else {
-       alert("Không có phường/xã nào cho quận/huyện đã chọn.");
-     }
-   } catch (error) {
-     console.error("Failed to fetch wards:", error);
-     alert("Không thể tải danh sách phường/xã. Vui lòng thử lại.");
-   }
- };
-
- const fetchWardsByDistrict = async (provinceCode, districtCode) => {
-   const response = await axios.get(
-     `https://provinces.open-api.vn/api/d/${provinceCode}?depth=2`
-   );
-    console.log("response", response);
-   if (!response.ok) {
-     throw new Error("Network response was not ok");
-   }
-   const data = await response.json();
-
-   console.log("data", data.districts);
-   // Find the selected district
-   const selectedDistrict = data.districts.find(
-     (district) => district.code === districtCode
-   );
-   console.log("selectedDistrict", selectedDistrict);
-   return selectedDistrict ? selectedDistrict.wards : null;
- };
-
-
+    try {
+      const response = await axios.get(
+        `https://provinces.open-api.vn/api/d/${districtCode}?depth=2`
+      );
+      setLocationData((prev) => ({
+        ...prev,
+        wards: { [districtCode]: response.data.wards },
+      }));
+    } catch (error) {
+      console.error("Không thể tải dữ liệu phường/xã:", error);
+      alert("Không thể tải dữ liệu phường/xã. Vui lòng thử lại.");
+    }
+  };
 
   const handleAddAddress = async () => {
     try {
@@ -137,7 +109,7 @@ const Address = () => {
       setAddresses((prevAddresses) => [...prevAddresses, addedAddress]);
       setNewAddress({
         id: "",
-        userId: "", // Set userId based on your application's context
+        userId: "",
         street: "",
         province: "",
         district: "",
@@ -145,17 +117,16 @@ const Address = () => {
         zipCode: "",
         country: "",
       });
-      setIsAddingNewAddress(false); // Close the form after adding
+      setIsAddingNewAddress(false);
       alert("Địa chỉ mới đã được thêm thành công!");
     } catch (error) {
-      console.error("Failed to add new address:", error);
+      console.error("Không thể thêm địa chỉ mới:", error);
       alert("Không thể thêm địa chỉ mới. Vui lòng thử lại.");
     }
   };
 
   return (
     <div className="w-full mx-auto p-6">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Địa chỉ của tôi</h2>
         <button
@@ -166,11 +137,9 @@ const Address = () => {
         </button>
       </div>
 
-      {/* New Address Form */}
       {isAddingNewAddress ? (
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4">Thêm địa chỉ mới</h3>
-          {/* Province Selection */}
           <select
             name="province"
             onChange={handleProvinceChange}
@@ -185,7 +154,6 @@ const Address = () => {
             ))}
           </select>
 
-          {/* District Selection */}
           <select
             name="district"
             onChange={handleDistrictChange}
@@ -194,15 +162,13 @@ const Address = () => {
           >
             <option value="">Chọn quận/huyện</option>
             {newAddress.province &&
-              locationData.districts[newAddress.province] &&
-              locationData.districts[newAddress.province].map((district) => (
+              locationData.districts[newAddress.province]?.map((district) => (
                 <option key={district.code} value={district.code}>
                   {district.name}
                 </option>
               ))}
           </select>
 
-          {/* Ward Selection */}
           <select
             name="ward"
             onChange={handleInputChange}
@@ -211,8 +177,7 @@ const Address = () => {
           >
             <option value="">Chọn phường/xã</option>
             {newAddress.district &&
-              locationData.wards[newAddress.district] &&
-              locationData.wards[newAddress.district].map((ward) => (
+              locationData.wards[newAddress.district]?.map((ward) => (
                 <option key={ward.code} value={ward.code}>
                   {ward.name}
                 </option>
@@ -242,16 +207,12 @@ const Address = () => {
           </button>
         </div>
       ) : (
-        // Address List
         <div className="bg-white rounded-lg shadow-lg p-6">
           {addresses.length > 0 ? (
             addresses.map(
               (address) =>
                 address && (
-                  <div
-                    key={address?.id}
-                    className="border-b pb-4 mb-4 last:border-b-0"
-                  >
+                  <div key={address?.id} className="border-b pb-4 mb-4 last:border-b-0">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <p className="font-semibold text-lg text-gray-800">
