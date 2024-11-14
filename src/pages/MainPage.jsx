@@ -29,14 +29,15 @@ const MainPage = () => {
        const product = await GetAllProduct();
        const productData = product.data.productsWithCounts;
        const mappedProducts = productData.map((product) => ({
-         imageSrc: product?.product_img[0], 
-         promotionOverlaySrc: product?.product_img[1], 
-         altText: product?.product_name, 
-         price: product?.product_price, 
-         discount: "10%", 
-         promotionText: "Flash Sale", 
-         rating: product?.avgRating, 
-         soldCount: product?.soldCount, 
+         imageSrc: product?.product_img[0],
+         promotionOverlaySrc: product?.product_img[1],
+         altText: product?.product_name,
+         id: product?._id,
+         price: product?.product_price,
+         discount: "10%",
+         promotionText: "Flash Sale",
+         rating: product?.avgRating,
+         soldCount: product?.soldCount,
        }));
        setProducts(mappedProducts);
      } catch (error) {
@@ -45,6 +46,8 @@ const MainPage = () => {
    };
    fetchProductData();
  }, []);
+  
+  console.log("first", products);
   return (
     <>
       <PageHeader title="Discover" changePageName={false} />

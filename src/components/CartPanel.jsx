@@ -5,7 +5,7 @@ import { getCart } from "@api/cart";
 import { getShopById } from "@api/shop";
 import { getProductById } from "@api/product";
 import Loading from "@components/Loading";
-import { createOrder } from "@api/order"; 
+import { createOrder } from "@api/order";
 import { Image } from "antd";
 import { changeQuantityProduct, deleteProductById } from "../api/cart";
 import { toast } from "react-toastify";
@@ -102,8 +102,8 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       await Promise.all(
         cartData.cart_products.map(async (item) => {
           const { shopId, productId, quantity } = item;
-          const shopData = await getShopById(shopId);
-
+          const shop = await getShopById(shopId);
+          const shopData = shop.shop;
           if (!productsByShop[shopId]) {
             productsByShop[shopId] = {
               shopId: shopData._id,
@@ -141,7 +141,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       return updated;
     });
   };
-  
+
   const handleQuantityChange = async (id, delta) => {
     try {
       // Find the current product in the list
@@ -200,8 +200,6 @@ const CartPanel = ({ open, onOpen, onClose }) => {
     }
   };
 
-
-
   const calculateTotalPrice = () =>
     Array.from(selectedIds).reduce((total, id) => {
       let itemTotal = 0;
@@ -214,7 +212,6 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       return total + itemTotal;
     }, 0);
 
-  
   const handleBuyNow = async () => {
     const selectedProducts = Array.from(selectedIds)
       .map((id) => {

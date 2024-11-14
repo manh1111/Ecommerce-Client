@@ -37,7 +37,7 @@ const RevenueByPeriod = lazy(() => import("@pages/RevenueByPeriod"));
 const TopProducts = lazy(() => import("@pages/TopProducts"));
 const ProductsGrid = lazy(() => import("@pages/ProductsGrid"));
 const ProductsManagement = lazy(() => import("@pages/ProductsManagement"));
-// const ProductEditor = lazy(() => import("@pages/EditProduct"));
+const ProductEditor = lazy(() => import("@pages/EditProduct"));
 const StartSelling = lazy(() => import("@pages/StartSelling"));
 const Banners = lazy(() => import("@pages/Banners"));
 const Orders = lazy(() => import("@pages/Orders"));
@@ -91,12 +91,14 @@ const App = () => {
                   <Route path="/payment-failed" element={<ConfirmPayment />} />
                   <Route path="/" element={<MainPage />} />
                   <Route path="/salesAnalytics" element={<SalesAnalytics />} />
-                  <Route path="/sellers-list" element={<SellersList />} />
-                  <Route path="/sellers-table" element={<SellersTable />} />
-                  <Route path="/sellers-grid" element={<SellersGrid />} />
                   <Route
                     path="/products-management"
                     element={<ProductsManagement />}
+                  />
+                  <Route path="/product-editor" element={<ProductEditor />} />
+                  <Route
+                    path="/product-editor/:id"
+                    element={<ProductEditor />}
                   />
                   <Route path="/seller-profile" element={<SellerProfile />} />
                   <Route

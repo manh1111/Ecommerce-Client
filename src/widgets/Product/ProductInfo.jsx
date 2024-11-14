@@ -75,9 +75,9 @@ const ProductInfo = ({ product, shopData }) => {
 
   return (
     <div className="w-full h-full mt-12 px-4 xl:px-8">
-      <div className="flex flex-col xl:flex-row gap-8">
+      <div className="flex flex-row xl:flex-row gap-8">
         {/* Product Images */}
-        <div className="xl:w-1/2 w-full flex flex-col items-center justify-center gap-8 relative">
+        <div className="xl:w-1/2 w-full max-h-80 flex flex-col items-center justify-center gap-8 relative">
           <div className="w-full flex items-center justify-center relative">
             {/* Left Arrow for Previous Image */}
             <button
@@ -87,17 +87,17 @@ const ProductInfo = ({ product, shopData }) => {
               <LeftOutlined style={{ fontSize: "24px" }} />
             </button>
 
-            <div className="w-11/12">
+            <div className="max-h-80">
               {/* Product Image */}
               {product?.mainImage?.map((image, index) => (
                 <div
                   key={index}
-                  className={`w-full flex items-center justify-center ${
+                  className={`w-full max-h-48 flex items-center justify-center ${
                     index === currentImageIndex ? "block" : "hidden"
                   }`}
                 >
                   <Image
-                    className="object-contain min-h-80 xl:h-[400px] h-fit w-fit"
+                    className="object-contain max-h-80 h-fit w-fit"
                     src={image}
                     alt={`Product Image ${index + 1}`}
                   />

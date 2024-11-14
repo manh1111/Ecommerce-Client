@@ -1,10 +1,7 @@
-import axiosInstance from "@api/axiosInstance";
+import axiosInstance from "../api/axiosInstance";
 import { checkToken } from "@utils/auth";
-import { getCookie } from "@utils/cookie";
 
-// Get the base API URL from environment variables
-const URL_API =
-  "https://ecommerce-server-0mcc.onrender.com/v1/api/";
+import { URL_API } from "../../src/config/config";
 
 export const GetAllProduct = async () => {
   try {
@@ -84,4 +81,95 @@ export const searchProduct = async ({
     }
   );
   return result.data;
+};
+
+export const createProduct = async ({
+  product_name,
+  product_desc,
+  product_price,
+  product_quantity,
+  category_id,
+  files, 
+  isDraft = false, 
+  isPublic = false, 
+}) => {
+  try {
+    const formData = new FormData();
+    formData.append("product_name", product_name);
+    formData.append("product_desc", product_desc);
+    formData.append("product_price", product_price);
+    formData.append("product_quantity", product_quantity);
+    formData.append("category_id", category_id);
+
+    // Append each file to formData
+    files.forEach((file) => formData.append("files", file));
+
+    // Append publication status
+    if (isDraft) formData.append("isDraft", "true");
+    if (isPublic) formData.append("isPublic", "true");
+
+    const config = checkToken("multipart/form-data");
+    const response = await axiosInstance.post(
+      `${URL_API}product`,
+      formData,
+      config
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error creating product:", error);
+    throw error;
+  }
+};
+
+
+export const updateProduct = async ({
+  id,
+  product_name,
+  product_desc,
+  product_price,
+  product_quantity,
+  category_id,
+  files = [],
+}) => {
+  try {
+    const formData = new FormData();
+    formData.append("product_name", product_name);
+    formData.append("product_desc", product_desc);
+    formData.append("product_price", product_price);
+    formData.append("product_quantity", product_quantity);
+    formData.append("category_id", category_id);
+
+    // Append each file to formData if there are any files
+    files.forEach((file) => formData.append("product_img", file));
+
+    const config = checkToken("multipart/form-data");
+    const response = await axiosInstance.put(
+      `${URL_API}product/${id}`,
+      formData,
+      config
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw error;
+  }
+};
+
+// In your API file (e.g., product.js)
+
+export const deleteProducts = async ({ids}) => {
+  try {
+    const config = checkToken("application/json");
+    const result = await axiosInstance.delete(
+      `${URL_API}product`,
+      config
+    );
+
+    return result.data;
+  } catch (error) {
+    console.error("Error deleting products:", error);
+    throw error;
+  }
 };

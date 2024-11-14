@@ -74,3 +74,17 @@ export const deleteOrderById = async (orderId) => {
     throw error;
   }
 };
+
+export const getOrdersForShop = async () => {
+  try {
+    const config = checkToken("application/json");
+    const response = await axiosInstance.get(
+      `${URL_API}order/shop-owners`,
+      config
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch categories", error);
+    throw error;
+  }
+};

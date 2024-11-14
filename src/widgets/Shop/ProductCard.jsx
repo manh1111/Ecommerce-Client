@@ -14,11 +14,7 @@ const ProductCard = ({ product }) => {
           className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
         />
         <div className="absolute bottom-0 left-0 w-full h-full rounded-t-lg">
-          {/* <img
-            src={product?.promotionOverlaySrc}
-            className="w-full h-full object-cover rounded-t-lg"
-            alt="custom-overlay"
-          /> */}
+
         </div>
         <div className="absolute bottom-0 right-0 flex pr-1 pb-1">
           <div

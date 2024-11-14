@@ -8,8 +8,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
   const [orders, setOrders] = useState(initialOrders);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [isCancelling, setIsCancelling] = useState(false); // Track cancellation state
-
+  const [isCancelling, setIsCancelling] = useState(false); 
   const handleCancelOrder = async (orderId) => {
     const updatedOrders = orders.filter((order) => order._id !== orderId);
     setOrders(updatedOrders);

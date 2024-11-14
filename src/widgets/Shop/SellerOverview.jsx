@@ -16,7 +16,7 @@ const SellerOverview = ({
     const calculateTimeSinceJoined = () => {
       const joinedDate = new Date(joinDate);
       const currentDate = new Date();
-      const timeDifference = currentDate - joinedDate; // Difference in milliseconds
+      const timeDifference = currentDate - joinedDate; 
       const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
 
       let timeDisplay = "";
@@ -37,13 +37,10 @@ const SellerOverview = ({
       setTimeSinceJoined(timeDisplay);
     };
 
-    // Initial calculation when the component mounts
     calculateTimeSinceJoined();
 
-    // Set an interval to update every 24 hours (1 day)
     const interval = setInterval(calculateTimeSinceJoined, 1000 * 60 * 60 * 24);
 
-    // Clean up the interval when the component is unmounted
     return () => clearInterval(interval);
   }, [joinDate]);
   return (

@@ -161,7 +161,7 @@ const AuthLayout = () => {
               <button
                 className="btn btn--primary w-full"
                 type="submit"
-                disabled={loading} // Disable button when loading
+                disabled={loading} 
               >
                 Sign In
               </button>

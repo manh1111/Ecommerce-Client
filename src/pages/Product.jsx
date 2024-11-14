@@ -20,7 +20,7 @@ const Product = () => {
         setProductData(productDetails);
 
         const shopDetails = await getShopById(productDetails.shop_id._id);
-        setShop(shopDetails);
+        setShop(shopDetails.shop);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
