@@ -1,15 +1,13 @@
 // components
 import PageHeader from "@layout/PageHeader";
-import CalendarSelector from "@components/CalendarSelector";
 import Select from "@ui/Select";
 import OrdersAverageRate from "@widgets/OrdersAverageRate";
 import OrdersInfobox from "@components/OrdersInfobox";
-import OrdersTable from "@widgets/OrdersTable";
+import OrdersTableShop from "@widgets/OrdersTableShop";
 import Loader from "@components/Loader";
-// hooks
+
 import { useState, useEffect } from "react";
 
-// constants
 import { PRODUCT_CATEGORIES, ORDER_SORT_OPTIONS } from "@constants/options";
 import { getOrdersForShop } from "@api/order";
 
@@ -19,85 +17,133 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("pending");
+  const [updatedOrders, setUpdatedOrders] = useState([]); 
+
+  const orderStatuses = [
+    { value: "", name: "Tất cả đơn hàng" },
+    { value: "pending", name: "Chờ xử lý" },
+    { value: "processing", name: "Đang xử lý" },
+    { value: "shipped", name: "Đã vận chuyển" },
+    { value: "completed", name: "Đã giao hàng" },
+    { value: "cancelled", name: "Đã hủy" },
+    { value: "paid", name: "Đã thanh toán" },
+  ];
 
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
-      setError(null);
       try {
-        const data = await getOrdersForShop();
-        setOrders(data.orders || []); // Adjust based on actual data structure
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-        setError("Failed to load orders. Please try again later.");
+        const data = await getOrdersForShop(activeTab);
+        setOrders(data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        setError("Không thể tải đơn hàng. Vui lòng thử lại.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchOrders();
-  }, []);
+  }, [activeTab]);
+
+  const handleOrderUpdate = (orderId) => {
+    setUpdatedOrders((prev) => [...prev, orderId]);
+  };
+
+  const filteredOrders = orders.filter(
+    (order) => !updatedOrders.includes(order.id)
+  );
+
+  const renderStatusTabs = () =>
+    orderStatuses.map((status) => (
+      <button
+        key={status.value}
+        onClick={() => setActiveTab(status.value)}
+        className={`py-2 px-4 rounded ${
+          activeTab === status.value
+            ? "bg-blue-500 text-white"
+            : "bg-gray-200 text-gray-700"
+        }`}
+      >
+        {status.name}
+      </button>
+    ));
+
+  // Render the infobox widgets
+  const renderInfoboxWidgets = () => (
+    <div className="widgets-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:col-span-4">
+      <OrdersInfobox
+        title="Hoàn thành"
+        count={2345}
+        icon={<i className="icon-check-to-slot-solid" />}
+      />
+      <OrdersInfobox
+        title="Đã xác nhận"
+        count={323}
+        color="green"
+        icon={<i className="icon-list-check-solid" />}
+      />
+      <OrdersInfobox
+        title="Đã hủy"
+        count={17}
+        color="red"
+        icon={<i className="icon-ban-solid" />}
+      />
+      <OrdersInfobox
+        title="Đã hoàn tiền"
+        count={2}
+        color="badge-status-bg"
+        icon={<i className="icon-rotate-left-solid" />}
+      />
+    </div>
+  );
 
   return (
     <>
-      <PageHeader title="Orders" />
+      <PageHeader title="Đơn Hàng" />
       <div className="flex flex-col flex-1 gap-5 md:gap-[26px]">
+        {/* Order Status Tabs */}
+        <div className="flex gap-4">{renderStatusTabs()}</div>
+
+        {/* Filters Section */}
         <div className="w-full grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-[26px] lg:grid-cols-4 lg:items-end xl:grid-cols-6">
-          <CalendarSelector
-            wrapperClass="lg:max-w-[275px] lg:col-span-2 xl:col-span-4"
-            id="ordersPeriodSelector"
-          />
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-[26px] md:col-span-2">
             <Select
               value={category}
               options={PRODUCT_CATEGORIES}
               onChange={setCategory}
-              placeholder="Product category"
+              placeholder="Danh mục sản phẩm"
             />
             <Select
               value={sort}
               options={ORDER_SORT_OPTIONS}
               onChange={setSort}
-              placeholder="Default sorting"
+              placeholder="Sắp xếp mặc định"
             />
           </div>
         </div>
+
+        {/* Widgets Section */}
         <div className="w-full widgets-grid grid-cols-1 xl:grid-cols-6">
           <div className="xl:col-span-2">
             <OrdersAverageRate />
           </div>
-          <div className="widgets-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:col-span-4">
-            <OrdersInfobox
-              title="Completed"
-              count={2345}
-              icon={<i className="icon-check-to-slot-solid" />}
-            />
-            <OrdersInfobox
-              title="Confirmed"
-              count={323}
-              color="green"
-              icon={<i className="icon-list-check-solid" />}
-            />
-            <OrdersInfobox
-              title="Canceled"
-              count={17}
-              color="red"
-              icon={<i className="icon-ban-solid" />}
-            />
-            <OrdersInfobox
-              title="Refunded"
-              count={2}
-              color="badge-status-bg"
-              icon={<i className="icon-rotate-left-solid" />}
-            />
-          </div>
+          {renderInfoboxWidgets()}
         </div>
+
+        {/* Orders Table or Loader */}
         {loading ? (
           <Loader />
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <OrdersTable initialOrders={orders} category={category} sort={sort} />
+          <OrdersTableShop
+            initialOrders={filteredOrders}
+            category={category}
+            sort={sort}
+            onOrderUpdate={handleOrderUpdate} 
+          />
         )}
       </div>
     </>

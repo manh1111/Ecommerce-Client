@@ -120,45 +120,19 @@ export const TRANSACTIONS_COLUMN_DEFS = [
     render: (timestamp) => <Timestamp date={timestamp} />,
   },
   {
-    title: "Người bán",
-    dataIndex: "seller",
-    render: (text, record) => {
-      return (
-        <>
-          {record.seller ? (
-            <div className="flex items-center gap-[18px]">
-              <div className="img-wrapper w-[60px] h-[60px] flex items-center justify-center shrink-0">
-                <img
-                  className="max-w-[50px]"
-                  src={record.seller.logo}
-                  alt={record.seller.name}
-                />
-              </div>
-              <span className="hidden truncate lg:inline">
-                {record.seller.name}
-              </span>
-            </div>
-          ) : (
-            "N/A"
-          )}
-        </>
-      );
-    },
-  },
-  {
-    title: "SKU",
-    dataIndex: "sku",
+    title: "ID",
+    dataIndex: "id",
     responsive: ["lg"],
   },
   {
     title: "Phương thức",
     dataIndex: "method",
-    responsive: ["xxl"],
+    responsive: ["lg"],
   },
   {
-    title: "Loại",
-    dataIndex: "type",
-    render: (type) => <span className="capitalize">{type}</span>,
+    title: "Order id",
+    dataIndex: "order_id",
+    render: (order_id) => <span className="capitalize">{order_id}</span>,
   },
   {
     title: "Trạng thái",
@@ -173,34 +147,12 @@ export const TRANSACTIONS_COLUMN_DEFS = [
     ),
   },
   {
-    title: "Quốc gia",
-    dataIndex: "country",
-    responsive: ["xxl"],
-  },
-  {
-    title: "Tiền tệ",
-    dataIndex: "currency",
-    responsive: ["xl"],
-  },
-  {
-    title: "Phí",
-    dataIndex: "fee",
-    responsive: ["xl"],
-  },
-  {
-    title: "Thuế",
-    dataIndex: "tax",
-    responsive: ["xl"],
-  },
-  {
     title: "Tổng",
-    dataIndex: "total",
-    render: (text, record) => {
-      const total = record.fee - (record.fee / 100) * record.tax;
-
+    dataIndex: "amount",
+    render: (amount) => {
       return (
         <span className="font-heading font-semibold text-header">
-          ${total.toFixed(2)}
+          {amount} VND
         </span>
       );
     },

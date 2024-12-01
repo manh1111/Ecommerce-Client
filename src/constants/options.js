@@ -69,6 +69,7 @@ export const PRODUCT_MANAGEMENT_OPTIONS = [
   { value: "all", label: "Tất cả" },
   { value: "publish", label: "Đã xuất bản" },
   { value: "draft", label: "Bản nháp" },
+  { value: "deleted", label: "Đã xóa" },
 ];
 
 export const ORDER_SORT_OPTIONS = [

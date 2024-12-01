@@ -11,6 +11,7 @@ import { NavLink } from "react-router-dom";
 import dayjs from "dayjs";
 import getProducts, { fetchProducts } from "@db/products_management";
 import { deleteProducts } from "@api/product";
+import { toast } from "react-toastify";
 
 const ProductManagementTable = () => {
   const { width } = useWindowSize();
@@ -58,18 +59,27 @@ const ProductManagementTable = () => {
   const handleDeleteProducts = async () => {
     try {
       if (selectedProducts.length > 0) {
-        console.log("first,", selectedProducts);
         const response = await deleteProducts(selectedProducts);
         setProducts(getProducts());
-        setSelectedProducts([]); 
-        
-        alert("Products deleted successfully");
+        setSelectedProducts([]);
+
+        toast.success("Sản phẩm đã được xóa thành công", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 5000, 
+        });
       } else {
-        alert("No products selected for deletion");
+        toast.warn("Chưa chọn sản phẩm để xóa", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 5000,
+        });
       }
     } catch (error) {
-      console.error("Error deleting products:", error);
-      alert("Error deleting products");
+      console.error("Lỗi khi xóa sản phẩm:", error);
+
+      toast.error("Lỗi khi xóa sản phẩm", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000,
+      });
     }
   };
 
@@ -122,7 +132,16 @@ const ProductManagementTable = () => {
     {
       title: "Giá",
       dataIndex: "price",
-      render: (price) => <span>${price ? price.toFixed(2) : "0.00"}</span>,
+      render: (price) => {
+        const formattedPrice = price
+          ? price.toLocaleString("vi-VN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })
+          : "0.00";
+
+        return <span>₫{formattedPrice}</span>;
+      },
     },
     {
       title: "Danh mục",

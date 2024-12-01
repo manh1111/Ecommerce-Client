@@ -171,7 +171,7 @@ const AppBar = () => {
               <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
                 <button
                   className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={handleMessagesClick} // Use the new function here
+                  onClick={handleMessagesClick} 
                   aria-label="Messages"
                 >
                   <i className="fas fa-truck" title="Theo dõi đơn hàng" />

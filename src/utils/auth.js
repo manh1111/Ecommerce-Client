@@ -2,11 +2,7 @@ import { getCookie } from "./cookie";
 
 export function checkAvailableLogin() {
   var token = getCookie("token");
-  if (token == null) {
-    return false;
-  } else {
-    return true;
-  }
+  return token !== null;
 }
 
 export function checkToken(contentType = "application/json") {
@@ -23,6 +19,7 @@ export function checkToken(contentType = "application/json") {
     throw new Error("No authentication token found");
   }
 
+  console.log("token", token)
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,

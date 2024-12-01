@@ -159,11 +159,13 @@ export const updateProduct = async ({
 
 // In your API file (e.g., product.js)
 
-export const deleteProducts = async ({ids}) => {
+export const deleteProducts = async (ids) => {
   try {
     const config = checkToken("application/json");
+    console.log("first", config, ids);
     const result = await axiosInstance.delete(
       `${URL_API}product`,
+      ids,
       config
     );
 

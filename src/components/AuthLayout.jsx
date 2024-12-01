@@ -43,15 +43,18 @@ const AuthLayout = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const accessToken = searchParams.get("access_token");
+    const refreshToken = searchParams.get("refresh_token");
 
-    if (accessToken) {
+    if (accessToken && refreshToken) {
       dispatch(CHANGE_STATUS_AUTH(true));
       dispatch(CHANGE_VALUE_TOKEN(accessToken));
+
       setCookie("token", accessToken, expirationHours);
+      setCookie("refresh_token", refreshToken, expirationHours);
       setCookie("user_login", accessToken);
       navigate("/");
     } else if (googleLoginAttempt) {
-      toast.error("Không thể đăng nhập bằng Google!");
+      toast.error("Unable to sign in with Google!");
       setGoogleLoginAttempt(false);
     }
   }, [location.search, googleLoginAttempt, dispatch, navigate]);
@@ -60,19 +63,17 @@ const AuthLayout = () => {
     setLoading(true);
     try {
       const response = await signIn(data.email, data.password);
+      const { accessToken, refreshToken } = response?.data?.metadata?.tokens;
+
       dispatch(CHANGE_STATUS_AUTH(true));
-      dispatch(
-        CHANGE_VALUE_TOKEN(response?.data?.metadata?.tokens.accessToken)
-      );
-      setCookie(
-        "token",
-        response?.data?.metadata?.tokens.accessToken,
-        expirationHours
-      );
-      setCookie("user_login", response?.data?.metadata?.tokens.accessToken);
+      dispatch(CHANGE_VALUE_TOKEN(accessToken));
+
+      setCookie("token", accessToken, expirationHours);
+      setCookie("refresh_token", refreshToken, expirationHours);
+      setCookie("user_login", accessToken);
       navigate("/");
     } catch (err) {
-      toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
+      toast.error("Login failed! Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -161,7 +162,7 @@ const AuthLayout = () => {
               <button
                 className="btn btn--primary w-full"
                 type="submit"
-                disabled={loading} 
+                disabled={loading}
               >
                 Sign In
               </button>

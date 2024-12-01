@@ -3,12 +3,15 @@ import { useState } from "react";
 import { deleteOrderById } from "@api/order";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { createReview } from "@api/review"; // Import createReview API
 
 const OrdersTable = ({ initialOrders = [] }) => {
   const [orders, setOrders] = useState(initialOrders);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [isCancelling, setIsCancelling] = useState(false); 
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [reviewData, setReviewData] = useState({}); // State to hold review data
+
   const handleCancelOrder = async (orderId) => {
     const updatedOrders = orders.filter((order) => order._id !== orderId);
     setOrders(updatedOrders);
@@ -17,7 +20,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
       const res = await deleteOrderById(orderId);
       if (res.status === 200) {
         toast.success("Đơn hàng đã được hủy thành công.", {
-          toastId: orderId, // Dùng toastId để đảm bảo không hiển thị nhiều lần
+          toastId: orderId,
         });
       } else {
         throw new Error("Failed to cancel the order");
@@ -25,13 +28,41 @@ const OrdersTable = ({ initialOrders = [] }) => {
     } catch (error) {
       console.error("Error cancelling order:", error);
       toast.error("Có lỗi xảy ra khi hủy đơn hàng.", {
-        toastId: "error_" + orderId, // Tạo một toastId khác cho thông báo lỗi
+        toastId: "error_" + orderId,
       });
 
       setOrders(initialOrders);
     }
   };
 
+  const handleReviewChange = (orderId, productId, field, value) => {
+    setReviewData((prev) => ({
+      ...prev,
+      [orderId]: {
+        ...(prev[orderId] || {}),
+        [productId]: {
+          ...prev[orderId]?.[productId],
+          [field]: value,
+        },
+      },
+    }));
+  };
+
+  const handleSubmitReview = async (orderId, productId) => {
+    const { rating, comment } = reviewData[orderId]?.[productId] || {};
+
+    if (!rating || !comment) {
+      toast.error("Vui lòng cung cấp đánh giá và bình luận.");
+      return;
+    }
+
+    try {
+      await createReview(productId, rating, comment);
+      toast.success("Đánh giá đã được gửi thành công!");
+    } catch (error) {
+      toast.error("Có lỗi xảy ra khi gửi đánh giá.");
+    }
+  };
 
   // Filter orders based on selected date range
   const filteredOrders = orders.filter((order) => {
@@ -151,6 +182,60 @@ const OrdersTable = ({ initialOrders = [] }) => {
                         {product.price.toLocaleString()}₫
                       </span>
                     </p>
+
+                    {/* Show the "Rate Order" button if the order is complete */}
+                    {order.order_status === "complete" && (
+                      <div className="mt-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Đánh giá:
+                        </label>
+                        <div className="flex space-x-2">
+                          <input
+                            type="number"
+                            className="border-2 border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+                            placeholder="Rating (1-5)"
+                            min="1"
+                            max="5"
+                            value={
+                              reviewData[order._id]?.[product._id]?.rating || ""
+                            }
+                            onChange={(e) =>
+                              handleReviewChange(
+                                order._id,
+                                product._id,
+                                "rating",
+                                e.target.value
+                              )
+                            }
+                          />
+                          <textarea
+                            className="border-2 border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+                            placeholder="Your comment"
+                            rows="3"
+                            value={
+                              reviewData[order._id]?.[product._id]?.comment ||
+                              ""
+                            }
+                            onChange={(e) =>
+                              handleReviewChange(
+                                order._id,
+                                product._id,
+                                "comment",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                        <button
+                          className="mt-2 text-white bg-blue-500 rounded-xl px-4 py-2"
+                          onClick={() =>
+                            handleSubmitReview(order._id, product._id)
+                          }
+                        >
+                          Gửi đánh giá
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -158,6 +243,8 @@ const OrdersTable = ({ initialOrders = [] }) => {
           </div>
         ))
       )}
+
+      <ToastContainer />
     </div>
   );
 };
