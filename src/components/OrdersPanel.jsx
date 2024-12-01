@@ -9,22 +9,23 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("pending");
 
- const orderStatuses = [
-   "pending",
-   "processing",
-   "shipped",
-   "delivered",
-   "complete",
-   "cancelled",
- ];
+  const orderStatuses = [
+    "",
+    "pending",
+    "confirmed",
+    "shipped",
+    "completed",
+    "waiting",
+    "cancelled",
+  ];
 
  const statusTranslation = {
    pending: "Chờ xử lý",
-   processing: "Đang xử lý",
-   shipped: "Đã gửi",
-   delivered: "Đã giao",
-   complete: "Hoàn thành",
+   confirmed: "Đã xác nhận",
+   shipped: "Đang vận chuyển",
+   completed: "Hoàn thành",
    cancelled: "Đã hủy",
+   waiting: "Chờ thanh toán"
  };
 
   useEffect(() => {
@@ -45,17 +46,13 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
     }
   }, [open, activeTab]);
 
-  const filteredOrders = orders.filter(
-    (order) => order.order_status === activeTab
-  );
+  console.log("order", orders);
+  const filteredOrders = orders
 
-  // Function to handle "Đánh giá" or "Chưa nhận hàng" button click for each order
   const handleButtonClick = (order, action) => {
     if (action === "review") {
-      // Logic for review button click
       console.log("Review order", order);
     } else if (action === "notReceived") {
-      // Logic for "Chưa nhận hàng" button click
       console.log("Order not received", order);
     }
   };
@@ -88,9 +85,9 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 text-gray-800 hover:bg-blue-100"
               }`}
-              onClick={() => setActiveTab(status)} 
+              onClick={() => setActiveTab(status)}
             >
-              {statusTranslation[status]}{" "}
+              {statusTranslation[status] || "Tất cả"}{" "}
             </button>
           ))}
         </div>

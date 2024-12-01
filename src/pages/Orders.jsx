@@ -23,11 +23,11 @@ const Orders = () => {
   const orderStatuses = [
     { value: "", name: "Tất cả đơn hàng" },
     { value: "pending", name: "Chờ xử lý" },
-    { value: "processing", name: "Đang xử lý" },
-    { value: "shipped", name: "Đã vận chuyển" },
+    { value: "confirmed", name: "Đã xác nhận" },
+    { value: "shipped", name: "Đang vận chuyển" },
     { value: "completed", name: "Đã giao hàng" },
     { value: "cancelled", name: "Đã hủy" },
-    { value: "paid", name: "Đã thanh toán" },
+    { value: "waiting", name: "Chờ thanh toán" },
   ];
 
   useEffect(() => {

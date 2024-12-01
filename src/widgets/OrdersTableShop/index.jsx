@@ -45,9 +45,9 @@ const OrdersTable = ({ initialOrders }) => {
       let nextStatus;
       switch (orderToUpdate.order_status) {
         case "pending":
-          nextStatus = "processing";
+          nextStatus = "confirmed";
           break;
-        case "processing":
+        case "confirmed":
           nextStatus = "shipped";
           break;
         case "shipped":
@@ -78,7 +78,9 @@ const OrdersTable = ({ initialOrders }) => {
     }
   };
 
-
+   {
+     console.log("filteredOrders", orders);
+   }
   const filteredOrders = orders.filter((order) => {
     const orderDate = dayjs(order.createdAt);
     const isAfterStartDate = startDate
@@ -127,6 +129,7 @@ const OrdersTable = ({ initialOrders }) => {
       </div>
 
       {/* Danh sách đơn hàng */}
+      {console.log("filteredOrders", filteredOrders)}
       {filteredOrders.length === 0 ? (
         <p className="text-gray-600 text-center">
           Không có đơn hàng nào để hiển thị.

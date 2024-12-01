@@ -235,7 +235,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
               className="mt-6 w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               disabled={loading}
             >
-              {loading ? "Đang xử lý..." : "Đặt hàng"}
+              {loading ? "Đã xác nhận..." : "Đặt hàng"}
             </button>
           </>
         ) : (

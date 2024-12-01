@@ -71,7 +71,7 @@ export const searchProduct = async ({
   sortBy = "-createdAt",
 }) => {
   const result = await axiosInstance.post(
-    `${URL_API}product/search`,
+    `${URL_API}product/search?searchQuery=${searchQuery}&category=${category}&sortBy=${sortBy}`,
     {
       searchQuery,
       category,

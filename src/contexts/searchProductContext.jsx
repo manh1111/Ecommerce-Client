@@ -55,6 +55,7 @@ export const SearchProductProvider = ({ children }) => {
 
       // Fetch filtered products based on the search query and category
       const response = await searchProduct({ searchQuery, categoryId });
+      console.log("responseFetch filtered products", response);
       if (
         response.productsWithCounts &&
         Array.isArray(response.productsWithCounts)
@@ -75,7 +76,7 @@ export const SearchProductProvider = ({ children }) => {
         }));
 
         console.log("response", products);
-        setFilteredProducts(products); // Update filtered products based on search
+        setFilteredProducts(products); 
       } else {
         console.warn("Unexpected response structure:", response.data);
         setFilteredProducts([]); // Reset filtered products if response is unexpected
