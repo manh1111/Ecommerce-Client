@@ -13,14 +13,14 @@ import { useParams } from "react-router-dom";
 import { getCatalogByShopId } from "@api/catalog ";
 import { getProductsByCatalogShop, getAllProductsShopId } from "@api/product";
 import { getShopById } from "@api/shop";
-import Loading from "@components/Loading";
+import Loader from "@components/Loader";
 
 const Shop = () => {
   const [shop, setShop] = useState([]);
   const [catalogs, setCatalogs] = useState([]);
   const [categories, setCategories] = useState([]);
   const [allProduct, setAllProduct] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoader] = useState(true);
   const { id } = useParams();
   const getRandomNumber = (min, max) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
@@ -39,7 +39,7 @@ const Shop = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true); // Set loading to true before fetching data
+        setLoader(true); // Set loading to true before fetching data
         // Fetch shop details
         const shopDetails = await getShopById(id);
         setShop(shopDetails.shop);
@@ -94,7 +94,7 @@ const Shop = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false); // Set loading to false after data fetching
+        setLoader(false); // Set loading to false after data fetching
       }
     };
 
@@ -102,7 +102,7 @@ const Shop = () => {
   }, [id]);
 
   if (loading) {
-    return <Loading />;
+    return <Loader />;
   }
 
   const defaultProducts = [

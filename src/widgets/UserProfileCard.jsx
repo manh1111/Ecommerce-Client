@@ -97,11 +97,11 @@ const UserProfileCard = () => {
       </div>
       <h4>{userData?.userName}</h4>
       <p className="subheading-2 mt-6 mb-[18px]">
-        last visit {dayjs().format("DD/MM/YYYY")}
+        đăng nhập lần cuối {dayjs().format("DD/MM/YYYY")}
       </p>
       <div className="" onClick={handleLogout}>
         <button className="btn btn--secondary w-full md:max-w-[280px]">
-          Log Out
+          Đăng xuất
         </button>
       </div>
       {!roleNames.includes("shop") && (
@@ -110,7 +110,7 @@ const UserProfileCard = () => {
           type="button"
           onClick={handleStartSelling}
         >
-          Start Selling
+          Bắt đầu bán
         </button>
       )}
     </Spring>

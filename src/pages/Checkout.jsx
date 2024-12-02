@@ -23,7 +23,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
   const [address, setAddress] = useState("");
   const [addresses, setAddresses] = useState([]);
   const [paymentGateway, setPaymentGateway] = useState("cod");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoader] = useState(false);
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -63,7 +63,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
   };
 
   const handleBuyNow = async () => {
-    setLoading(true); // Set loading state
+    setLoader(true); // Set loading state
     try {
       const storedProducts = localStorage.getItem("selectedProducts");
       console.log("groupedProducts", storedProducts);
@@ -132,7 +132,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
     } catch (error) {
       toast.error("Đặt hàng thất bại, vui lòng thử lại.");
     } finally {
-      setLoading(false); // Reset loading state
+      setLoader(false); // Reset loading state
     }
   };
 

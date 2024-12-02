@@ -17,13 +17,13 @@ import { getReviewForShop } from "@api/review";
 const LatestAcceptedReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [sort, setSort] = useState(REVIEW_SORT_OPTIONS[0]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoader] = useState(true);
 
   // Fetch reviews from API
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        setLoading(true);
+        setLoader(true);
         const fetchedReviews = await getReviewForShop();
         const formattedReviews = fetchedReviews.map((review, index) => ({
           id: review.id || `review-${index + 1}`,
@@ -39,7 +39,7 @@ const LatestAcceptedReviews = () => {
       } catch (error) {
         console.error("Error fetching reviews:", error);
       } finally {
-        setLoading(false);
+        setLoader(false);
       }
     };
 
@@ -78,7 +78,7 @@ const LatestAcceptedReviews = () => {
         <span className="block h-[1px] bg-input-border opacity-60" />
         <div>
           {loading ? (
-            <p className="text-center p-4">Loading reviews...</p>
+            <p className="text-center p-4">Loader reviews...</p>
           ) : (
             pagination
               .currentItems()

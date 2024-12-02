@@ -34,7 +34,6 @@ const PageHeader = ({ title, changePageName = true }) => {
             className="group hidden w-fit xl:flex items-center gap-2 font-heading font-semibold
                         text-header text-sm"
           >
-            Data Refresh
             <i className="icon icon-arrows-rotate-regular text-[20px] group-hover:animate-spin-slow" />
           </button>
           {/* <div

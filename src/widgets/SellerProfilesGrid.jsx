@@ -13,12 +13,12 @@ import { SELLER_SORT_OPTIONS } from "@constants/options";
 // utils
 import { sortSellers } from "@utils/helpers";
 import { GetAllShop } from "@api/shop";
-import Loading from "@components/Loading";
+import Loader from "@components/Loader";
 
 const SellerProfilesGrid = ({ numberOfSellers = 24, fullGrid = true }) => {
   const [sort, setSort] = useState(SELLER_SORT_OPTIONS[0]);
   const [sellers, setSellers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoader] = useState(true);
   const [error, setError] = useState(null);
 
   const pagination = usePagination(sellers, numberOfSellers);
@@ -28,7 +28,7 @@ const SellerProfilesGrid = ({ numberOfSellers = 24, fullGrid = true }) => {
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        setLoading(true);
+        setLoader(true);
         const response = await GetAllShop();
 
         // Kiểm tra cấu trúc dữ liệu
@@ -64,7 +64,7 @@ const SellerProfilesGrid = ({ numberOfSellers = 24, fullGrid = true }) => {
       } catch (err) {
         setError("Failed to load seller data", err);
       } finally {
-        setLoading(false);
+        setLoader(false);
       }
     };
 
@@ -75,7 +75,7 @@ const SellerProfilesGrid = ({ numberOfSellers = 24, fullGrid = true }) => {
     pagination.setCurrentPage(0);
   }, [sort, numberOfSellers]);
 
-  if (loading) return <Loading />;
+  if (loading) return <Loader />;
   if (error) return <p>{error}</p>;
 
   return (

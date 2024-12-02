@@ -127,13 +127,13 @@ const UserProfileDetails = () => {
     <Spring className="card flex flex-col gap-[30px] md:gap-12 md:row-start-2 md:col-span-2 md:!pb-[50px] xl:row-start-1 xl:col-start-2 xl:col-span-1">
       {!showShopDetails && (
         <div className="flex flex-col gap-5">
-          <h5>My Profile Details</h5>
+          <h5>Chi tiết thông tin</h5>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-4 md:grid-cols-1 md:gap-5">
               <div className="grid gap-4">
                 <div className="field-wrapper">
                   <label className="field-label" htmlFor="userName">
-                    Name
+                    Họ và tên
                   </label>
                   <input
                     className={classNames("field-input", {
@@ -145,7 +145,9 @@ const UserProfileDetails = () => {
                     {...register("userName", { required: true })}
                   />
                   {errors.userName && (
-                    <p className="error-message">Name is required</p>
+                    <p className="error-message">
+                      Họ và tên không được để trống
+                    </p>
                   )}
                 </div>
 
@@ -166,13 +168,13 @@ const UserProfileDetails = () => {
                     })}
                   />
                   {errors.email && (
-                    <p className="error-message">Valid email is required</p>
+                    <p className="error-message">Email không hợp lệ</p>
                   )}
                 </div>
 
                 <div className="field-wrapper">
                   <label className="field-label" htmlFor="phone">
-                    Phone Number
+                    Số điện thoại
                   </label>
                   <Controller
                     name="phone"
@@ -190,13 +192,15 @@ const UserProfileDetails = () => {
                     )}
                   />
                   {errors.phone && (
-                    <p className="error-message">Phone number is required</p>
+                    <p className="error-message">
+                      Số điện thoại không được để trống
+                    </p>
                   )}
                 </div>
 
                 <div className="field-wrapper">
                   <label className="field-label" htmlFor="gender">
-                    Gender
+                    Giới tính
                   </label>
                   <div className="flex gap-4">
                     <label className="flex items-center">
@@ -206,7 +210,7 @@ const UserProfileDetails = () => {
                         {...register("gender", { required: true })}
                         className="field-radio"
                       />
-                      <span className="ml-2">Male</span>
+                      <span className="ml-2">Nam</span>
                     </label>
                     <label className="flex items-center">
                       <input
@@ -215,7 +219,7 @@ const UserProfileDetails = () => {
                         {...register("gender", { required: true })}
                         className="field-radio"
                       />
-                      <span className="ml-2">Female</span>
+                      <span className="ml-2">Nữ</span>
                     </label>
                     <label className="flex items-center">
                       <input
@@ -224,17 +228,17 @@ const UserProfileDetails = () => {
                         {...register("gender", { required: true })}
                         className="field-radio"
                       />
-                      <span className="ml-2">Other</span>
+                      <span className="ml-2">Khác</span>
                     </label>
                   </div>
                   {errors.gender && (
-                    <p className="error-message">Gender is required</p>
+                    <p className="error-message">Chọn giới tính</p>
                   )}
                 </div>
 
                 <div className="field-wrapper">
                   <label className="field-label" htmlFor="dob">
-                    Date of Birth
+                    Ngày sinh
                   </label>
                   <input
                     className={classNames("field-input", {
@@ -246,7 +250,7 @@ const UserProfileDetails = () => {
                     {...register("dob", { required: true })}
                   />
                   {errors.dob && (
-                    <p className="error-message">Date of birth is required</p>
+                    <p className="error-message">Nhập ngày sinh</p>
                   )}
                 </div>
               </div>
@@ -258,15 +262,15 @@ const UserProfileDetails = () => {
                   className="text-red font-bold"
                   onClick={() => setShowPasswordModal(true)} // Show modal on click
                 >
-                  Change Password
+                  Đổi mật khẩu
                 </button>
               </div>
               <form onSubmit={handleSubmit(onSubmit)} className="">
                 <button
-                  className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
+                  className="btn btn--primary w-full mt-5 md:w-fit "
                   type="submit"
                 >
-                  Save Changes
+                  Thay đổi thông tin
                 </button>
               </form>
             </div>
@@ -277,22 +281,31 @@ const UserProfileDetails = () => {
       {roleNames.includes("shop") && (
         <>
           <div className="flex justify-end">
-            <button
-              onClick={() => setShowShopDetails(true)}
-              className="text-btn"
-            >
-              Show Shop Details
-            </button>
+            {!showShopDetails ? (
+              <button
+                onClick={() => setShowShopDetails(true)}
+                className="text-btn"
+              >
+                Chi tiết cửa hàng của bạn
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowShopDetails(false)}
+                className="text-btn"
+              >
+                Chi tiết thông tin cá nhân
+              </button>
+            )}
           </div>
           {showShopDetails && (
             <div className="flex flex-col gap-5">
-              <h5>Shop Details</h5>
+              <h5>Thông tin</h5>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid gap-4 md:grid-cols-1 md:gap-5">
                   <div className="grid gap-4">
                     <div className="field-wrapper">
                       <label className="field-label" htmlFor="shopName">
-                        Shop Name
+                        Tên cửa hàng
                       </label>
                       <input
                         className={classNames("field-input", {
@@ -304,13 +317,13 @@ const UserProfileDetails = () => {
                         {...register("shopName", { required: true })}
                       />
                       {errors.shopName && (
-                        <p className="error-message">Shop name is required</p>
+                        <p className="error-message">Nhập tên cửa hàng</p>
                       )}
                     </div>
 
                     <div className="field-wrapper">
                       <label className="field-label" htmlFor="pickupAddress">
-                        Pickup Address
+                        Địa chỉ lấy hàng
                       </label>
                       <input
                         className={classNames("field-input", {
@@ -322,15 +335,13 @@ const UserProfileDetails = () => {
                         {...register("pickupAddress", { required: true })}
                       />
                       {errors.pickupAddress && (
-                        <p className="error-message">
-                          Pickup address is required
-                        </p>
+                        <p className="error-message">Nhập địa chỉ lấy hàng</p>
                       )}
                     </div>
 
                     <div className="field-wrapper">
                       <label className="field-label" htmlFor="sellerEmail">
-                        Seller Email
+                        Email cửa hàng
                       </label>
                       <input
                         className={classNames("field-input", {
@@ -345,15 +356,13 @@ const UserProfileDetails = () => {
                         })}
                       />
                       {errors.sellerEmail && (
-                        <p className="error-message">
-                          Valid seller email is required
-                        </p>
+                        <p className="error-message">Email không hợp lệ</p>
                       )}
                     </div>
 
                     <div className="field-wrapper">
                       <label className="field-label" htmlFor="sellerPhone">
-                        Seller Phone
+                        Số điện thoại cửa hàng
                       </label>
                       <Controller
                         name="sellerPhone"
@@ -373,23 +382,18 @@ const UserProfileDetails = () => {
                         )}
                       />
                       {errors.sellerPhone && (
-                        <p className="error-message">
-                          Seller phone is required
-                        </p>
+                        <p className="error-message">Số điện thoại băts buộc</p>
                       )}
                     </div>
                   </div>
                 </div>
 
                 <div className="flex justify-between mt-2.5">
-                  <button className="text-btn" type="button">
-                    Edit Profile
-                  </button>
                   <button
-                    className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
+                    className="btn btn--primary w-full mt-5 md:w-fit "
                     type="submit"
                   >
-                    Save Changes
+                    Thay đổi thông tin
                   </button>
                 </div>
               </form>

@@ -15,7 +15,7 @@ const Orders = () => {
   const [category, setCategory] = useState(PRODUCT_CATEGORIES[0]);
   const [sort, setSort] = useState(ORDER_SORT_OPTIONS[0]);
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoader] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("pending");
   const [updatedOrders, setUpdatedOrders] = useState([]); 
@@ -32,7 +32,7 @@ const Orders = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      setLoading(true);
+      setLoader(true);
       try {
         const data = await getOrdersForShop(activeTab);
         setOrders(data);
@@ -40,7 +40,7 @@ const Orders = () => {
         console.error("Error fetching orders:", error);
         setError("Không thể tải đơn hàng. Vui lòng thử lại.");
       } finally {
-        setLoading(false);
+        setLoader(false);
       }
     };
 

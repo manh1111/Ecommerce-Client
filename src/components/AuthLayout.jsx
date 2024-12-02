@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Logo from "@components/Logo";
-import { LoginSocialFacebook } from "reactjs-social-login";
 import { toast } from "react-toastify";
 import Spring from "@components/Spring";
 import PasswordInput from "@components/PasswordInput";
@@ -11,19 +10,19 @@ import classNames from "classnames";
 import media from "@assets/login.webp";
 import google from "@assets/icons/google.png";
 import facebook from "@assets/icons/facebook.png";
-import { signIn } from "@api/auth";
+import { signIn, signInWithGoogle } from "@api/auth";
 import { setCookie } from "@utils/cookie";
 import { useDispatch } from "react-redux";
 import {
   CHANGE_STATUS_AUTH,
   CHANGE_VALUE_TOKEN,
 } from "@redux/slice/auth/authSlice";
-import Loading from "@components/Loading";
+import Loader from "@components/Loader";
 
 const AuthLayout = () => {
   const { width } = useWindowSize();
   const [googleLoginAttempt, setGoogleLoginAttempt] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoader] = useState(false);
   const expirationHours = 3;
   const dispatch = useDispatch();
   const location = useLocation();
@@ -54,13 +53,13 @@ const AuthLayout = () => {
       setCookie("user_login", accessToken);
       navigate("/");
     } else if (googleLoginAttempt) {
-      toast.error("Unable to sign in with Google!");
+      toast.error("Không thể đăng nhập bằng Google!");
       setGoogleLoginAttempt(false);
     }
   }, [location.search, googleLoginAttempt, dispatch, navigate]);
 
   const onSubmit = async (data) => {
-    setLoading(true);
+    setLoader(true);
     try {
       const response = await signIn(data.email, data.password);
       const { accessToken, refreshToken } = response?.data?.metadata?.tokens;
@@ -73,16 +72,29 @@ const AuthLayout = () => {
       setCookie("user_login", accessToken);
       navigate("/");
     } catch (err) {
-      toast.error("Login failed! Please check your credentials.");
+      toast.error("Đăng nhập thất bại! Vui lòng kiểm tra thông tin đăng nhập.");
     } finally {
-      setLoading(false);
+      setLoader(false);
     }
   };
 
-  const handleLoginWithGoogle = () => {
-    setGoogleLoginAttempt(true);
-    window.location.href = "http://localhost:8080/v1/api/auth/google/callback";
-  };
+const handleLoginWithGoogle = async () => {
+  try {
+    const response = await signInWithGoogle();
+
+    const { response_type, redirect_uri, scope, client_id } = response.data;
+
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?response_type=${response_type}&redirect_uri=${encodeURIComponent(
+      redirect_uri
+    )}&scope=${encodeURIComponent(scope)}&client_id=${client_id}`;
+
+    window.location.href = googleAuthUrl;
+    console.log("first", googleAuthUrl);
+  } catch (error) {
+    console.error("Lỗi khi gọi API cấu hình Google OAuth:", error);
+    toast.error("Không thể kết nối tới Google!");
+  }
+};
 
   const handlePasswordReminder = (e) => {
     e.preventDefault();
@@ -92,7 +104,7 @@ const AuthLayout = () => {
     navigate("/sign-up");
   };
 
-  if (loading) return <Loading />;
+  if (loading) return <Loader />;
 
   return (
     <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 4xl:grid-cols-[minmax(0,_1030px)_minmax(0,_1fr)]">
@@ -100,8 +112,8 @@ const AuthLayout = () => {
         <div className="flex flex-col justify-center items-center lg:p-[60px]">
           <Logo imgClass="w-[60px]" textClass="text-[28px]" />
           <p className="text-center tracking-[0.2px] font-semibold text-lg leading-6 max-w-[540px] my-7 mx-auto">
-            Discover trends, track your orders effortlessly, and enhance your
-            shopping experience.
+            Khám phá xu hướng, theo dõi đơn hàng dễ dàng và nâng cao trải nghiệm
+            mua sắm của bạn.
           </p>
           <img className="max-w-[780px]" src={media} alt="media" />
         </div>
@@ -114,9 +126,10 @@ const AuthLayout = () => {
           delay={300}
         >
           <div className="flex flex-col gap-2.5 text-center">
-            <h1>Welcome back!</h1>
+            <h1>Chào mừng trở lại!</h1>
             <p className="lg:max-w-[300px] m-auto 4xl:max-w-[unset]">
-              Explore our latest offerings and enjoy your shopping experience.
+              Khám phá các ưu đãi mới nhất và tận hưởng trải nghiệm mua sắm của
+              bạn.
             </p>
           </div>
           <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
@@ -131,7 +144,7 @@ const AuthLayout = () => {
                   })}
                   id="email"
                   type="text"
-                  placeholder="Your E-mail address"
+                  placeholder="Địa chỉ email của bạn"
                   {...register("email", {
                     required: true,
                     pattern: /^\S+@\S+$/i,
@@ -145,7 +158,7 @@ const AuthLayout = () => {
                 render={({ field }) => (
                   <PasswordInput
                     id="password"
-                    placeholder="Your password"
+                    placeholder="Mật khẩu của bạn"
                     error={errors.password}
                     innerRef={field.ref}
                     isInvalid={errors.password}
@@ -157,14 +170,14 @@ const AuthLayout = () => {
             </div>
             <div className="flex flex-col items-center gap-6 mt-4 mb-10">
               <button className="text-btn" onClick={handlePasswordReminder}>
-                Forgot Password?
+                Quên mật khẩu?
               </button>
               <button
                 className="btn btn--primary w-full"
                 type="submit"
                 disabled={loading}
               >
-                Sign In
+                Đăng nhập
               </button>
             </div>
           </form>
@@ -172,23 +185,22 @@ const AuthLayout = () => {
             <div className="relative">
               <span className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[1px] bg-border" />
               <span className="flex items-center justify-center relative z-10 w-11 h-[23px] m-auto bg-widget">
-                or
+                hoặc
               </span>
             </div>
-            <div className="grid grid-cols-1 gap-4 2xs:grid-cols-2 xs:gap-[30px] mt-[30px] mb-9">
-              <div className="btn btn--social" onClick={handleLoginWithGoogle}>
+            <div className="py-4">
+              <div
+                className="btn btn--social"
+                onClick={handleLoginWithGoogle}
+              >
                 <img className="icon" src={google} alt="Google" />
                 Google
               </div>
-              <LoginSocialFacebook className="btn btn--social">
-                <img className="icon" src={facebook} alt="Facebook" />
-                Facebook
-              </LoginSocialFacebook>
             </div>
             <div className="flex justify-center gap-2.5 leading-none">
-              <p>Don’t have an account?</p>
+              <p>Bạn chưa có tài khoản?</p>
               <button className="text-btn" onClick={handleSignUp}>
-                Sign Up
+                Đăng ký
               </button>
             </div>
           </div>

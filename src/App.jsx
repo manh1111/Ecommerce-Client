@@ -9,14 +9,12 @@ import { ThemeProvider } from "styled-components";
 import { useTheme } from "@contexts/themeContext";
 import { useEffect, useRef } from "react";
 import { useWindowSize } from "react-use";
-import ScrollToTop from "@components/ScrollToTop";
-import Loader from "@components/Loader";
 import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Sidebar from "@layout/Sidebar";
 import AppBar from "@layout/AppBar";
 import CreaterProduct from "@pages/CreaterProduct";
-import Loading from "@components/Loading";
+import Loader from "@components/Loader";
 import Checkout from "./pages/Checkout";
 
 const Login = lazy(() => import("@pages/Login"));
@@ -79,7 +77,7 @@ const App = () => {
           {withSidebar && <Sidebar />}
           <div className="app_content">
             {width >= 1280 && withSidebar && <AppBar />}
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<Loader />}>
               <div className={withSidebar ? "main" : ""}>
                 <Routes>
                   <Route path="/login" element={<Login />} />

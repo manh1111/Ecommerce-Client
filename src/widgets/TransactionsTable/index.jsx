@@ -5,7 +5,7 @@ import Select from "@ui/Select";
 import Pagination from "@ui/Pagination";
 import TransactionCollapseItem from "@components/TransactionCollapseItem";
 import Empty from "@components/Empty";
-import Loading from "@components/Loading";
+import Loader from "@components/Loader";
 
 import { useState, useEffect } from "react";
 import usePagination from "@hooks/usePagination";
@@ -20,7 +20,7 @@ const TransactionsTable = () => {
   const [activeCollapse, setActiveCollapse] = useState("");
   const [sort, setSort] = useState(TRANSACTIONS_SORT_OPTIONS[0]);
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoader] = useState(true);
   const [error, setError] = useState(null);
 
   const sortedData = transactions.sort((a, b) => {
@@ -49,7 +49,7 @@ const TransactionsTable = () => {
         setError("Failed to fetch transactions");
         console.error("Error fetching transactions", error);
       } finally {
-        setLoading(false);
+        setLoader(false);
       }
     };
 
@@ -70,7 +70,7 @@ const TransactionsTable = () => {
   };
 
   if (loading) {
-    return <Loading />;
+    return <Loader />;
   }
 
   if (error) {

@@ -3,10 +3,31 @@ import { checkToken } from "@utils/auth";
 
 import { URL_API } from "../../src/config/config";
 
-export const GetAllProduct = async () => {
+export const GetAllProduct = async (isPublic = true, isDraft, isDeleted) => {
   try {
+    const config = checkToken("application/json");
+    const queryParams = new URLSearchParams();
+
+    if (isPublic !== undefined && isPublic !== null) {
+      {
+        isPublic && queryParams.append("isPublic", isPublic);
+      }
+    }
+    if (isDraft !== undefined && isDraft !== null) {
+      {
+        isDraft && queryParams.append("isDraft", isDraft);
+      }
+    }
+    if (isDeleted !== undefined && isDeleted !== null) {
+      {
+        isDeleted && queryParams.append("isDeleted", isDeleted);
+      }
+    }
+
+    // Construct the API URL with the query parameters
     const response = await axiosInstance.get(
-      `${URL_API}product`
+      `${URL_API}product/shop-owners?${queryParams.toString()}`,
+      config
     );
 
     return response;
@@ -18,9 +39,7 @@ export const GetAllProduct = async () => {
 
 export const getProductById = async (id) => {
   try {
-    const response = await axiosInstance.get(
-      `${URL_API}product/${id}`
-    );
+    const response = await axiosInstance.get(`${URL_API}product/${id}`);
 
     return response.data;
   } catch (error) {
@@ -29,9 +48,29 @@ export const getProductById = async (id) => {
   }
 };
 
+export const deletePermanentlyProducts = async (ids) => {
+  try {
+    const config = checkToken();
+    const result = await axiosInstance.delete(
+      `${URL_API}product/delete-permanently`,
+      {
+        ...config,
+        data: { ids: ids },
+      }
+    );
+
+    console.log("result", result);
+
+    return result.data;
+  } catch (error) {
+    console.error("Error delete Permanently Products products:", error);
+    throw error;
+  }
+};
+
 export const getProductsByCatalogShop = async (shopId, catalogId) => {
   try {
-     const config = checkToken("application/json");
+    const config = checkToken("application/json");
 
     // Fetch product by ID with token in Authorization header
     const response = await axiosInstance.get(
@@ -89,9 +128,9 @@ export const createProduct = async ({
   product_price,
   product_quantity,
   category_id,
-  files, 
-  isDraft = false, 
-  isPublic = false, 
+  files,
+  isDraft = false,
+  isPublic = false,
 }) => {
   try {
     const formData = new FormData();
@@ -121,7 +160,6 @@ export const createProduct = async ({
     throw error;
   }
 };
-
 
 export const updateProduct = async ({
   id,
@@ -161,17 +199,36 @@ export const updateProduct = async ({
 
 export const deleteProducts = async (ids) => {
   try {
-    const config = checkToken("application/json");
-    console.log("first", config, ids);
-    const result = await axiosInstance.delete(
-      `${URL_API}product`,
-      ids,
-      config
-    );
+    const config = checkToken();
+    const result = await axiosInstance.delete(`${URL_API}product`, {
+      ...config,
+      data: { ids: ids },
+    });
+
+    console.log("result", result);
 
     return result.data;
   } catch (error) {
     console.error("Error deleting products:", error);
+    throw error;
+  }
+};
+
+export const publishProducts = async (ids) => {
+  try {
+    const config = checkToken("application/json");
+
+    const requestBody = { ids: ids };
+
+    const response = await axiosInstance.post(
+      `${URL_API}product/public`,
+      requestBody,
+      config
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error publishing products:", error);
     throw error;
   }
 };

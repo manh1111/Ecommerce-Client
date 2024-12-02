@@ -1,32 +1,61 @@
-import FilterItem from "@ui/FilterItem";
-import StyledTable from "./styles";
-import Empty from "@components/Empty";
-import Pagination from "@ui/Pagination";
-import ProductManagementCollapseItem from "@components/ProductManagementCollapseItem";
-import { useState, useEffect } from "react";
-import usePagination from "@hooks/usePagination";
+import { useEffect, useState } from "react";
 import { useWindowSize } from "react-use";
-import { PRODUCT_MANAGEMENT_OPTIONS } from "@constants/options";
+import { toast } from "react-toastify";
+import {
+  deleteProducts,
+  publishProducts,
+  deletePermanentlyProducts,
+} from "@api/product";
+import getProducts, { fetchProducts } from "@db/products_management"; // Ensure this file exists and exports correctly
+import ProductManagementCollapseItem from "@components/ProductManagementCollapseItem";
+import FilterItem from "@ui/FilterItem";
+import Pagination from "@ui/Pagination";
+import Empty from "@components/Empty";
+import StyledTable from "./styles"; // Ensure this exists
 import { NavLink } from "react-router-dom";
 import dayjs from "dayjs";
-import getProducts, { fetchProducts } from "@db/products_management";
-import { deleteProducts } from "@api/product";
-import { toast } from "react-toastify";
+import { PRODUCT_MANAGEMENT_OPTIONS } from "@constants/options";
+import usePagination from "@hooks/usePagination";
 
 const ProductManagementTable = () => {
   const { width } = useWindowSize();
   const [products, setProducts] = useState([]);
-  const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState("publish");
   const [activeCollapse, setActiveCollapse] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
 
   useEffect(() => {
     const loadProducts = async () => {
-      await fetchProducts();
-      setProducts(getProducts());
+      console.log("category", category);
+      await fetchProducts(category);
+      setProducts(getProducts(category)); // Get the latest products after fetching
     };
     loadProducts();
-  }, []);
+  }, [category]); // Re-run when category changes
+
+  const handlePublishProduct = async (productId) => {
+    try {
+      const response = await publishProducts([productId]); 
+      console.log("response", response);
+      if (response && response.success) {
+        console.log("Product successfully published.");
+      }
+    } catch (error) {
+      console.error("Error publishing the product:", error);
+    }
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    try {
+      const response = await deletePermanentlyProducts([productId]);
+      console.log("response", response);
+      if (response && response.success) {
+        console.log("Product successfully delete permanently.");
+      }
+    } catch (error) {
+      console.error("Error delete permanently the product:", error);
+    }
+  };
 
   const getQty = (status) => {
     if (status === "all") return products.length;
@@ -34,8 +63,7 @@ const ProductManagementTable = () => {
   };
 
   const dataByStatus = () => {
-    if (category === "all") return products;
-    return products.filter((product) => product.status === category);
+    return products;
   };
 
   const pagination = usePagination(dataByStatus(), 8);
@@ -65,7 +93,7 @@ const ProductManagementTable = () => {
 
         toast.success("Sản phẩm đã được xóa thành công", {
           position: toast.POSITION.TOP_RIGHT,
-          autoClose: 5000, 
+          autoClose: 5000,
         });
       } else {
         toast.warn("Chưa chọn sản phẩm để xóa", {
@@ -185,6 +213,26 @@ const ProductManagementTable = () => {
           <NavLink to={`/product-editor/${product.id}`} aria-label="Chỉnh sửa">
             <i className="icon icon-pen-to-square-regular text-lg leading-none" />
           </NavLink>
+
+          {(category === "deleted" || category === "drafted") && (
+            <button
+              onClick={() => handlePublishProduct(product.id)}
+              aria-label="Xuất bản"
+              className="text-blue-500 hover:text-blue-700"
+            >
+              <i className="fas fa-paper-plane text-lg leading-none" />
+            </button>
+          )}
+
+          {category === "deleted" && (
+            <button
+              onClick={() => handleDeleteProduct(product.id)}
+              aria-label="Xuất bản"
+              className="text-blue-500 hover:text-blue-700"
+            >
+              <i className="fas fa-trash text-lg leading-none" />
+            </button>
+          )}
         </div>
       ),
     },
@@ -219,17 +267,7 @@ const ProductManagementTable = () => {
           <StyledTable
             columns={[
               {
-                title: (
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      const isSelected = e.target.checked;
-                      setSelectedProducts(
-                        isSelected ? products.map((p) => p.id) : []
-                      );
-                    }}
-                  />
-                ),
+                title: "Chọn",
                 render: (text, product) => (
                   <input
                     type="checkbox"

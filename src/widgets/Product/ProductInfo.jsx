@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Image, Modal, Skeleton, Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoaderOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 import { addCart } from "@api/cart";
@@ -12,7 +12,7 @@ const VND = new Intl.NumberFormat("vi-VN", {
 });
 
 const ProductInfo = ({ product, shopData }) => {
-  const [loadingCart, setLoadingCart] = useState(false);
+  const [loadingCart, setLoaderCart] = useState(false);
   const [open, setOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -23,7 +23,7 @@ const ProductInfo = ({ product, shopData }) => {
   const handleCancel = () => setOpen(false);
 
   const handleAddToCart = async () => {
-    setLoadingCart(true);
+    setLoaderCart(true);
     try {
       const response = await addCart(product.id, 1);
       if (response?.status === 200) {
@@ -34,7 +34,7 @@ const ProductInfo = ({ product, shopData }) => {
     } catch (error) {
       toast.error("Lỗi hệ thống. Vui lòng thử lại sau.");
     } finally {
-      setLoadingCart(false);
+      setLoaderCart(false);
     }
   };
 
@@ -153,7 +153,7 @@ const ProductInfo = ({ product, shopData }) => {
               <div className="w-1/2 flex items-center">
                 <Spin
                   className="w-fit"
-                  indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
+                  indicator={<LoaderOutlined style={{ fontSize: 24 }} spin />}
                 />
               </div>
             ) : (

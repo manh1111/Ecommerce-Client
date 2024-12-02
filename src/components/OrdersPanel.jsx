@@ -1,12 +1,12 @@
 import DrawerBase from "@ui/DrawerBase";
 import { useState, useEffect } from "react";
 import OrdersTable from "@widgets/OrdersTable";
-import { getAllOrder, deleteOrderById } from "@api/order"; // Import the deleteOrderById API function
-import Loading from "./Loading";
+import { getAllOrder} from "@api/order"; 
+import Loader from "./Loader";
 
 const OrdersPanel = ({ open, onOpen, onClose }) => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoader] = useState(true);
   const [activeTab, setActiveTab] = useState("pending");
 
   const orderStatuses = [
@@ -30,14 +30,14 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
 
   useEffect(() => {
     const fetchOrders = async (status) => {
-      setLoading(true);
+      setLoader(true);
       try {
         const data = await getAllOrder(status);
         setOrders(data);
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {
-        setLoading(false);
+        setLoader(false);
       }
     };
 
@@ -95,7 +95,7 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
 
       <div className="h-full overflow-y-auto">
         {loading ? (
-          <Loading />
+          <Loader />
         ) : (
           <div>
             <OrdersTable initialOrders={filteredOrders} />

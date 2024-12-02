@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { GetAllProduct, searchProduct } from "@api/product";
-import Loading from "@components/Loading";
+import Loader from "@components/Loader";
 
 const SearchProductContext = createContext(undefined);
 
@@ -8,7 +8,7 @@ export const SearchProductProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoader] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -35,7 +35,7 @@ export const SearchProductProvider = ({ children }) => {
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
-        setLoading(false);
+        setLoader(false);
       }
     };
 
@@ -44,16 +44,14 @@ export const SearchProductProvider = ({ children }) => {
 
   const searchProducts = async (searchQuery, categoryId) => {
     setSearchTerm(searchQuery);
-    setLoading(true);
+    setLoader(true);
 
     try {
-      // If the search query is empty, reset filtered products
       if (searchQuery.trim() === "") {
         setFilteredProducts(products);
         return;
       }
 
-      // Fetch filtered products based on the search query and category
       const response = await searchProduct({ searchQuery, categoryId });
       console.log("responseFetch filtered products", response);
       if (
@@ -85,7 +83,7 @@ export const SearchProductProvider = ({ children }) => {
       console.error("Error searching products:", error);
       setFilteredProducts([]); // Reset filtered products in case of error
     } finally {
-      setLoading(false);
+      setLoader(false);
     }
   };
 
@@ -120,7 +118,7 @@ export const SearchProductProvider = ({ children }) => {
         updateProductList, // Expose the new function
       }}
     >
-      {loading ? <Loading /> : children}
+      {loading ? <Loader /> : children}
     </SearchProductContext.Provider>
   );
 };

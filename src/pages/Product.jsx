@@ -4,7 +4,7 @@ import ShopInfo from "@widgets/Product/ShopInfo";
 import { useParams } from "react-router-dom";
 import { getProductById } from "@api/product";
 import { getShopById } from "@api/shop";
-import Loading from "@components/Loading";
+import Loader from "@components/Loader";
 
 const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -31,7 +31,7 @@ const Product = () => {
 
   if (!productData) {
     console.log(productData)
-    return <Loading />;
+    return <Loader />;
   }
 
   const sellerData = {
