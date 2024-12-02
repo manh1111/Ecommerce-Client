@@ -23,6 +23,7 @@ const ProductManagementTable = () => {
   const [category, setCategory] = useState("publish");
   const [activeCollapse, setActiveCollapse] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [change, setChange] = useState(false);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -31,17 +32,25 @@ const ProductManagementTable = () => {
       setProducts(getProducts(category)); // Get the latest products after fetching
     };
     loadProducts();
-  }, [category]); // Re-run when category changes
+  }, [category, change]); // Re-run when category changes
 
   const handlePublishProduct = async (productId) => {
     try {
-      const response = await publishProducts([productId]); 
-      console.log("response", response);
-      if (response && response.success) {
-        console.log("Product successfully published.");
-      }
+      const response = await publishProducts([productId]);
+      toast.success("Sản phẩm đã được xuất bản thành công!", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000,
+      });
+      // Reload products after successful publish
+      await fetchProducts(category);
+      setProducts(getProducts(category));
+      setChange(!change);
     } catch (error) {
       console.error("Error publishing the product:", error);
+      toast.error("Lỗi khi xuất bản sản phẩm", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000,
+      });
     }
   };
 
@@ -49,13 +58,50 @@ const ProductManagementTable = () => {
     try {
       const response = await deletePermanentlyProducts([productId]);
       console.log("response", response);
-      if (response && response.success) {
-        console.log("Product successfully delete permanently.");
-      }
+       toast.success("Sản phẩm đã được xóa vĩnh viễn!", {
+         position: toast.POSITION.TOP_RIGHT,
+         autoClose: 5000,
+       });
+       // Reload products after successful deletion
+       await fetchProducts(category);
+      setProducts(getProducts(category));
+      setChange(!change);
     } catch (error) {
       console.error("Error delete permanently the product:", error);
+      toast.error("Lỗi khi xóa sản phẩm", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000,
+      });
     }
   };
+
+  const handleDeleteProducts = async () => {
+    try {
+      if (selectedProducts.length > 0) {
+        const response = await deleteProducts(selectedProducts);
+        setProducts(getProducts()); // Reload after deletion
+        setSelectedProducts([]);
+
+        toast.success("Sản phẩm đã được xóa thành công", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 5000,
+        });
+        setChange(!change);
+      } else {
+        toast.warn("Chưa chọn sản phẩm để xóa", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 5000,
+        });
+      }
+    } catch (error) {
+      console.error("Lỗi khi xóa sản phẩm:", error);
+      toast.error("Lỗi khi xóa sản phẩm", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000,
+      });
+    }
+  };
+
 
   const getQty = (status) => {
     if (status === "all") return products.length;
@@ -84,32 +130,6 @@ const ProductManagementTable = () => {
     );
   };
 
-  const handleDeleteProducts = async () => {
-    try {
-      if (selectedProducts.length > 0) {
-        const response = await deleteProducts(selectedProducts);
-        setProducts(getProducts());
-        setSelectedProducts([]);
-
-        toast.success("Sản phẩm đã được xóa thành công", {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 5000,
-        });
-      } else {
-        toast.warn("Chưa chọn sản phẩm để xóa", {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 5000,
-        });
-      }
-    } catch (error) {
-      console.error("Lỗi khi xóa sản phẩm:", error);
-
-      toast.error("Lỗi khi xóa sản phẩm", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 5000,
-      });
-    }
-  };
 
   const PRODUCTS_MANAGEMENT_COLUMN_DEFS = [
     {
