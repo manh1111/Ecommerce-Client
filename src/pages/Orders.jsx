@@ -1,7 +1,5 @@
 // components
 import PageHeader from "@layout/PageHeader";
-import Select from "@ui/Select";
-import OrdersAverageRate from "@widgets/OrdersAverageRate";
 import OrdersInfobox from "@components/OrdersInfobox";
 import OrdersTableShop from "@widgets/OrdersTableShop";
 import Loader from "@components/Loader";
@@ -18,7 +16,7 @@ const Orders = () => {
   const [loading, setLoader] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("pending");
-  const [updatedOrders, setUpdatedOrders] = useState([]); 
+  const [updatedOrders, setUpdatedOrders] = useState([]);
 
   const orderStatuses = [
     { value: "", name: "Tất cả đơn hàng" },
@@ -55,6 +53,11 @@ const Orders = () => {
     (order) => !updatedOrders.includes(order.id)
   );
 
+  // Count orders by status
+  const countOrdersByStatus = (status) => {
+    return orders.filter((order) => order.status === status).length;
+  };
+
   const renderStatusTabs = () =>
     orderStatuses.map((status) => (
       <button
@@ -70,29 +73,29 @@ const Orders = () => {
       </button>
     ));
 
-  // Render the infobox widgets
+  // Render the infobox widgets with dynamic counts
   const renderInfoboxWidgets = () => (
     <div className="widgets-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:col-span-4">
       <OrdersInfobox
         title="Hoàn thành"
-        count={2345}
+        count={countOrdersByStatus("completed")}
         icon={<i className="icon-check-to-slot-solid" />}
       />
       <OrdersInfobox
         title="Đã xác nhận"
-        count={323}
+        count={countOrdersByStatus("confirmed")}
         color="green"
         icon={<i className="icon-list-check-solid" />}
       />
       <OrdersInfobox
         title="Đã hủy"
-        count={17}
+        count={countOrdersByStatus("cancelled")}
         color="red"
         icon={<i className="icon-ban-solid" />}
       />
       <OrdersInfobox
         title="Đã hoàn tiền"
-        count={2}
+        count={countOrdersByStatus("refunded")} // Adjust this if you have a "refunded" status
         color="badge-status-bg"
         icon={<i className="icon-rotate-left-solid" />}
       />
@@ -106,29 +109,8 @@ const Orders = () => {
         {/* Order Status Tabs */}
         <div className="flex gap-4">{renderStatusTabs()}</div>
 
-        {/* Filters Section */}
-        <div className="w-full grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-[26px] lg:grid-cols-4 lg:items-end xl:grid-cols-6">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-[26px] md:col-span-2">
-            <Select
-              value={category}
-              options={PRODUCT_CATEGORIES}
-              onChange={setCategory}
-              placeholder="Danh mục sản phẩm"
-            />
-            <Select
-              value={sort}
-              options={ORDER_SORT_OPTIONS}
-              onChange={setSort}
-              placeholder="Sắp xếp mặc định"
-            />
-          </div>
-        </div>
-
         {/* Widgets Section */}
         <div className="w-full widgets-grid grid-cols-1 xl:grid-cols-6">
-          <div className="xl:col-span-2">
-            <OrdersAverageRate />
-          </div>
           {renderInfoboxWidgets()}
         </div>
 
@@ -142,7 +124,7 @@ const Orders = () => {
             initialOrders={filteredOrders}
             category={category}
             sort={sort}
-            onOrderUpdate={handleOrderUpdate} 
+            onOrderUpdate={handleOrderUpdate}
           />
         )}
       </div>

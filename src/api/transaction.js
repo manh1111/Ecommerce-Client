@@ -7,7 +7,10 @@ import { URL_API } from "../config/config";
 export const getTransaction = async () => {
   try {
     const config = checkToken("application/json");
-    const response = await axiosInstance.get(`${URL_API}transaction`, config);
+    const response = await axiosInstance.get(
+      `${URL_API}transaction/shop`,
+      config
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch reviews", error);

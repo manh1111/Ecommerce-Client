@@ -3,7 +3,6 @@ import { checkToken } from "@utils/auth";
 
 import { URL_API } from "../../src/config/config";
 
-// Fetch reviews for the shop
 export const getReviewForShop = async () => {
   try {
     const config = checkToken("application/json");
@@ -19,7 +18,7 @@ export const createReview = async (productId, rating, comment) => {
   try {
     const config = checkToken("application/json");
     const response = await axiosInstance.post(
-      `${URL_API}/review/`,
+      `${URL_API}review`,
       { productId, rating, comment },
       config
     );

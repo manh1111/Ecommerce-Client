@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Spring from "@components/Spring";
 import StyledTable from "./styles";
 import CalendarSelector from "@components/CalendarSelector";
@@ -7,33 +8,31 @@ import TransactionCollapseItem from "@components/TransactionCollapseItem";
 import Empty from "@components/Empty";
 import Loader from "@components/Loader";
 
-import { useState, useEffect } from "react";
 import usePagination from "@hooks/usePagination";
 import { useWindowSize } from "react-use";
 
 import { TRANSACTIONS_COLUMN_DEFS } from "@constants/columnDefs";
 import { TRANSACTIONS_SORT_OPTIONS } from "@constants/options";
 import { fetchTransaction } from "@db/transactions";
+import dayjs from "dayjs";
 
 const TransactionsTable = () => {
   const { width } = useWindowSize();
   const [activeCollapse, setActiveCollapse] = useState("");
   const [sort, setSort] = useState(TRANSACTIONS_SORT_OPTIONS[0]);
   const [transactions, setTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [loading, setLoader] = useState(true);
   const [error, setError] = useState(null);
+  const [dateRange, setDateRange] = useState([dayjs().startOf("year"), dayjs()]);
 
-  const sortedData = transactions.sort((a, b) => {
+  const sortedData = filteredTransactions.sort((a, b) => {
     switch (sort.value) {
       default:
       case "recent":
         return new Date(b.timestamp) - new Date(a.timestamp);
       case "oldest":
         return new Date(a.timestamp) - new Date(b.timestamp);
-      case "amount-high-to-low":
-        return b.fee.localeCompare(a.fee);
-      case "amount-low-to-high":
-        return a.fee.localeCompare(b.fee);
     }
   });
 
@@ -43,8 +42,8 @@ const TransactionsTable = () => {
     const loadData = async () => {
       try {
         const fetchedTransactions = await fetchTransaction();
-        console.log("fetchTransaction", fetchedTransactions);
         setTransactions(fetchedTransactions);
+        setFilteredTransactions(fetchedTransactions);
       } catch (error) {
         setError("Failed to fetch transactions");
         console.error("Error fetching transactions", error);
@@ -55,6 +54,22 @@ const TransactionsTable = () => {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    const filterByDateRange = () => {
+      const [start, end] = dateRange;
+      setFilteredTransactions(
+        transactions.filter(
+          (transaction) =>
+            dayjs(transaction.timestamp).isAfter(start) &&
+            dayjs(transaction.timestamp).isBefore(end)
+        )
+      );
+      pagination.goToPage(0); // Reset pagination when filtering
+    };
+
+    filterByDateRange();
+  }, [dateRange, transactions]);
 
   useEffect(() => {
     pagination.goToPage(0);
@@ -83,11 +98,12 @@ const TransactionsTable = () => {
         <CalendarSelector
           wrapperClass="md:max-w-[275px]"
           id="transactionsDate"
-          label="Transaction date from"
+          label="Ngày giao dịch từ"
+          onChange={setDateRange}
         />
         <div className="flex flex-col-reverse gap-2.5 md:flex-col md:min-w-[220px]">
           <p className="md:text-right">
-            View transactions: {pagination.showingOf()}
+            Xem giao dịch: {pagination.showingOf()}
           </p>
           <Select
             options={TRANSACTIONS_SORT_OPTIONS}
@@ -103,7 +119,7 @@ const TransactionsTable = () => {
             dataSource={pagination.currentItems()}
             rowKey={(record) => record.sku}
             locale={{
-              emptyText: <Empty text="No transactions found" />,
+              emptyText: <Empty text="Không tìm thấy giao dịch nào" />,
             }}
             pagination={false}
           />

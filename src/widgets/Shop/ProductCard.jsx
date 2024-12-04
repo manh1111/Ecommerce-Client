@@ -30,9 +30,9 @@ const ProductCard = ({ product }) => {
       <div className="p-2 flex-1 flex flex-col justify-between">
         <div className="space-y-1 mb-1 flex-1 flex flex-col justify-between h-fit">
           <div className="whitespace-normal line-clamp-2 break-words h-fit text-sm">
-            <div className="mr-0.5 mb-0.5 w-fit bg-blue-700 p-1 rounded-lg text-base text-white h-fit uppercase ">
+            {/* <div className="mr-0.5 mb-0.5 w-fit bg-blue-700 p-1 rounded-lg text-base text-white h-fit uppercase ">
               Xử lý bởi ShopPoint
-            </div>
+            </div> */}
             <div className="text-xl font-semibold py-1">{product?.altText}</div>
           </div>
           <div className="flex items-center">
@@ -62,9 +62,9 @@ const ProductCard = ({ product }) => {
                   fill="transparent"
                 ></path>
               </svg>
-              <div className="text-sp10 leading-4 h-4 mx-1 truncate">
+              {/* <div className="text-sp10 leading-4 h-4 mx-1 truncate">
                 {product?.promotionText}
-              </div>
+              </div> */}
               <svg
                 className="w-1 h-4 absolute right-0 top-0 transform rotate-180"
                 viewBox="-0.25 -0.25 4 16"

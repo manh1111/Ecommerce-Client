@@ -118,8 +118,6 @@ export const PRODUCT_TYPE_OPTIONS = [
 export const TRANSACTIONS_SORT_OPTIONS = [
   { value: "recent", label: "Mới nhất" },
   { value: "oldest", label: "Cũ nhất" },
-  { value: "amount-high-to-low", label: "Số tiền: Cao đến Thấp" },
-  { value: "amount-low-to-high", label: "Số tiền: Thấp đến Cao" },
 ];
 
 export const PRODUCT_SELLER_OPTIONS = [
