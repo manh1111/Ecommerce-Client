@@ -19,7 +19,6 @@ import Checkout from "./pages/Checkout";
 
 const Login = lazy(() => import("@pages/Login"));
 const SignUp = lazy(() => import("@pages/SignUp"));
-const SalesAnalytics = lazy(() => import("@pages/SalesAnalytics"));
 const ConfirmPayment = lazy(() => import("@pages/ConfirmPayment"));
 const MainPage = lazy(() => import("@pages/MainPage"));
 const SellerProfile = lazy(() => import("@pages/SellerProfile"));
@@ -85,7 +84,6 @@ const App = () => {
                   <Route path="/payment-success" element={<ConfirmPayment />} />
                   <Route path="/payment-failed" element={<ConfirmPayment />} />
                   <Route path="/" element={<MainPage />} />
-                  <Route path="/salesAnalytics" element={<SalesAnalytics />} />
                   <Route
                     path="/products-management"
                     element={<ProductsManagement />}

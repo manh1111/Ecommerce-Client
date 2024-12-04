@@ -10,7 +10,6 @@ const SellerCollapseItem = ({ seller, handleCollapse, activeCollapse }) => {
       }`}
       onClick={() => handleCollapse(seller.id)}
     >
-      {/* Avatar Section */}
       <div
         className="relative w-full h-40 rounded-lg overflow-hidden mb-4"
         style={{

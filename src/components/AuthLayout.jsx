@@ -9,7 +9,6 @@ import { useWindowSize } from "react-use";
 import classNames from "classnames";
 import media from "@assets/login.webp";
 import google from "@assets/icons/google.png";
-import facebook from "@assets/icons/facebook.png";
 import { signIn, signInWithGoogle } from "@api/auth";
 import { setCookie } from "@utils/cookie";
 import { useDispatch } from "react-redux";
@@ -27,6 +26,9 @@ const AuthLayout = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
   const {
     register,
     handleSubmit,
@@ -95,10 +97,6 @@ const handleLoginWithGoogle = async () => {
     toast.error("Không thể kết nối tới Google!");
   }
 };
-
-  const handlePasswordReminder = (e) => {
-    e.preventDefault();
-  };
 
   const handleSignUp = () => {
     navigate("/sign-up");
@@ -169,7 +167,10 @@ const handleLoginWithGoogle = async () => {
               />
             </div>
             <div className="flex flex-col items-center gap-6 mt-4 mb-10">
-              <button className="text-btn" onClick={handlePasswordReminder}>
+              <button
+                className="text-btn"
+                onClick={() => handleNavigation("/forgot-password")}
+              >
                 Quên mật khẩu?
               </button>
               <button
@@ -189,10 +190,7 @@ const handleLoginWithGoogle = async () => {
               </span>
             </div>
             <div className="py-4">
-              <div
-                className="btn btn--social"
-                onClick={handleLoginWithGoogle}
-              >
+              <div className="btn btn--social" onClick={handleLoginWithGoogle}>
                 <img className="icon" src={google} alt="Google" />
                 Google
               </div>
