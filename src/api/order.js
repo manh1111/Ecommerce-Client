@@ -101,18 +101,3 @@ export const updateOrderStatus = async (orderId, newStatus) => {
   }
 };
 
-// export const updateOrderStatus = async (orderId, newStatus) => {
-//   try {
-//     const config = checkToken("application/json");
-//     const response = await axiosInstance.put(
-//       `${URL_API}order/${orderId}?status=${newStatus}`,
-//       config 
-//     );
-
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error updating order status:", error);
-//     return false;
-//   }
-// };
-

@@ -65,7 +65,7 @@ const TransactionsTable = () => {
             dayjs(transaction.timestamp).isBefore(end)
         )
       );
-      pagination.goToPage(0); // Reset pagination when filtering
+      pagination.goToPage(0); 
     };
 
     filterByDateRange();

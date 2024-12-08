@@ -1,129 +1,76 @@
 // components
-import SubmenuTrigger from '@ui/SubmenuTrigger';
-import RatingStars from '@ui/RatingStars';
-import Timestamp from '@ui/Timestamp';
-import TruncatedText from '@components/TruncatedText';
-import Spring from '@components/Spring';
-import ModalBase from '@ui/ModalBase';
+import Spring from "@components/Spring";
+import Select from "@ui/Select";
+import Review from "@components/Review";
+import Pagination from "@ui/Pagination";
 
 // hooks
-import {useTheme} from '@contexts/themeContext';
-import {useWindowSize} from 'react-use';
-import useMeasure from 'react-use-measure';
-import {useState, useEffect} from 'react';
+import { useState } from "react";
+import usePagination from "@hooks/usePagination";
 
-// utils
-import dayjs from 'dayjs';
+// constants
+import { REVIEW_SORT_OPTIONS } from "@constants/options";
 
-const placeholder = {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'email@domain.com',
-    rating: 5,
-    img: 'https://via.placeholder.com/63x63',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae diam eu nulla tincidunt tincidunt.',
-    timestamp: new Date()
-}
+const LatestAcceptedReviews = ({ reviews }) => {
+  console.log("reviews", reviews);
+  const [sort, setSort] = useState(REVIEW_SORT_OPTIONS[0]);
 
-const User = ({data = placeholder, wrapperClass}) => {
-    return (
-        <div className={`flex items-center ${wrapperClass}`}>
-            <img className="bg-input-border shrink-0 w-10 h-10 rounded-md md:w-[63px] md:h-[63px]"
-                 src={data.img}
-                 alt={`${data.firstName} ${data.lastName}`}
-                 width={63}
-                 height={63} />
-            <div className="flex flex-col gap-1.5 md:gap-2.5">
-                <h6 className="truncate max-w-[120px] xs:max-w-[180px]">
-                    {data.firstName} {data.lastName}
-                </h6>
-                <a className="text-btn" href={`mailto:${data.email}`}>
-                   <span className="truncate max-w-[120px] xs:max-w-[180px]">
-                         {data.email}
-                   </span>
-                </a>
-            </div>
+  // Sort the reviews based on the selected sort option
+  const sortedData = [...reviews].sort((a, b) => {
+    if (sort.value === "recent") {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    } else if (sort.value === "oldest") {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    } else if (sort.value === "rating-high-to-low") {
+      return b.rating - a.rating;
+    } else if (sort.value === "rating-low-to-high") {
+      return a.rating - b.rating;
+    }
+
+    return 0;
+  });
+
+  // Apply pagination to the sorted data
+  const pagination = usePagination(sortedData, 4);
+
+  return (
+    <Spring className="flex flex-1 flex-col gap-[26px]">
+      <div className="card !p-0 flex-1">
+        <div className="flex flex-col bg-blue-200 p-5 gap-2.5 md:flex-row md:justify-between md:items-center md:px-[26px] rounded-t-lg">
+          <Select
+            value={sort}
+            onChange={setSort}
+            options={REVIEW_SORT_OPTIONS}
+            variant="minimal"
+          />
         </div>
-    )
-}
+        <span className="block h-[1px] bg-input-border opacity-60" />
+        <div>
+          {pagination.currentItems().map((review, index) => (
+            <Review
+              key={`${sort.value}-${review._id}`}
+              data={{
+                id: review._id,
+                product: review.product_id,
+                user: review.user_id,
+                rating: review.rating,
+                comment: review.comment,
+                date: new Date(review.createdAt).toLocaleString("vi-VN", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              }}
+              index={index}
+            />
+          ))}
+        </div>
+      </div>
+      {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
+    </Spring>
+  );
+};
 
-const Review = ({data = placeholder, index = 0}) => {
-    const {theme} = useTheme();
-    const {width} = useWindowSize();
-    const [ref, {width: refWidth}] = useMeasure();
-    const bgColor = theme === 'light' ? 'var(--body)' : 'rgba(39,50,65,.2)';
-
-    const [modalOpen, setModalOpen] = useState(false);
-
-    useEffect(() => {
-        setModalOpen(false);
-    }, [width]);
-
-    return (
-        <Spring index={index}>
-            <div className="p-5" style={{backgroundColor: index % 2 === 0 ? bgColor : 'var(--widget)'}}>
-                <div className="flex items-center justify-between">
-                    <User data={data} wrapperClass="gap-5 md:gap-[30px] md:w-[300px]" />
-                    {
-                        width >= 768 &&
-                        <div className="flex items-center gap-[18px] xl:ml-[30px] xl:mr-10 xl:w-[200px]">
-                            <RatingStars rating={data.rating} />
-                            <span className="label-text">{data.rating}</span>
-                        </div>
-                    }
-                    {
-                        width >= 1280 &&
-                        <div className="flex flex-1 gap-5 bg-input-bg border border-input-border h-20 rounded-md
-                             max-w-[588px] p-4 overflow-hidden">
-                            <div className="flex-1 max-w-[513px]" ref={ref}>
-                                <TruncatedText className="flex-1" text={data.text} width={refWidth} />
-                            </div>
-                            <button className="self-start icon text-[18px] mt-1"
-                                    onClick={() => setModalOpen(true)}
-                                    aria-label="See details">
-                                <i className="icon-message-arrow-up-right-regular"/>
-                            </button>
-                        </div>
-                    }
-                    {
-                        width >= 1024 &&
-                        <Timestamp date={data.timestamp} wrapperClass="xl:ml-[30px] xl:mr-[75px]" />
-                    }
-                    <div className="flex gap-4 items-center">
-                        <button className="icon text-[18px] mt-0.5 xl:hidden"
-                                onClick={() => setModalOpen(true)}
-                                aria-label="See details">
-                            <i className="icon-message-arrow-up-right-regular"/>
-                        </button>
-                        <SubmenuTrigger/>
-                    </div>
-                </div>
-            </div>
-            <ModalBase open={modalOpen} onClose={() => setModalOpen(false)}>
-                <div className="card relative no-hover flex flex-col w-full max-w-[400px] will-change-transform">
-                    <button className="absolute top-5 right-5 icon text-[18px] transition hover:text-red"
-                            onClick={() => setModalOpen(false)}
-                            aria-label="Close">
-                        <i className="icon-circle-xmark-regular"/>
-                    </button>
-                    <User data={data} wrapperClass="gap-4 mb-5" />
-                    <p className="flex gap-4 mb-2">
-                        <span className="label-text">Date: </span>
-                        <span className="text-sm font-medium">
-                            {dayjs(data.timestamp).format('DD/MM/YYYY, hh:mm A')}
-                        </span>
-                    </p>
-                    <div className="flex gap-4 mb-6">
-                        <span className="label-text">Rate:</span>
-                        <RatingStars rating={data.rating} />
-                    </div>
-                    <div className="bg-input-bg rounded-md border border-input-border h-[240px] p-4 overflow-y-auto">
-                        {data.text}
-                    </div>
-                </div>
-            </ModalBase>
-        </Spring>
-    )
-}
-
-export default Review
+export default LatestAcceptedReviews;

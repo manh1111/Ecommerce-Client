@@ -3,7 +3,6 @@ import { checkToken } from "@utils/auth";
 
 import { URL_API } from "../config/config";
 
-// Fetch reviews for the shop
 export const getCustomer = async () => {
   try {
     const config = checkToken("application/json");

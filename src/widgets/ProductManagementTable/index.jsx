@@ -5,13 +5,14 @@ import {
   deleteProducts,
   publishProducts,
   deletePermanentlyProducts,
+  countProducts,
 } from "@api/product";
-import getProducts, { fetchProducts } from "@db/products_management"; // Ensure this file exists and exports correctly
+import getProducts, { fetchProducts } from "@db/products_management"; 
 import ProductManagementCollapseItem from "@components/ProductManagementCollapseItem";
 import FilterItem from "@ui/FilterItem";
 import Pagination from "@ui/Pagination";
 import Empty from "@components/Empty";
-import StyledTable from "./styles"; // Ensure this exists
+import StyledTable from "./styles";
 import { NavLink } from "react-router-dom";
 import dayjs from "dayjs";
 import { PRODUCT_MANAGEMENT_OPTIONS } from "@constants/options";
@@ -25,14 +26,34 @@ const ProductManagementTable = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [change, setChange] = useState(false);
 
+  const [productCounts, setProductCounts] = useState({
+    totalDraft: 0,
+    totalPublic: 0,
+    totalDeleted: 0,
+  });
+
+  useEffect(() => {
+    const fetchProductCounts = async () => {
+      try {
+        const counts = await countProducts();
+        setProductCounts(counts);
+      } catch (error) {
+        console.error("Error fetching product counts:", error);
+      }
+    };
+
+    fetchProductCounts();
+  }, []);
+
+
   useEffect(() => {
     const loadProducts = async () => {
       console.log("category", category);
       await fetchProducts(category);
-      setProducts(getProducts(category)); // Get the latest products after fetching
+      setProducts(getProducts(category)); 
     };
     loadProducts();
-  }, [category, change]); // Re-run when category changes
+  }, [category, change]); 
 
   const handlePublishProduct = async (productId) => {
     try {
@@ -62,7 +83,6 @@ const ProductManagementTable = () => {
          position: toast.POSITION.TOP_RIGHT,
          autoClose: 5000,
        });
-       // Reload products after successful deletion
        await fetchProducts(category);
       setProducts(getProducts(category));
       setChange(!change);
@@ -79,7 +99,7 @@ const ProductManagementTable = () => {
     try {
       if (selectedProducts.length > 0) {
         const response = await deleteProducts(selectedProducts);
-        setProducts(getProducts()); // Reload after deletion
+        setProducts(getProducts()); 
         setSelectedProducts([]);
 
         toast.success("Sản phẩm đã được xóa thành công", {
@@ -104,9 +124,19 @@ const ProductManagementTable = () => {
 
 
   const getQty = (status) => {
-    if (status === "all") return products.length;
-    return products.filter((product) => product.status === status).length;
+    if (status === "all") {
+      return (
+        productCounts.totalDraft +
+        productCounts.totalPublic +
+        productCounts.totalDeleted
+      );
+    }
+    if (status === "publish") return productCounts.totalPublic;
+    if (status === "draft") return productCounts.totalDraft;
+    if (status === "deleted") return productCounts.totalDeleted;
+    return 0;
   };
+
 
   const dataByStatus = () => {
     return products;

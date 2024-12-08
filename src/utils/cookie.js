@@ -70,9 +70,8 @@ export const decodeUserToken = () => {
   const userTokenCookie = getCookie("user_login");
   if (userTokenCookie) {
     try {
-      const token = JSON.parse(userTokenCookie); // Parse the stored token
-      const dataInforUser = jwtDecode(token); // Decode the JWT token to get user info
-      console.log("User info:", dataInforUser);
+      const token = JSON.parse(userTokenCookie); 
+      const dataInforUser = jwtDecode(token);
       return dataInforUser;
     } catch (error) {
       console.error("Invalid user login token", error);
@@ -89,7 +88,6 @@ export const decodeRefreshToken = () => {
   if (refreshToken) {
     try {
       const refreshTokenData = jwtDecode(refreshToken); 
-      console.log("Refresh token decoded:", refreshTokenData);
       return refreshTokenData;
     } catch (error) {
       console.error("Invalid refresh token", error);

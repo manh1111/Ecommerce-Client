@@ -72,8 +72,9 @@ const OrdersTable = ({ initialOrders = [] }) => {
     const { rating, comment } =
       reviewData[selectedOrder._id]?.[selectedProduct._id] || {};
 
+    console.log("selectedProduct._id", selectedProduct);
     try {
-      await createReview(selectedProduct._id, rating, comment);
+      await createReview(selectedProduct.productId, rating, comment);
       toast.success("Đánh giá đã được gửi thành công!");
       setIsReviewModalOpen(false); // Close modal after submission
     } catch (error) {

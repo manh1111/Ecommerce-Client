@@ -2,7 +2,6 @@ import Spring from "@components/Spring";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import DropFiles from "@components/DropFiles";
 import { getCategories } from "@api/categorie";
 import { createProduct, updateProduct, getProductById } from "@api/product"; // Import updateProduct and getProductById API functions
 import classNames from "classnames";
@@ -288,12 +287,12 @@ const ProductEditor = () => {
                     handleSubmitProduct(data, true)
                   )}
                 >
-                  Save as Draft
+                  Lưu thành bản nháp
                 </button>
               ) : null}
 
               <button className="btn btn--secondary" type="submit">
-                {id ? "Update Product" : "Publish"}
+                {id ? "Cập nhật thông tin" : "Xuất bản sản phẩm"}
               </button>
             </div>
           </div>

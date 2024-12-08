@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Button, Image, Modal, Skeleton, Spin } from "antd";
-import { LoaderOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 import { addCart } from "@api/cart";
-import { getCookie } from "@utils/cookie";
+import Loader from "@components/Loader";
 
 const VND = new Intl.NumberFormat("vi-VN", {
   style: "currency",
@@ -115,7 +114,6 @@ const ProductInfo = ({ product, shopData }) => {
           </div>
         </div>
 
-        {/* Product Information */}
         <div className="xl:w-1/2 w-full flex flex-col justify-between gap-6 px-4 xl:px-0">
           <div className="text-2xl font-bold mb-2">{product.name}</div>
           <div className="flex items-center gap-4 mb-4">
@@ -153,7 +151,7 @@ const ProductInfo = ({ product, shopData }) => {
               <div className="w-1/2 flex items-center">
                 <Spin
                   className="w-fit"
-                  indicator={<LoaderOutlined style={{ fontSize: 24 }} spin />}
+                  indicator={<Loader/>}
                 />
               </div>
             ) : (

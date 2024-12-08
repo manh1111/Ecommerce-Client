@@ -1,18 +1,19 @@
 // components
-import PageHeader from "@layout/PageHeader";
-import OrdersInfobox from "@components/OrdersInfobox";
-import OrdersTableShop from "@widgets/OrdersTableShop";
-import Loader from "@components/Loader";
+import PageHeader from "../layout/PageHeader";
+import OrdersInfobox from "../components/OrdersInfobox";
+import OrdersTableShop from "../widgets/OrdersTableShop";
+import Loader from "../components/Loader";
 
 import { useState, useEffect } from "react";
 
-import { PRODUCT_CATEGORIES, ORDER_SORT_OPTIONS } from "@constants/options";
-import { getOrdersForShop } from "@api/order";
+import { PRODUCT_CATEGORIES, ORDER_SORT_OPTIONS } from "../constants/options";
+import { getAllOrder } from "../api/order";
 
 const Orders = () => {
   const [category, setCategory] = useState(PRODUCT_CATEGORIES[0]);
   const [sort, setSort] = useState(ORDER_SORT_OPTIONS[0]);
   const [orders, setOrders] = useState([]);
+  const [AllOrders, setAllOrders] = useState([]);
   const [loading, setLoader] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("pending");
@@ -32,8 +33,10 @@ const Orders = () => {
     const fetchOrders = async () => {
       setLoader(true);
       try {
-        const data = await getOrdersForShop(activeTab);
+        const data = await getAllOrder(activeTab);
+        const allData = await getAllOrder();
         setOrders(data);
+        setAllOrders(allData);
       } catch (error) {
         console.error("Error fetching orders:", error);
         setError("Không thể tải đơn hàng. Vui lòng thử lại.");
@@ -55,7 +58,17 @@ const Orders = () => {
 
   // Count orders by status
   const countOrdersByStatus = (status) => {
-    return orders.filter((order) => order.status === status).length;
+    return AllOrders.filter((order) => order.order_status === status) // Lọc các đơn hàng có trạng thái phù hợp
+      .reduce((total, order) => {
+        // Tính tổng số lượng sản phẩm trong các đơn hàng đã lọc
+        return (
+          total +
+          order.order_products.reduce(
+            (productTotal, product) => productTotal + product.quantity,
+            0
+          )
+        );
+      }, 0);
   };
 
   const renderStatusTabs = () =>
@@ -63,16 +76,17 @@ const Orders = () => {
       <button
         key={status.value}
         onClick={() => setActiveTab(status.value)}
-        className={`py-2 px-4 rounded ${
+        className={`py-2 px-4 rounded-lg text-sm ${
           activeTab === status.value
             ? "bg-blue-500 text-white"
-            : "bg-gray-200 text-gray-700"
+            : "bg-slate-100 text-gray-700 border-slate-200 border-2"
         }`}
       >
         {status.name}
       </button>
     ));
 
+  console.log("first", AllOrders, countOrdersByStatus("completed"));
   // Render the infobox widgets with dynamic counts
   const renderInfoboxWidgets = () => (
     <div className="widgets-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:col-span-4">
@@ -80,6 +94,12 @@ const Orders = () => {
         title="Hoàn thành"
         count={countOrdersByStatus("completed")}
         icon={<i className="icon-check-to-slot-solid" />}
+      />
+      <OrdersInfobox
+        title="Chờ xác nhận"
+        count={countOrdersByStatus("confirmed")}
+        color="badge-status-bg"
+        icon={<i className="icon-rotate-left-solid" />}
       />
       <OrdersInfobox
         title="Đã xác nhận"
@@ -93,12 +113,6 @@ const Orders = () => {
         color="red"
         icon={<i className="icon-ban-solid" />}
       />
-      <OrdersInfobox
-        title="Đã hoàn tiền"
-        count={countOrdersByStatus("refunded")} // Adjust this if you have a "refunded" status
-        color="badge-status-bg"
-        icon={<i className="icon-rotate-left-solid" />}
-      />
     </div>
   );
 
@@ -106,15 +120,11 @@ const Orders = () => {
     <>
       <PageHeader title="Đơn Hàng" />
       <div className="flex flex-col flex-1 gap-5 md:gap-[26px]">
-        {/* Order Status Tabs */}
-        <div className="flex gap-4">{renderStatusTabs()}</div>
-
-        {/* Widgets Section */}
-        <div className="w-full widgets-grid grid-cols-1 xl:grid-cols-6">
+        <div className="w-full widgets-grid grid-cols-1 ">
           {renderInfoboxWidgets()}
         </div>
 
-        {/* Orders Table or Loader */}
+        <div className="flex gap-4">{renderStatusTabs()}</div>
         {loading ? (
           <Loader />
         ) : error ? (

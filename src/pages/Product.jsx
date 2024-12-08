@@ -10,6 +10,7 @@ const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 const Product = () => {
+  console.log("getRandomNumber");
   const { id } = useParams();
   const [productData, setProductData] = useState(null); 
   const [shop, setShop] = useState({}); 
@@ -34,6 +35,7 @@ const Product = () => {
     return <Loader />;
   }
 
+  console.log("productData", productData);
   const sellerData = {
     id: shop._id,
     backgroundUrl: shop.logo || "", 

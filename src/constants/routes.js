@@ -1,42 +1,29 @@
 const ROUTES = [
-  // {
-  //   name: "Dashboard",
-  //   icon: "rectangle-history-circle-user-regular",
-  //   links: [
-  //     { name: "Sales Analytics", path: "/" },
-  //     { name: "Sellers List", path: "/sellers-list" },
-  //     { name: "Sellers Table", path: "/sellers-table" },
-  //     { name: "Sellers Grid", path: "/sellers-grid" },
-  //     { name: "Seller Profile", path: "/seller-profile" },
-  //     { name: "Revenue by Period", path: "/revenue-by-period" },
-  //   ],
-  // },
   {
-    name: "Products",
+    name: "Sản phẩm",
     icon: "boxes-stacked-regular",
-    path: "/products-management" 
+    path: "/products-management",
   },
   {
-    name: "Orders",
+    name: "Đơn hàng",
     icon: "cart-shopping-regular",
     path: "/orders",
   },
   {
-    name: "Reviews",
+    name: "Đánh giá",
     icon: "star-half-stroke-solid",
     path: "/reviews",
   },
   {
-    name: "Customers",
+    name: "Khách hàng",
     icon: "chart-user-regular",
     path: "/customers",
   },
   {
-    name: "Transactions",
+    name: "Giao dịch",
     icon: "money-check-dollar-pen-regular",
     path: "/transactions",
-    qty: 279,
   },
 ];
 
-export default ROUTES
+export default ROUTES;

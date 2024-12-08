@@ -232,3 +232,18 @@ export const publishProducts = async (ids) => {
     throw error;
   }
 };
+
+export const countProducts = async () => {
+  try {
+    const config = checkToken("application/json");
+    const response = await axiosInstance.get(
+      `${URL_API}product/shop/countProduct`,
+      config
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error publishing products:", error);
+    throw error;
+  }
+};

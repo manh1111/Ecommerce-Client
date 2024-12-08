@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 
-const Search = ({ placeholder = "Search...", wrapperClass }) => {
+const Search = ({ placeholder = "Tìm kiếm...", wrapperClass }) => {
   const { searchProducts, setSearchTerm } = useSearchProduct();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");

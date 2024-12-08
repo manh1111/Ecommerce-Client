@@ -6,7 +6,7 @@ import { URL_API } from "../../src/config/config";
 export const getReviewForShop = async () => {
   try {
     const config = checkToken("application/json");
-    const response = await axiosInstance.get(`${URL_API}/reviews`, config);
+    const response = await axiosInstance.get(`${URL_API}review`, config);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch reviews", error);

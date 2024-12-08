@@ -59,6 +59,7 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
   };
 
   const handleReviewSubmit = async (rating, comment) => {
+    console.log("selectedOrder", selectedOrder);
     if (selectedOrder) {
       try {
         await createReview(selectedOrder.productId, rating, comment);
