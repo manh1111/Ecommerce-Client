@@ -36,8 +36,7 @@ const LatestAcceptedReviews = ({ reviews }) => {
   return (
     <Spring className="flex flex-1 flex-col gap-[26px]">
       <div className="card !p-0 flex-1">
-        <div className="flex flex-col p-5 gap-2.5 md:flex-row md:justify-between md:items-center md:px-[26px]">
-          <h5>Latest Accepted Reviews</h5>
+        <div className="flex flex-col bg-blue-200 p-5 gap-2.5 md:flex-row md:justify-between md:items-center md:px-[26px] rounded-t-lg">
           <Select
             value={sort}
             onChange={setSort}

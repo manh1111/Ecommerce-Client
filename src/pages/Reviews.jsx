@@ -44,12 +44,11 @@ const Reviews = () => {
   if (loading) {
     return <Loader />;
   }
-
   return (
     <>
       <PageHeader title="Đánh giá" />
       <div className="flex flex-col flex-1 gap-5 md:gap-[26px]">
-        {!reviews ? <LatestAcceptedReviews reviews={reviews} />
+        {reviews ? <LatestAcceptedReviews reviews={reviews} />
         : <div className="flex justify-center items-center text-red font-bold">Chưa có đánh giá nào trong shop của bạn</div>}
       </div>
     </>
