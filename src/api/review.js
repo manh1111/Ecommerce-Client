@@ -17,6 +17,20 @@ export const getReviewForShop = async () => {
   }
 };
 
+export const getReviewProductById= async ({id}) => {
+  try {
+    const config = checkToken("application/json");
+    const response = await axiosInstance.get(
+      `${URL_API}review/${id}`,
+      config
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch reviews", error);
+    throw error;
+  }
+};
+
 export const createReview = async (productId, rating, comment) => {
   try {
     const config = checkToken("application/json");

@@ -205,8 +205,6 @@ const ProductInfo = ({ product, shopData }) => {
           <div className="flex flex-col gap-6">
             <div className="text-lg font-semibold mb-2">Thông tin sản phẩm</div>
             <div className="text-lg mb-4">{product.description}</div>
-            <div className="text-lg font-semibold mb-2">Hướng dẫn sử dụng</div>
-            <div className="text-lg">{product.usage}</div>
           </div>
         </section>
       </div>
