@@ -1,33 +1,16 @@
 import axiosInstance from "@api/axiosInstance";
 import { checkToken } from "@utils/auth";
-import { getCookie } from "@utils/cookie";
 
-// Access the base URL from the environment variables
-const URL_API = import.meta.env.VITE_URL_API;
+import { URL_API } from "../../src/config/config";
 
 export const getCart = async () => {
   try {
-    let token = null;
+    const config = checkToken("application/json");
+    const response = await axiosInstance.get(`${URL_API}cart`,
+      config,
+    );
 
-    // Get the token from cookies if it exists
-    const userLoginCookie = getCookie("user_login");
-    if (userLoginCookie) {
-      token = JSON.parse(userLoginCookie);
-    }
 
-    // If token is not found, throw an error
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
-
-    // Perform the API call using the base URL from the .env file
-    const response = await axiosInstance.get(`${URL_API}cart`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    // Return the cart data from the response
     return response.data;
   } catch (error) {
     console.error("Error fetching cart data:", error);

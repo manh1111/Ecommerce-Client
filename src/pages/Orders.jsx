@@ -1,66 +1,145 @@
 // components
-import PageHeader from '@layout/PageHeader';
-import CalendarSelector from '@components/CalendarSelector';
-import Select from '@ui/Select';
-import OrdersAverageRate from '@widgets/OrdersAverageRate';
-import OrdersInfobox from '@components/OrdersInfobox';
-import OrdersTable from '@widgets/OrdersTable';
+import PageHeader from "../layout/PageHeader";
+import OrdersInfobox from "../components/OrdersInfobox";
+import OrdersTableShop from "../widgets/OrdersTableShop";
+import Loader from "../components/Loader";
 
-// hooks
-import {useState} from 'react';
+import { useState, useEffect } from "react";
 
-// constants
-import {PRODUCT_CATEGORIES, ORDER_SORT_OPTIONS} from '@constants/options';
+import { PRODUCT_CATEGORIES, ORDER_SORT_OPTIONS } from "../constants/options";
+import { getAllOrder } from "../api/order";
 
 const Orders = () => {
-    const [category, setCategory] = useState(PRODUCT_CATEGORIES[0]);
-    const [sort, setSort] = useState(ORDER_SORT_OPTIONS[0]);
+  const [category, setCategory] = useState(PRODUCT_CATEGORIES[0]);
+  const [sort, setSort] = useState(ORDER_SORT_OPTIONS[0]);
+  const [orders, setOrders] = useState([]);
+  const [AllOrders, setAllOrders] = useState([]);
+  const [loading, setLoader] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("pending");
+  const [updatedOrders, setUpdatedOrders] = useState([]);
 
-    return (
-        <>
-            <PageHeader title="Orders"/>
-            <div className="flex flex-col flex-1 gap-5 md:gap-[26px]">
-                <div className="w-full grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-[26px] lg:grid-cols-4 lg:items-end
-                     xl:grid-cols-6">
-                    <CalendarSelector wrapperClass="lg:max-w-[275px] lg:col-span-2 xl:col-span-4"
-                                      id="ordersPeriodSelector"/>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-[26px] md:col-span-2">
-                        <Select value={category}
-                                options={PRODUCT_CATEGORIES}
-                                onChange={setCategory}
-                                placeholder="Product category"/>
-                        <Select value={sort}
-                                options={ORDER_SORT_OPTIONS}
-                                onChange={setSort}
-                                placeholder="Default sorting"/>
-                    </div>
-                </div>
-                <div className="w-full widgets-grid grid-cols-1 xl:grid-cols-6">
-                    <div className="xl:col-span-2">
-                        <OrdersAverageRate/>
-                    </div>
-                    <div className="widgets-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:col-span-4">
-                        <OrdersInfobox title="Completed"
-                                       count={2345}
-                                       icon={<i className="icon-check-to-slot-solid"/>}/>
-                        <OrdersInfobox title="Confirmed"
-                                       count={323}
-                                       color="green"
-                                       icon={<i className="icon-list-check-solid"/>}/>
-                        <OrdersInfobox title="Canceled"
-                                       count={17}
-                                       color="red"
-                                       icon={<i className="icon-ban-solid"/>}/>
-                        <OrdersInfobox title="Refunded"
-                                       count={2}
-                                       color="badge-status-bg"
-                                       icon={<i className="icon-rotate-left-solid"/>}/>
-                    </div>
-                </div>
-                <OrdersTable category={category} sort={sort}/>
-            </div>
-        </>
-    )
-}
+  const orderStatuses = [
+    { value: "", name: "Tất cả đơn hàng" },
+    { value: "pending", name: "Chờ xử lý" },
+    { value: "confirmed", name: "Đã xác nhận" },
+    { value: "shipped", name: "Đang vận chuyển" },
+    { value: "completed", name: "Đã giao hàng" },
+    { value: "cancelled", name: "Đã hủy" },
+    { value: "waiting", name: "Chờ thanh toán" },
+  ];
 
-export default Orders
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoader(true);
+      try {
+        const data = await getAllOrder(activeTab);
+        const allData = await getAllOrder();
+        setOrders(data);
+        setAllOrders(allData);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        setError("Không thể tải đơn hàng. Vui lòng thử lại.");
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    fetchOrders();
+  }, [activeTab]);
+
+  const handleOrderUpdate = (orderId) => {
+    setUpdatedOrders((prev) => [...prev, orderId]);
+  };
+
+  const filteredOrders = orders.filter(
+    (order) => !updatedOrders.includes(order.id)
+  );
+
+  // Count orders by status
+  const countOrdersByStatus = (status) => {
+    return AllOrders.filter((order) => order.order_status === status) // Lọc các đơn hàng có trạng thái phù hợp
+      .reduce((total, order) => {
+        // Tính tổng số lượng sản phẩm trong các đơn hàng đã lọc
+        return (
+          total +
+          order.order_products.reduce(
+            (productTotal, product) => productTotal + product.quantity,
+            0
+          )
+        );
+      }, 0);
+  };
+
+  const renderStatusTabs = () =>
+    orderStatuses.map((status) => (
+      <button
+        key={status.value}
+        onClick={() => setActiveTab(status.value)}
+        className={`py-2 px-4 rounded-lg text-sm ${
+          activeTab === status.value
+            ? "bg-blue-500 text-white"
+            : "bg-slate-100 text-gray-700 border-slate-200 border-2"
+        }`}
+      >
+        {status.name}
+      </button>
+    ));
+
+  console.log("first", AllOrders, countOrdersByStatus("completed"));
+  // Render the infobox widgets with dynamic counts
+  const renderInfoboxWidgets = () => (
+    <div className="widgets-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:col-span-4">
+      <OrdersInfobox
+        title="Hoàn thành"
+        count={countOrdersByStatus("completed")}
+        icon={<i className="icon-check-to-slot-solid" />}
+      />
+      <OrdersInfobox
+        title="Chờ xác nhận"
+        count={countOrdersByStatus("confirmed")}
+        color="badge-status-bg"
+        icon={<i className="icon-rotate-left-solid" />}
+      />
+      <OrdersInfobox
+        title="Đã xác nhận"
+        count={countOrdersByStatus("confirmed")}
+        color="green"
+        icon={<i className="icon-list-check-solid" />}
+      />
+      <OrdersInfobox
+        title="Đã hủy"
+        count={countOrdersByStatus("cancelled")}
+        color="red"
+        icon={<i className="icon-ban-solid" />}
+      />
+    </div>
+  );
+
+  return (
+    <>
+      <PageHeader title="Đơn Hàng" />
+      <div className="flex flex-col flex-1 gap-5 md:gap-[26px]">
+        <div className="w-full widgets-grid grid-cols-1 ">
+          {renderInfoboxWidgets()}
+        </div>
+
+        <div className="flex gap-4">{renderStatusTabs()}</div>
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <OrdersTableShop
+            initialOrders={filteredOrders}
+            category={category}
+            sort={sort}
+            onOrderUpdate={handleOrderUpdate}
+          />
+        )}
+      </div>
+    </>
+  );
+};
+
+export default Orders;

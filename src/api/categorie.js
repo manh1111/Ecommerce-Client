@@ -1,5 +1,4 @@
 import axiosInstance from "@api/axiosInstance";
-import { getCookie } from "@utils/cookie";
 
 import { URL_API } from "../../src/config/config";
 

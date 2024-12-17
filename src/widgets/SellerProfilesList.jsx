@@ -23,33 +23,30 @@ const SellerProfilesList = () => {
     const sortedData = sortSellers(data, sort.value);
     const pagination = usePagination(sortedData, 4);
 
-    // go to first page when sort changes
     useEffect(() => {
         pagination.goToPage(0);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sort]);
 
     return (
-        <>
-            <div className="flex flex-col gap-4 mb-5 md:flex-row md:mb-[26px] justify-between">
-                <CalendarSelector wrapperClass="md:max-w-[275px]" id="sellerList"/>
-                <div className="flex flex-col-reverse gap-2.5 md:flex-col md:min-w-[220px]">
-                    <p className="md:text-right">
-                        View profiles: {pagination.showingOf()}
-                    </p>
-                    <Select value={sort} onChange={setSort} options={SELLER_SORT_OPTIONS}/>
-                </div>
-            </div>
-            <div className="flex flex-col flex-1 gap-5 mb-[30px] md:gap-[26px]">
-                {
-                    pagination.currentItems().map((seller, index) => (
-                        <SellerListItem key={seller.id} seller={seller} index={index}/>
-                    ))
-                }
-            </div>
-            {pagination.maxPage > 1 && <Pagination pagination={pagination}/>}
-        </>
-    )
+      <>
+        <div className="flex flex-col gap-4 mb-5 md:flex-row md:mb-[26px] justify-between">
+          <div className="flex flex-col-reverse gap-2.5 md:flex-col md:min-w-[220px]">
+            <p className="md:text-right">Xem hồ sơ: {pagination.showingOf()}</p>
+            <Select
+              value={sort}
+              onChange={setSort}
+              options={SELLER_SORT_OPTIONS}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col flex-1 gap-5 mb-[30px] md:gap-[26px]">
+          {pagination.currentItems().map((seller, index) => (
+            <SellerListItem key={seller.id} seller={seller} index={index} />
+          ))}
+        </div>
+        {pagination.maxPage > 1 && <Pagination pagination={pagination} />}
+      </>
+    );
 }
 
 export default SellerProfilesList

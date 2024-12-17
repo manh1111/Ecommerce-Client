@@ -98,8 +98,8 @@ const SignUpLayout = () => {
         <div className="flex flex-col justify-center items-center lg:p-[60px]">
           <Logo imgClass="w-[60px]" textClass="text-[28px]" />
           <p className="text-center tracking-[0.2px] font-semibold text-lg leading-6 max-w-[540px] my-7 mx-auto">
-            Discover trends, track your orders effortlessly, and enhance your
-            shopping experience.
+            Khám phá xu hướng, theo dõi đơn hàng một cách dễ dàng và nâng cao
+            trải nghiệm mua sắm của bạn.
           </p>
           <img className="max-w-[780px]" src={media} alt="media" />
         </div>
@@ -150,7 +150,7 @@ const SignUpLayout = () => {
               <div className="flex flex-col gap-5">
                 <div className="field-wrapper">
                   <label htmlFor="name" className="field-label">
-                    Name
+                    Họ và tên
                   </label>
                   <input
                     className={classNames("field-input", {
@@ -158,12 +158,12 @@ const SignUpLayout = () => {
                     })}
                     id="name"
                     type="text"
-                    placeholder="Your name"
+                    placeholder="Nhập họ và tên"
                     {...register("name", {
                       required: "Yêu cầu nhập họ tên",
                       minLength: {
                         value: 5,
-                        message: "Phải chứa ít nhất 5 kí tự",
+                        message: "Họ tên phải chứa ít nhất 5 kí tự",
                       },
                     })}
                   />
@@ -175,7 +175,7 @@ const SignUpLayout = () => {
                 </div>
                 <div className="field-wrapper">
                   <label htmlFor="phoneNumber" className="field-label">
-                    Phone Number
+                    Số điện thoại
                   </label>
                   <input
                     className={classNames("field-input", {
@@ -183,7 +183,7 @@ const SignUpLayout = () => {
                     })}
                     id="phoneNumber"
                     type="text"
-                    placeholder="Your phone number"
+                    placeholder="Nhập số điện thoại"
                     {...register("phoneNumber", {
                       required: "Yêu cầu số điện thoại",
                       pattern: {
@@ -192,7 +192,7 @@ const SignUpLayout = () => {
                       },
                       minLength: {
                         value: 8,
-                        message: "Phải chứa ít nhất 8 số",
+                        message: "Số điện thoại phải chứa ít nhất 8 số",
                       },
                     })}
                   />
@@ -212,7 +212,7 @@ const SignUpLayout = () => {
                     })}
                     id="email"
                     type="text"
-                    placeholder="Your E-mail address"
+                    placeholder="Nhập e-mail"
                     {...register("email", {
                       required: true,
                       pattern: {
@@ -240,7 +240,7 @@ const SignUpLayout = () => {
                   render={({ field }) => (
                     <PasswordInput
                       id="password"
-                      placeholder="Your password"
+                      placeholder="Nhập mật khẩu"
                       error={errors.password}
                       innerRef={field.ref}
                       isInvalid={errors.password}

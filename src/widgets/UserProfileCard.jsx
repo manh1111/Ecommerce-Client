@@ -26,6 +26,7 @@ const UserProfileCard = () => {
       try {
         const data = await getProfileOwn();
         setUserData(data);
+        console.log("firstDATA", data)
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -57,8 +58,8 @@ const UserProfileCard = () => {
     if (file) {
       try {
         await updateProfileAvatar(file);
-        const updatedData = await getProfileOwn(); // Fetch updated data
-        setUserData(updatedData); // Update the displayed data with the latest info
+        const updatedData = await getProfileOwn(); 
+        setUserData(updatedData); 
       } catch (error) {
         console.error("Failed to update profile picture:", error);
       }
@@ -96,11 +97,11 @@ const UserProfileCard = () => {
       </div>
       <h4>{userData?.userName}</h4>
       <p className="subheading-2 mt-6 mb-[18px]">
-        last visit {dayjs().format("DD/MM/YYYY")}
+        đăng nhập lần cuối {dayjs().format("DD/MM/YYYY")}
       </p>
       <div className="" onClick={handleLogout}>
         <button className="btn btn--secondary w-full md:max-w-[280px]">
-          Log Out
+          Đăng xuất
         </button>
       </div>
       {!roleNames.includes("shop") && (
@@ -109,7 +110,7 @@ const UserProfileCard = () => {
           type="button"
           onClick={handleStartSelling}
         >
-          Start Selling
+          Bắt đầu bán
         </button>
       )}
     </Spring>

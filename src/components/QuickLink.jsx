@@ -30,20 +30,20 @@ const QuickLink = () => {
       alt: "Mã Giảm Giá",
       title: "Mã Giảm Giá",
     },
-    {
-      href: "/shopee-sieu-re",
-      imgSrc:
-        "https://cf.shopee.vn/file/vn-50009109-91399a1d3ed283d272b069fac5ca989c_xhdpi",
-      alt: "Shopee Siêu Rẻ",
-      title: "Shopee Siêu Rẻ",
-    },
-    {
-      href: "/shopee-style",
-      imgSrc:
-        "https://cf.shopee.vn/file/vn-50009109-c02353c969d19918c53deaa4ea15bdbe_xhdpi",
-      alt: "Shopee Style Voucher 40%",
-      title: "Shopee Style Voucher 40%",
-    },
+    // {
+    //   href: "/shopee-sieu-re",
+    //   imgSrc:
+    //     "https://cf.shopee.vn/file/vn-50009109-91399a1d3ed283d272b069fac5ca989c_xhdpi",
+    //   alt: "Shopee Siêu Rẻ",
+    //   title: "Shopee Siêu Rẻ",
+    // },
+    // {
+    //   href: "/shopee-style",
+    //   imgSrc:
+    //     "https://cf.shopee.vn/file/vn-50009109-c02353c969d19918c53deaa4ea15bdbe_xhdpi",
+    //   alt: "Shopee Style Voucher 40%",
+    //   title: "Shopee Style Voucher 40%",
+    // },
     {
       href: "/sandealquocte",
       imgSrc:

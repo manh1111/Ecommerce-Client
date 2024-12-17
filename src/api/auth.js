@@ -1,5 +1,6 @@
 import axiosInstance from "./axiosInstance";
 import { URL_API } from "../../src/config/config";
+import { checkToken } from "@utils/auth";
 
 export const signInWithGoogle = async () => {
   try {
@@ -45,3 +46,20 @@ export const signUp = async (
     throw new Error("Failed to sign up");
   }
 };
+
+export const refreshAccessToken = async (refreshToken) => {
+  const config = checkToken("application/json");
+
+  try {
+    const response = await axiosInstance.post(
+      `${URL_API}refresh-token`,
+      {refreshToken}, 
+      config
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error refreshing access token:", error);
+    throw error; // Rethrow the error to handle it where this function is called
+  }
+};
+

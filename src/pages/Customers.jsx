@@ -1,26 +1,94 @@
-// components
-import PageHeader from '@layout/PageHeader';
-import CustomerRetentionRate from '@widgets/CustomerRetentionRate';
-import DemographicSegmentation from '@widgets/DemographicSegmentation';
-import ConversionRate from '@widgets/ConversionRate';
-import CustomersInfobox from '@components/CustomersInfobox';
+import { useEffect, useState } from "react";
+import { Table, Alert } from "antd";
+import Loader from "@components/Loader";
+import { getCustomer } from "@api/customer";
+import PageHeader from "@layout/PageHeader";
 
 const Customers = () => {
-    return (
-        <>
-            <PageHeader title="Customers"/>
-            <div className="widgets-grid grid-cols-1 xl:grid-cols-6">
-                <div className="widgets-grid grid-cols-1 md:grid-cols-3 xl:col-span-3">
-                    <CustomersInfobox count={32987} color="green"/>
-                    <CustomersInfobox label="New" count={17153} iconClass="user-plus-solid"/>
-                    <CustomersInfobox label="Regular" count={7587} color="red" iconClass="user-group-crown-solid"/>
-                </div>
-                <ConversionRate/>
-                <CustomerRetentionRate/>
-                <DemographicSegmentation/>
-            </div>
-        </>
-    )
-}
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-export default Customers
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const data = await getCustomer();
+        setCustomers(data);
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu khách hàng:", error);
+        setError("Không thể tải danh sách khách hàng. Vui lòng thử lại.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
+  // Cấu hình các cột trong bảng
+  const columns = [
+    {
+      title: "Ảnh đại diện",
+      dataIndex: "avatar",
+      key: "avatar",
+      render: (avatar) => (
+        <img
+          src={avatar}
+          alt="Avatar"
+          className="rounded-full w-20 h-20 object-cover"
+        />
+      ), // Cập nhật ảnh đại diện và tăng kích thước
+    },
+    {
+      title: "Tên người dùng",
+      dataIndex: "userName",
+      key: "userName",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <span
+          className={status === "active" ? "text-green-500" : "text-red-500"}
+        >
+          {status === "active" ? "Đang hoạt động" : "Không hoạt động"}
+        </span>
+      ),
+    },
+  ];
+
+  // Render bảng
+  return (
+    <>
+      <PageHeader title="Khách hàng" />
+      <div className="container mx-auto my-6 bg-white rounded-lg ">
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Alert message={error} type="error" showIcon />
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={customers}
+            rowKey="_id"
+            pagination={false}
+            className="rounded-lg shadow-lg "
+          />
+        )}
+      </div>
+    </>
+  );
+};
+
+export default Customers;

@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 const AddShop = () => {
   const [imagePreview, setImagePreview] = useState(null);
-  const [file, setLogo] = useState(null); // State to store the file
+  const [file, setLogo] = useState(null);
 
   const {
     register,
@@ -34,14 +34,14 @@ const AddShop = () => {
         formData.append("file", file);
       }
 
-      console.log("Submitting formData:", formData);
+      console.log("Đang gửi formData:", formData);
       const result = await createShop(formData);
-      toast.success("Shop created successfully!", {
+      toast.success("Tạo cửa hàng thành công!", {
         autoClose: 1000,
       });
     } catch (error) {
-      console.error("There was a problem with the API call:", error);
-      toast.error("Failed to create shop. Please try again.", {
+      console.error("Có lỗi xảy ra khi gọi API:", error);
+      toast.error("Tạo cửa hàng thất bại. Vui lòng thử lại.", {
         autoClose: 1000,
       });
     }
@@ -59,17 +59,14 @@ const AddShop = () => {
   };
 
   return (
-    <div className="card ">
-      <h5 className="mb-[15px]">Create Shop</h5>
+    <div className="card">
+      <h5 className="mb-[15px]">Tạo cửa hàng</h5>
       <div className="w-full flex justify-center">
-        <form
-          className="w-full"
-          onSubmit={handleSubmit(handleCreateShop)}
-        >
+        <form className="w-full" onSubmit={handleSubmit(handleCreateShop)}>
           <div className="flex w-full">
             <div className="w-full">
               <div>
-                <span className="block field-label mb-2.5">Shop Image</span>
+                <span className="block field-label mb-2.5">Ảnh cửa hàng</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -79,7 +76,7 @@ const AddShop = () => {
                   <div className="mt-4 w-[150px] h-[150px]">
                     <img
                       src={imagePreview}
-                      alt="Shop Preview"
+                      alt="Ảnh cửa hàng"
                       className="w-full h-auto object-cover"
                     />
                   </div>
@@ -88,31 +85,34 @@ const AddShop = () => {
 
               <div className="field-wrapper">
                 <label className="field-label text-lg pt-2" htmlFor="shop_name">
-                  Shop Name
+                  Tên cửa hàng
                 </label>
                 <input
                   className="field-input"
                   id="shop_name"
-                  placeholder="Enter shop name"
+                  placeholder="Nhập tên cửa hàng"
                   {...register("shop_name", { required: true })}
                 />
                 {errors.shop_name && (
-                  <p className="text-red-500">Shop name is required</p>
+                  <p className="text-red-500">Tên cửa hàng là bắt buộc</p>
                 )}
               </div>
 
               <div className="field-wrapper">
-                <label className="field-label text-lg pt-2" htmlFor="description">
-                  Description
+                <label
+                  className="field-label text-lg pt-2"
+                  htmlFor="description"
+                >
+                  Mô tả
                 </label>
                 <textarea
                   className="field-input !h-[160px] !py-[15px] !overflow-y-auto"
                   id="description"
-                  placeholder="Enter shop description"
+                  placeholder="Nhập mô tả cửa hàng"
                   {...register("description", { required: true })}
                 />
                 {errors.description && (
-                  <p className="text-red-500">Description is required</p>
+                  <p className="text-red-500">Mô tả là bắt buộc</p>
                 )}
               </div>
             </div>
@@ -120,31 +120,34 @@ const AddShop = () => {
             <div className="w-full gap-5 pl-8 mt-[55px]">
               <div className="field-wrapper">
                 <label className="field-label text-lg pt-2" htmlFor="address">
-                  Address
+                  Địa chỉ
                 </label>
                 <input
                   className="field-input"
                   id="address"
-                  placeholder="Enter shop address"
+                  placeholder="Nhập địa chỉ cửa hàng"
                   {...register("address", { required: true })}
                 />
                 {errors.address && (
-                  <p className="text-red-500">Address is required</p>
+                  <p className="text-red-500">Địa chỉ là bắt buộc</p>
                 )}
               </div>
 
               <div className="field-wrapper">
-                <label className="field-label text-lg pt-2" htmlFor="phone_number">
-                  Phone Number
+                <label
+                  className="field-label text-lg pt-2"
+                  htmlFor="phone_number"
+                >
+                  Số điện thoại
                 </label>
                 <input
                   className="field-input"
                   id="phone_number"
-                  placeholder="Enter phone number"
+                  placeholder="Nhập số điện thoại"
                   {...register("phone_number", { required: true })}
                 />
                 {errors.phone_number && (
-                  <p className="text-red-500">Phone number is required</p>
+                  <p className="text-red-500">Số điện thoại là bắt buộc</p>
                 )}
               </div>
 
@@ -155,17 +158,17 @@ const AddShop = () => {
                 <input
                   className="field-input"
                   id="email"
-                  placeholder="Enter shop email"
+                  placeholder="Nhập email cửa hàng"
                   {...register("email", {
                     required: true,
                     pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   })}
                 />
                 {errors.email?.type === "required" && (
-                  <p className="text-red-500">Email is required</p>
+                  <p className="text-red-500">Email là bắt buộc</p>
                 )}
                 {errors.email?.type === "pattern" && (
-                  <p className="text-red-500">Invalid email format</p>
+                  <p className="text-red-500">Định dạng email không hợp lệ</p>
                 )}
               </div>
             </div>
@@ -176,7 +179,7 @@ const AddShop = () => {
               className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
               type="submit"
             >
-              Create Shop
+              Tạo cửa hàng
             </button>
           </div>
         </form>

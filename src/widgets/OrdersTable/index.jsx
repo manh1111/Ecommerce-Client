@@ -1,14 +1,35 @@
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { deleteOrderById } from "@api/order";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { createReview } from "@api/review"; // Import createReview API
 
 const OrdersTable = ({ initialOrders = [] }) => {
   const [orders, setOrders] = useState(initialOrders);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [isCancelling, setIsCancelling] = useState(false); // Track cancellation state
+  const [reviewData, setReviewData] = useState({});
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const modalRef = useRef(null);
+
+  // Handle click outside to close the modal
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsReviewModalOpen(false);
+      }
+    };
+
+    if (isReviewModalOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isReviewModalOpen]);
 
   const handleCancelOrder = async (orderId) => {
     const updatedOrders = orders.filter((order) => order._id !== orderId);
@@ -18,21 +39,53 @@ const OrdersTable = ({ initialOrders = [] }) => {
       const res = await deleteOrderById(orderId);
       if (res.status === 200) {
         toast.success("Đơn hàng đã được hủy thành công.", {
-          toastId: orderId, // Dùng toastId để đảm bảo không hiển thị nhiều lần
+          toastId: orderId,
         });
       } else {
         throw new Error("Failed to cancel the order");
       }
     } catch (error) {
       console.error("Error cancelling order:", error);
-      toast.error("Có lỗi xảy ra khi hủy đơn hàng.", {
-        toastId: "error_" + orderId, // Tạo một toastId khác cho thông báo lỗi
+      toast.error("Sản phẩm không tồn tại.", {
+        toastId: "error_" + orderId,
       });
-
       setOrders(initialOrders);
     }
   };
 
+  // Handle review input changes
+  const handleReviewChange = (field, value) => {
+    setReviewData((prev) => ({
+      ...prev,
+      [selectedOrder._id]: {
+        ...(prev[selectedOrder._id] || {}),
+        [selectedProduct._id]: {
+          ...prev[selectedOrder._id]?.[selectedProduct._id],
+          [field]: value,
+        },
+      },
+    }));
+  };
+
+  // Handle review submission
+  const handleSubmitReview = async () => {
+    const { rating, comment } =
+      reviewData[selectedOrder._id]?.[selectedProduct._id] || {};
+
+    console.log("selectedProduct._id", selectedProduct);
+    try {
+      await createReview(selectedProduct.productId, rating, comment);
+      toast.success("Đánh giá đã được gửi thành công!");
+      setIsReviewModalOpen(false); // Close modal after submission
+    } catch (error) {
+      if (error.response.status === 400) {
+        toast.error("Sản phẩm không còn tồn tại.");
+      } else {
+        toast.error("Có lỗi xảy ra khi gửi đánh giá.");
+      }
+      setIsReviewModalOpen(false); // Close modal on error
+    }
+  };
 
   // Filter orders based on selected date range
   const filteredOrders = orders.filter((order) => {
@@ -48,6 +101,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
 
   return (
     <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
+      {/* Date range filter */}
       <div className="mb-4 flex space-x-4">
         <div className="w-full">
           <label
@@ -81,6 +135,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
         </div>
       </div>
 
+      {/* Display orders */}
       {filteredOrders.length === 0 ? (
         <p className="text-gray-600 text-center text-red">
           Không có đơn hàng nào để hiển thị.
@@ -118,21 +173,37 @@ const OrdersTable = ({ initialOrders = [] }) => {
                   </span>
                 </p>
               </div>
-              <div>
+              <div className="flex flex-col w-[250px] items-center justify-end">
                 <button
-                  className={`text-white bg-rose-500 rounded-xl px-4 py-2 ${
+                  className={`text-white w-10/12 bg-rose-500 rounded-xl px-4 py-2 ${
                     order.order_status === "pending"
                       ? "hover:opacity-80"
                       : "opacity-50 cursor-not-allowed"
                   }`}
                   onClick={() => handleCancelOrder(order._id)}
-                  disabled={order.order_status !== "pending" || isCancelling}
+                  disabled={order.order_status !== "pending"}
                 >
                   Hủy đơn hàng
                 </button>
+
+                {order.order_status === "completed" &&
+                  order.order_products.map((product) => (
+                    <button
+                      key={product._id}
+                      className="mt-2 w-10/12 text-white bg-blue-500 rounded-xl px-4 py-2"
+                      onClick={() => {
+                        setSelectedOrder(order);
+                        setSelectedProduct(product); // Set selected product here
+                        setIsReviewModalOpen(true);
+                      }}
+                    >
+                      Đánh giá
+                    </button>
+                  ))}
               </div>
             </div>
 
+            {/* Display products in order */}
             <div className="mt-4 space-y-2">
               {order.order_products.map((product) => (
                 <div key={product._id} className="flex items-center">
@@ -158,6 +229,66 @@ const OrdersTable = ({ initialOrders = [] }) => {
             </div>
           </div>
         ))
+      )}
+
+      {/* Review Modal */}
+      {isReviewModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div
+            ref={modalRef}
+            className="bg-white p-6 rounded-lg shadow-lg w-96"
+          >
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              Đánh giá sản phẩm
+            </h3>
+
+            <div className="mb-4">
+              <label className="block">Chọn đánh giá</label>
+              <select
+                value={
+                  reviewData[selectedOrder._id]?.[selectedProduct._id]
+                    ?.rating || 1
+                }
+                onChange={(e) => handleReviewChange("rating", e.target.value)}
+                className="mt-2 w-full border-2 border-gray-300 p-2 rounded-md"
+              >
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <option key={rating} value={rating}>
+                    {rating} sao
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block">Nhận xét</label>
+              <textarea
+                rows={4}
+                value={
+                  reviewData[selectedOrder._id]?.[selectedProduct._id]
+                    ?.comment || ""
+                }
+                onChange={(e) => handleReviewChange("comment", e.target.value)}
+                className="mt-2 w-full border-2 border-gray-300 p-2 rounded-md"
+              />
+            </div>
+
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setIsReviewModalOpen(false)}
+                className="text-white bg-gray-500 px-4 py-2 rounded-md"
+              >
+                Đóng
+              </button>
+              <button
+                onClick={handleSubmitReview}
+                className="text-white bg-blue-600 px-4 py-2 rounded-md"
+              >
+                Gửi đánh giá
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

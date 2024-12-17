@@ -45,7 +45,7 @@ const SearchPage = () => {
         category: categoryId,
         page,
         limit: itemsPerPage,
-        sortBy, // Pass the sortBy parameter
+        sortBy, 
       });
 
       updateProductList(data.productsWithCounts || []);
@@ -56,7 +56,6 @@ const SearchPage = () => {
 
   useEffect(() => {
     if (activeCategory) {
-      // Determine the sortBy value based on the selected sort option
       const sortByMap = {
         "Phổ biến": "sold_count",
         "Mới nhất": "-createdAt",
@@ -84,7 +83,7 @@ const SearchPage = () => {
   const handleSearch = useCallback(
     (e) => {
       const newSearchTerm = e.target.value;
-      setSearchTerm(newSearchTerm); // Update search term in context
+      setSearchTerm(newSearchTerm);
       setCurrentPage(1);
     },
     [setSearchTerm]
@@ -144,7 +143,7 @@ const SearchPage = () => {
           /> */}
 
           <fieldset className="border-0 p-0 m-0">
-            <div className="font-bold mb-2 text-xl py-4">Sắp xếp theo</div>
+            <div className="font-bold mb-2 text-xl">Sắp xếp theo</div>
             <div className="flex gap-2 mb-4">
               <section className="flex gap-2">
                 {[
@@ -165,36 +164,6 @@ const SearchPage = () => {
                     <span aria-hidden="true">{option}</span>
                   </button>
                 ))}
-              </section>
-              <section>
-                <button
-                  type="button"
-                  role="combobox"
-                  aria-controls="price-options"
-                  aria-expanded={dropdownOpen}
-                  className="flex items-center px-4 py-2 border rounded text-gray-700 bg-transparent border-gray-300 hover:bg-gray-100"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                >
-                  <span className="mr-2">{priceSortOption}</span>
-                </button>
-                {dropdownOpen && (
-                  <ul
-                    id="price-options"
-                    className="absolute mt-1 bg-white border rounded shadow-lg z-10"
-                  >
-                    {["Giá thấp đến cao", "Giá cao đến thấp"].map((option) => (
-                      <li key={option}>
-                        <button
-                          type="button"
-                          className="block px-4 py-2 w-full text-left hover:bg-gray-100"
-                          onClick={() => handleSortOptionClick(option)}
-                        >
-                          {option}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </section>
             </div>
           </fieldset>

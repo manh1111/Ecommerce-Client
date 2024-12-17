@@ -9,26 +9,21 @@ import { ThemeProvider } from "styled-components";
 import { useTheme } from "@contexts/themeContext";
 import { useEffect, useRef } from "react";
 import { useWindowSize } from "react-use";
-import ScrollToTop from "@components/ScrollToTop";
-import Loader from "@components/Loader";
 import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Sidebar from "@layout/Sidebar";
 import AppBar from "@layout/AppBar";
 import CreaterProduct from "@pages/CreaterProduct";
-import Loading from "@components/Loading";
+import Loader from "@components/Loader";
 import Checkout from "./pages/Checkout";
 
 const Login = lazy(() => import("@pages/Login"));
 const SignUp = lazy(() => import("@pages/SignUp"));
-const SalesAnalytics = lazy(() => import("@pages/SalesAnalytics"));
 const ConfirmPayment = lazy(() => import("@pages/ConfirmPayment"));
 const MainPage = lazy(() => import("@pages/MainPage"));
-const SellersList = lazy(() => import("@pages/SellersList"));
-const SellersTable = lazy(() => import("@pages/SellersTable"));
-const SellersGrid = lazy(() => import("@pages/SellersGrid"));
 const SellerProfile = lazy(() => import("@pages/SellerProfile"));
 const Shop = lazy(() => import("@pages/Shop"));
+const Catalog = lazy(() => import("@pages/Catalog"));
 const Product = lazy(() => import("@pages/Product"));
 const SearchPage = lazy(() => import("@pages/SearchPage"));
 const Address = lazy(() => import("@pages/Address"));
@@ -37,7 +32,7 @@ const RevenueByPeriod = lazy(() => import("@pages/RevenueByPeriod"));
 const TopProducts = lazy(() => import("@pages/TopProducts"));
 const ProductsGrid = lazy(() => import("@pages/ProductsGrid"));
 const ProductsManagement = lazy(() => import("@pages/ProductsManagement"));
-// const ProductEditor = lazy(() => import("@pages/EditProduct"));
+const ProductEditor = lazy(() => import("@pages/EditProduct"));
 const StartSelling = lazy(() => import("@pages/StartSelling"));
 const Banners = lazy(() => import("@pages/Banners"));
 const Orders = lazy(() => import("@pages/Orders"));
@@ -82,7 +77,7 @@ const App = () => {
           {withSidebar && <Sidebar />}
           <div className="app_content">
             {width >= 1280 && withSidebar && <AppBar />}
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<Loader />}>
               <div className={withSidebar ? "main" : ""}>
                 <Routes>
                   <Route path="/login" element={<Login />} />
@@ -90,13 +85,14 @@ const App = () => {
                   <Route path="/payment-success" element={<ConfirmPayment />} />
                   <Route path="/payment-failed" element={<ConfirmPayment />} />
                   <Route path="/" element={<MainPage />} />
-                  <Route path="/salesAnalytics" element={<SalesAnalytics />} />
-                  <Route path="/sellers-list" element={<SellersList />} />
-                  <Route path="/sellers-table" element={<SellersTable />} />
-                  <Route path="/sellers-grid" element={<SellersGrid />} />
                   <Route
                     path="/products-management"
                     element={<ProductsManagement />}
+                  />
+                  <Route path="/product-editor" element={<ProductEditor />} />
+                  <Route
+                    path="/product-editor/:id"
+                    element={<ProductEditor />}
                   />
                   <Route path="/seller-profile" element={<SellerProfile />} />
                   <Route
@@ -119,6 +115,7 @@ const App = () => {
                     element={<GeneralSettings />}
                   />
                   <Route path="/shop/:id" element={<Shop />} />
+                  <Route path="/catalog" element={<Catalog />} />
                   <Route path="/product/:id" element={<Product />} />
                   <Route path="/search" element={<SearchPage />} />
                   <Route path="/address" element={<Address />} />

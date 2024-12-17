@@ -1,85 +1,102 @@
 import { jwtDecode } from "jwt-decode";
 
+// Set a cookie with an expiration time
 export const setCookie = (name, value, expirationHours) => {
-  var date = new Date();
-  value = JSON.stringify(value);
-  date.setTime(date.getTime() + expirationHours * 60 * 60 * 1000);
-  var expires = "expires=" + date.toUTCString();
-  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+  const date = new Date();
+  value = JSON.stringify(value); // Ensure value is stored as a string
+  date.setTime(date.getTime() + expirationHours * 60 * 60 * 1000); // Set expiration time
+  const expires = "expires=" + date.toUTCString();
+  document.cookie = `${name}=${value};${expires};path=/;Secure;SameSite=Strict`;
 };
 
-export const  getCookie = (name) => {
+// Get a cookie by name
+export const getCookie = (name) => {
   if (typeof document === "undefined") {
     return null;
   }
 
-  var dc = document.cookie;
-  var prefix = name + "=";
-  var begin = dc.indexOf("; " + prefix);
+  const dc = document.cookie;
+  const prefix = `${name}=`;
+  let begin = dc.indexOf("; " + prefix);
   if (begin === -1) {
     begin = dc.indexOf(prefix);
     if (begin !== 0) return null;
   } else {
     begin += 2;
-    var end = document.cookie.indexOf(";", begin);
+    let end = document.cookie.indexOf(";", begin);
     if (end === -1) {
       end = dc.length;
     }
+    return decodeURIComponent(dc.substring(begin + prefix.length, end));
   }
-
-  return decodeURI(dc.substring(begin + prefix.length, end));
 };
 
-export function checkTokenCookie() {
-  if (typeof window === "undefined") {
-    return null;
-  }
+// Delete a specific cookie by name
+export const deleteCookie = (name) => {
+  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+};
 
-  // Lấy tất cả các cookies
-  var allCookies = document.cookie;
-
-  // Tách các cookies thành mảng các cặp key-value
-  var cookiesArray = allCookies.split("; ");
-
-  // Tìm cookie có tên là "token"
-  var tokenCookie;
-  for (var i = 0; i < cookiesArray.length; i++) {
-    var cookie = cookiesArray[i];
-    var cookieParts = cookie.split("=");
-    var cookieName = cookieParts[0];
-    var cookieValue = cookieParts[1];
-
-    if (cookieName === "token") {
-      tokenCookie = cookieValue;
-      break;
-    }
-  }
-
-  if (tokenCookie) {
-    return tokenCookie.replace(/^"|"$/g, "");
-  } else {
-    console.log('Không tìm thấy cookie có tên là "token"');
-    return null;
-  }
-}
-
-export function clearAllCookies() {
+// Clear all cookies
+export const clearAllCookies = () => {
   const cookies = document.cookie.split(";");
-
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i];
-    const eqPos = cookie.indexOf("=");
-    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+  for (const cookie of cookies) {
+    const name = cookie.split("=")[0].trim();
+    deleteCookie(name);
   }
-}
+};
 
-// Decode JWT Token to get User Info
-if (getCookie("user_login")) {
-  const token = JSON.parse(getCookie("user_login"));
-  try {
-    const dataInforUser = jwtDecode(token);
-  } catch (error) {
-    console.error("Invalid token", error);
+// Check if the token cookie exists
+export const checkTokenCookie = () => {
+  const tokenCookie = getCookie("token");
+  if (tokenCookie) {
+    return tokenCookie;
+  } else {
+    console.warn('Không tìm thấy cookie có tên là "token"');
+    return null;
   }
-}
+};
+
+// Set refresh token
+export const setRefreshToken = (value, expirationHours) => {
+  setCookie("refresh_token", value, expirationHours);
+};
+
+// Get refresh token
+export const getRefreshToken = () => {
+  return getCookie("refresh_token");
+};
+
+export const decodeUserToken = () => {
+  const userTokenCookie = getCookie("user_login");
+  if (userTokenCookie) {
+    try {
+      const token = JSON.parse(userTokenCookie); 
+      const dataInforUser = jwtDecode(token);
+      return dataInforUser;
+    } catch (error) {
+      console.error("Invalid user login token", error);
+    }
+  } else {
+    console.warn("User login token is missing or invalid.");
+  }
+  return null;
+};
+
+// Decode Refresh Token
+export const decodeRefreshToken = () => {
+  const refreshToken = getRefreshToken();
+  if (refreshToken) {
+    try {
+      const refreshTokenData = jwtDecode(refreshToken); 
+      return refreshTokenData;
+    } catch (error) {
+      console.error("Invalid refresh token", error);
+    }
+  } else {
+    console.warn("Refresh token not found.");
+  }
+};
+
+
+const userInfo = decodeUserToken(); 
+const refreshTokenInfo = decodeRefreshToken(); 

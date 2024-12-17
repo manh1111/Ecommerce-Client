@@ -26,9 +26,6 @@ export default defineConfig({
           if (id.includes("node_modules/react-select-country-list")) {
             return "country-list";
           }
-          if (id.includes("node_modules/country-state-city")) {
-            return "city-list";
-          }
         },
       },
     },

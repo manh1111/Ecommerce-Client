@@ -1,125 +1,301 @@
-import React, { useEffect, useState } from "react";
-import Spring from "@components/Spring";
-// import Loading from "@components/Loading"; 
+import Gallery from "@components/Gallery/Gallery";
+import ProductGallery from "@components/Gallery/ProductGallery";
+import CategoryList from "@widgets/Shop/CategoryList";
+import CategoryMenu from "@widgets/Shop/CategoryMenu";
+import ProductGrid from "@widgets/Shop/ProductGrid_1";
+import ProductGrid_2 from "@widgets/Shop/ProductGrid_2";
+import ProductGrid_3 from "@widgets/Shop/ProductGrid_3";
+import SellerOverview from "@widgets/Shop/SellerOverview";
+import TabMenu from "@widgets/Shop/TapMenu";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+//api
+import { getCatalogByShopId } from "@api/catalog ";
+import { getProductsByCatalogShop, getAllProductsShopId } from "@api/product";
+import { getShopById } from "@api/shop";
+import Loader from "@components/Loader";
 
-// utils
-import dayjs from "dayjs";
-import avatar from "@assets/avatar.webp";
-import { clearAllCookies } from "@utils/cookie";
-import { useNavigate } from "react-router-dom";
-import { DELETE_ALL_VALUES } from "@redux/slice/user/userSlice";
-import { useDispatch } from "react-redux";
-
-// Import the profile update API functions
-import { updateProfileAvatar, getProfileOwn } from "@api/profile";
-import Loading from "@components/Loading";
-
-const UserProfileCard = () => {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+const Shop = () => {
+  const [shop, setShop] = useState([]);
+  const [shopDetails, setShopDetails] = useState([]);
+  const [catalogs, setCatalogs] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [allProduct, setAllProduct] = useState([]);
+  const [loading, setLoader] = useState(true);
+  const { id } = useParams();
+  const getRandomNumber = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
+  console.log("sop", shop)
+  console.log(
+    "shopDetails",
+    shopDetails?.productsCount,
+    shopDetails?.reviewsCount
+  );
+  const sellerData = {
+    backgroundUrl: shop?.logo,
+    Desc: shop.description,
+    avatarUrl: shop?.logo,
+    productCount: shopDetails?.productsCount,
+    followerCount: shopDetails?.followerCount || getRandomNumber(10, 100),
+    followingCount: shopDetails?.followingCount || getRandomNumber(10, 100),
+    sellerName: shop.shop_name,
+    joinDate: shop.createdAt,
+    rating: shopDetails?.reviewsCount,
+  };
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
-        setLoading(true);
-        const data = await getProfileOwn();
-        setUserData(data);
+        setLoader(true); // Set loading to true before fetching data
+        // Fetch shop details
+        const shopDetails = await getShopById(id);
+        setShop(shopDetails.shop);
+        setShopDetails(shopDetails);
+
+        // Fetch catalogs
+        const catalogData = await getCatalogByShopId(id);
+        setCatalogs(catalogData);
+
+        const productPromises = catalogData?.map(async (catalog) => {
+          const catalogId = catalog._id;
+          const products = await getProductsByCatalogShop(id, catalogId);
+          return { catalog, products };
+        });
+
+        const catalogsWithProducts = await Promise.all(productPromises);
+
+        const categories = catalogsWithProducts.map(
+          ({ catalog, products }) => ({
+            id: catalog._id,
+            name: catalog.catalog_name,
+            products: products.map((product) => ({
+              id: product._id,
+              imageSrc: product.product_img[0],
+              altText: product.product_name,
+              price: `${product.product_price.toLocaleString()} VND`,
+              discount: "0%",
+              rating: 4.8,
+              soldCount: product.product_quantity,
+              promotionText: "Khuyến mãi đặc biệt",
+              voucherText: "Giảm giá",
+              promotionOverlaySrc: "https://example.com/overlay.png",
+            })),
+          })
+        );
+
+        const products = await getAllProductsShopId(id);
+
+        const listProducts = products.productsWithCounts.map((product) => ({
+          id: product._id,
+          imageSrc: product.product_img[0],
+          altText: product.product_name,
+          price: `${product.product_price.toLocaleString()} VND`,
+          discount: "0%",
+          rating: 4.8,
+          soldCount: product.product_quantity,
+          promotionText: "Khuyến mãi đặc biệt",
+          voucherText: "Giảm giá",
+          promotionOverlaySrc: "https://example.com/overlay.png",
+        }));
+        setAllProduct(listProducts);
+        setCategories(categories);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching data:", error);
       } finally {
-        setLoading(false); 
+        setLoader(false); // Set loading to false after data fetching
       }
     };
 
-    fetchUserData();
-  }, []);
-
-  const handleStartSelling = () => {
-    navigate("/start-selling");
-  };
-
-  const handleLogout = async () => {
-    try {
-      clearAllCookies();
-      document.cookie = `user_login=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-      document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-
-      dispatch(DELETE_ALL_VALUES());
-      navigate("/");
-      window.location.reload();
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
-
-  const handleProfileImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      try {
-        await updateProfileAvatar(file);
-        const updatedData = await getProfileOwn();
-        setUserData(updatedData);
-      } catch (error) {
-        console.error("Failed to update profile picture:", error);
-      }
-    }
-  };
-
-  const roleNames = userData?.roleNames || [];
+    fetchData();
+  }, [id]);
 
   if (loading) {
-    return <Loading />;
+    return <Loader />;
   }
 
+  const defaultProducts = [
+    {
+      link: "https://shp.ee/nymx3s4",
+      imgSrc:
+        "https://down-bs-vn.img.susercontent.com/cn-11134210-7r98o-lyx29jig46uaa2.webp",
+    },
+    {
+      link: "/lovito.vn?shopCollection=244627923#product_list",
+      imgSrc:
+        "https://down-bs-vn.img.susercontent.com/cn-11134210-7r98o-lyx29jigb7oi76.webp",
+    },
+    {
+      link: "/lovito.vn?shopCollection=246707654#product_list",
+      imgSrc:
+        "https://down-bs-vn.img.susercontent.com/cn-11134210-7r98o-lyx29jigcm8y95.webp",
+    },
+    {
+      link: "/lovito.vn?shopCollection=143450997#product_list",
+      imgSrc:
+        "https://down-bs-vn.img.susercontent.com/cn-11134210-7r98o-lyx29jige0te72.webp",
+    },
+  ];
+
+  const productData = {
+    imageSrc:
+      "https://down-bs-vn.img.susercontent.com/cn-11134210-7r98o-lr44bgxap1nxbe.webp",
+    links: [
+      {
+        href: "/lovito.vn?shopCollection=249704111#product_list",
+        top: "0%",
+        left: "0%",
+        width: "100%",
+        height: "54.2667%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/24609117543",
+        top: "54.8%",
+        left: "0%",
+        width: "34.1333%",
+        height: "45.2%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/22263682984",
+        top: "54.6667%",
+        left: "34.4%",
+        width: "31.0667%",
+        height: "45.3333%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/23863678516",
+        top: "54.6667%",
+        left: "65.8667%",
+        width: "34.1333%",
+        height: "45.3333%",
+      },
+    ],
+  };
+  const productData2 = {
+    imageSrc:
+      "https://down-bs-vn.img.susercontent.com/cn-11134210-7r98o-lyx29jig9t4268.webp",
+    links: [
+      {
+        href: "https://shopee.vn/product/446089250/20605417536",
+        top: "10.9312%",
+        left: "0.133333%",
+        width: "34.2667%",
+        height: "44.6356%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/22037952162",
+        top: "11.1336%",
+        left: "35.2%",
+        width: "31.4667%",
+        height: "44.6356%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/23078250099",
+        top: "11.0324%",
+        left: "66.8%",
+        width: "33.2%",
+        height: "44.6356%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/25706389809",
+        top: "56.3765%",
+        left: "0.266667%",
+        width: "34.2667%",
+        height: "43.5223%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/24703374097",
+        top: "56.7814%",
+        left: "35.3333%",
+        width: "30.4%",
+        height: "43.1174%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/25252316222",
+        top: "56.8826%",
+        left: "66%",
+        width: "34%",
+        height: "43.1174%",
+      },
+      {
+        href: "/lovito.vn?shopCollection=243230552#product_list",
+        top: "0%",
+        left: "0%",
+        width: "100%",
+        height: "10.6275%",
+      },
+    ],
+  };
+  const productData3 = {
+    imageSrc:
+      "https://down-bs-vn.img.susercontent.com/cn-11134210-7r98o-lyx29jigffduc5.webp",
+    links: [
+      {
+        href: "https://shopee.vn/product/446089250/10651730416",
+        top: "0.177936%",
+        left: "0%",
+        width: "34.4%",
+        height: "80.7829%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/25671535292",
+        top: "0%",
+        left: "34.5333%",
+        width: "31.6%",
+        height: "79.8932%",
+      },
+      {
+        href: "https://shopee.vn/product/446089250/25969955327",
+        top: "0%",
+        left: "66.2667%",
+        width: "33.7333%",
+        height: "81.3167%",
+      },
+      {
+        href: "/lovito.vn?shopCollection=243230552#product_list",
+        top: "81.6726%",
+        left: "0%",
+        width: "100%",
+        height: "18.3274%",
+      },
+    ],
+  };
+
   return (
-    <Spring
-      className="card flex flex-col items-center justify-center"
-      id="userProfileCard"
-    >
-      <div className="relative mb-3.5">
-        <img
-          className="relative rounded-full w-[110px] h-[110px]"
-          src={userData?.avatar || avatar}
-          alt="User Avatar"
-        />
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          id="profileImageUpload"
-          onChange={handleProfileImageChange}
-        />
-        <label
-          htmlFor="profileImageUpload"
-          className="absolute z-10 right-0 bottom-0 h-10 w-10 bg-green text-widget rounded-full border-[3px]
-                    border-widget border-solid transition hover:bg-green-darker cursor-pointer"
-          aria-label="Change profile picture"
-        >
-          <i className="inline-block icon-camera-solid mt-1" />
-        </label>
+    <>
+      <div className="w-full">
+        <SellerOverview {...sellerData} />
       </div>
-      <h4>{userData?.userName}</h4>
-      <p className="subheading-2 mt-6 mb-[18px]">
-        last visit {dayjs().format("DD/MM/YYYY")}
-      </p>
-      <div className="" onClick={handleLogout}>
-        <button className="btn btn--secondary w-full md:max-w-[280px]">
-          Log Out
-        </button>
+      <div>
+        <TabMenu categories={categories} />
       </div>
-      {!roleNames.includes("shop") && (
-        <button
-          className="btn btn--primary w-full mt-5 md:w-fit"
-          type="button"
-          onClick={handleStartSelling}
-        >
-          Start Selling
-        </button>
-      )}
-    </Spring>
+      <div className="mt-4">
+        <Gallery slidesPerView={1} />
+      </div>
+      {/* <div className="mt-4">
+        <ProductGallery products={defaultProducts} />
+      </div>
+      <div className="mt-4">
+        <ProductGrid data={productData} />
+      </div>
+      <div className="mt-4">
+        <ProductGrid_2
+          imageSrc={productData2.imageSrc}
+          links={productData2.links}
+        />
+      </div>
+      <div className="mt-4">
+        <ProductGrid_3
+          imageSrc={productData3.imageSrc}
+          links={productData3.links}
+        />
+      </div> */}
+
+      <div className="category flex flex-row mt-5">
+        <CategoryMenu categories={categories} />
+        <CategoryList categories={allProduct} />
+      </div>
+    </>
   );
 };
 
-export default UserProfileCard;
+export default Shop;

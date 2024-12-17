@@ -3,35 +3,33 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 
-const Search = ({ placeholder = "Search...", wrapperClass }) => {
+const Search = ({ placeholder = "Tìm kiếm...", wrapperClass }) => {
   const { searchProducts, setSearchTerm } = useSearchProduct();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const isSearching = useRef(false); 
-
-  const handleInputChange = (e) => {
-    setQuery(e.target.value);
-  };
+  const isSearching = useRef(false);
 
   useEffect(() => {
     const handler = setTimeout(() => {
       if (query.trim() && !isSearching.current) {
-        isSearching.current = true; 
+        isSearching.current = true;
         searchProducts(query.trim()).then(() => {
-          const searchParams = new URLSearchParams({
-            searchQuery: query.trim(),
-          });
-          navigate(`/search?${searchParams}`);
+          navigate(`/search?searchQuery=${query}`);
           setSearchTerm(query.trim());
-          isSearching.current = false; 
+          isSearching.current = false;
         });
       }
-    }, 300); 
+    }, 300);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [query, navigate, searchProducts, setSearchTerm]);
+  }, [navigate, searchProducts, setSearchTerm]);
+
+  const handleSearch = () => {
+    setQuery(query)
+    setSearchTerm(query);
+  };
 
   return (
     <div className={`relative ${wrapperClass || ""}`}>
@@ -40,10 +38,10 @@ const Search = ({ placeholder = "Search...", wrapperClass }) => {
         type="search"
         placeholder={placeholder}
         value={query}
-        onChange={handleInputChange} 
+        onChange={(e) => setQuery(e.target.value)} // Update query on input change
         onKeyDown={(e) => {
-          if (e.key === "Enter" && query.trim()) {
-            setQuery(query.trim()); 
+          if (e.key === "Enter") {
+            handleSearch(); // Execute search on Enter key press
           }
         }}
       />
@@ -52,8 +50,8 @@ const Search = ({ placeholder = "Search...", wrapperClass }) => {
           query ? "opacity-100" : "opacity-0"
         }`}
         onClick={() => {
-          setQuery(""); 
-          setSearchTerm(""); 
+          setQuery(""); // Clear query
+          setSearchTerm(""); // Clear search term in context
         }}
         aria-label="Clear all"
       >
@@ -62,11 +60,7 @@ const Search = ({ placeholder = "Search...", wrapperClass }) => {
       <button
         className="field-btn icon"
         aria-label="Search"
-        onClick={() => {
-          if (query.trim()) {
-            setQuery(query.trim()); 
-          }
-        }}
+        onClick={handleSearch} // Execute search on button click
       >
         <i className="icon-magnifying-glass-solid" />
       </button>

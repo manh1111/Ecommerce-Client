@@ -39,23 +39,19 @@ export const getCategories = async () => {
   }
 };
 
-
 export const getAllOrder = async (status) => {
   try {
     const config = checkToken("application/json");
 
-    const url = `${URL_API}order/user${
-      status ? `?status=${status}` : ""
-    }`;
+    const url = `${URL_API}order/user${status ? `?status=${status}` : ""}`;
 
     const response = await axiosInstance.get(url, config);
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch orders:", error); 
+    console.error("Failed to fetch orders:", error);
     throw error;
   }
 };
-
 
 export const deleteOrderById = async (orderId) => {
   try {
@@ -74,3 +70,34 @@ export const deleteOrderById = async (orderId) => {
     throw error;
   }
 };
+
+export const getOrdersForShop = async (status) => {
+  try {
+    const config = checkToken("application/json");
+    const response = await axiosInstance.get(
+      `${URL_API}order/shop-owners${status ? `?status=${status}` : ""}`,
+      config
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch categories", error);
+    throw error;
+  }
+};
+
+export const updateOrderStatus = async (orderId, newStatus) => {
+  try {
+    const config = checkToken("application/json");
+    console.log("Config for headers:", config);
+    const response = await axiosInstance.put(
+      `${URL_API}order/${orderId}?status=${newStatus}`,
+      {},
+      config 
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update order status", error);
+    throw error;
+  }
+};
+

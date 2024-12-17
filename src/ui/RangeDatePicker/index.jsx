@@ -34,7 +34,7 @@ const RangeDatePicker = ({id, value, onChange, innerRef, disableFuture = true}) 
                            renderExtraFooter={() =>
                                <button className="btn btn--secondary w-full md:w-[252px] md:ml-auto"
                                        onClick={() => setOpen(false)}>
-                                   Close
+                                   Đóng
                                </button>
                            }
         />

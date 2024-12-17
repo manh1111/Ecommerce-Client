@@ -57,7 +57,6 @@ const AppBar = () => {
   const { theme, toggleTheme } = useTheme();
   const { setOpen } = useSidebar();
   const isAuthenticated = checkAvailableLogin();
-
   const activeLocale = LOCALES.find((l) => l.value === locale);
 
   let dataInforUser;
@@ -71,6 +70,19 @@ const AppBar = () => {
   }
 
   const roleNames = dataInforUser?.roleNames || [];
+
+  const isShop = () => {
+    const token = getCookie("user_login");
+    if (token) {
+      try {
+        const dataInforUser = jwtDecode(JSON.parse(token));
+        return dataInforUser?.roleNames?.includes("admin");
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+    return false;
+  };
 
   const handleCartClick = () => {
     if (!isAuthenticated) {
@@ -93,7 +105,7 @@ const AppBar = () => {
       <div className="mb-5 w-full">
         <div style={{ zIndex: 999 }}>
           <div className="flex items-center justify-between">
-            {roleNames.includes("shop") && width < 1920 && (
+            {roleNames.includes("shop") && (
               <button
                 className="icon text-2xl leading-none"
                 aria-label="Open sidebar"
@@ -159,7 +171,7 @@ const AppBar = () => {
               <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 xl:mr-1.5">
                 <button
                   className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={handleMessagesClick} // Use the new function here
+                  onClick={handleMessagesClick} 
                   aria-label="Messages"
                 >
                   <i className="fas fa-truck" title="Theo dõi đơn hàng" />

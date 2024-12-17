@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 const ProductManagementCollapseItem = ({product, activeCollapse, handleCollapse}) => {
     const {stock} = product;
-
+    
     return (
         <div className="card">
             <div className="flex items-center justify-between">

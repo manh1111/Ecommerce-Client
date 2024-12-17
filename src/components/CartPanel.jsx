@@ -4,9 +4,7 @@ import DrawerBase from "@ui/DrawerBase";
 import { getCart } from "@api/cart";
 import { getShopById } from "@api/shop";
 import { getProductById } from "@api/product";
-import Loading from "@components/Loading";
-import { createOrder } from "@api/order"; 
-import { Image } from "antd";
+import Loader from "@components/Loader";
 import { changeQuantityProduct, deleteProductById } from "../api/cart";
 import { toast } from "react-toastify";
 
@@ -83,7 +81,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
   const [footerRef, { height: footerHeight }] = useMeasure();
   const [listProduct, setListProduct] = useState([]);
   const [selectedIds, setSelectedIds] = useState(new Set());
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoader] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -93,7 +91,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
   }, [open]);
 
   const fetchCartData = async () => {
-    setLoading(true);
+    setLoader(true);
     try {
       const cartData = await getCart();
       console.log("Cart Data:", cartData);
@@ -102,8 +100,8 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       await Promise.all(
         cartData.cart_products.map(async (item) => {
           const { shopId, productId, quantity } = item;
-          const shopData = await getShopById(shopId);
-
+          const shop = await getShopById(shopId);
+          const shopData = shop.shop;
           if (!productsByShop[shopId]) {
             productsByShop[shopId] = {
               shopId: shopData._id,
@@ -130,7 +128,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       console.error("Error fetching cart data:", error);
       setError("Failed to load cart data");
     } finally {
-      setLoading(false);
+      setLoader(false);
     }
   };
 
@@ -141,7 +139,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       return updated;
     });
   };
-  
+
   const handleQuantityChange = async (id, delta) => {
     try {
       // Find the current product in the list
@@ -200,8 +198,6 @@ const CartPanel = ({ open, onOpen, onClose }) => {
     }
   };
 
-
-
   const calculateTotalPrice = () =>
     Array.from(selectedIds).reduce((total, id) => {
       let itemTotal = 0;
@@ -214,7 +210,6 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       return total + itemTotal;
     }, 0);
 
-  
   const handleBuyNow = async () => {
     const selectedProducts = Array.from(selectedIds)
       .map((id) => {
@@ -277,7 +272,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
           </div>
 
           {loading ? (
-            <Loading />
+            <Loader />
           ) : error ? (
             <div className="text-red-500 text-center">{error}</div>
           ) : (

@@ -8,7 +8,7 @@ import UserProfileInfo from '@widgets/UserProfileInfo';
 const GeneralSettings = () => {
     return (
         <>
-            <PageHeader title="Settings"/>
+            <PageHeader title="Cài đặt"/>
             <div className="widgets-grid md:!grid-cols-2 xl:!grid-cols-[340px,_minmax(0,1fr)]">
                 <div className="widgets-grid md:!grid-cols-2 md:col-span-2 xl:!grid-cols-1 xl:col-span-1">
                     <UserProfileCard/>

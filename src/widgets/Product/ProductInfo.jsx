@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Button, Image, Modal, Skeleton, Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 import { addCart } from "@api/cart";
-import { getCookie } from "@utils/cookie";
+import Loader from "@components/Loader";
 
 const VND = new Intl.NumberFormat("vi-VN", {
   style: "currency",
@@ -12,7 +11,7 @@ const VND = new Intl.NumberFormat("vi-VN", {
 });
 
 const ProductInfo = ({ product, shopData }) => {
-  const [loadingCart, setLoadingCart] = useState(false);
+  const [loadingCart, setLoaderCart] = useState(false);
   const [open, setOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -23,7 +22,7 @@ const ProductInfo = ({ product, shopData }) => {
   const handleCancel = () => setOpen(false);
 
   const handleAddToCart = async () => {
-    setLoadingCart(true);
+    setLoaderCart(true);
     try {
       const response = await addCart(product.id, 1);
       if (response?.status === 200) {
@@ -34,7 +33,7 @@ const ProductInfo = ({ product, shopData }) => {
     } catch (error) {
       toast.error("Lỗi hệ thống. Vui lòng thử lại sau.");
     } finally {
-      setLoadingCart(false);
+      setLoaderCart(false);
     }
   };
 
@@ -75,9 +74,9 @@ const ProductInfo = ({ product, shopData }) => {
 
   return (
     <div className="w-full h-full mt-12 px-4 xl:px-8">
-      <div className="flex flex-col xl:flex-row gap-8">
+      <div className="flex flex-row xl:flex-row gap-8">
         {/* Product Images */}
-        <div className="xl:w-1/2 w-full flex flex-col items-center justify-center gap-8 relative">
+        <div className="xl:w-1/2 w-full max-h-80 flex flex-col items-center justify-center gap-8 relative">
           <div className="w-full flex items-center justify-center relative">
             {/* Left Arrow for Previous Image */}
             <button
@@ -87,17 +86,17 @@ const ProductInfo = ({ product, shopData }) => {
               <LeftOutlined style={{ fontSize: "24px" }} />
             </button>
 
-            <div className="w-11/12">
+            <div className="max-h-80">
               {/* Product Image */}
               {product?.mainImage?.map((image, index) => (
                 <div
                   key={index}
-                  className={`w-full flex items-center justify-center ${
+                  className={`w-full max-h-48 flex items-center justify-center ${
                     index === currentImageIndex ? "block" : "hidden"
                   }`}
                 >
                   <Image
-                    className="object-contain min-h-80 xl:h-[400px] h-fit w-fit"
+                    className="object-contain max-h-80 h-fit w-fit"
                     src={image}
                     alt={`Product Image ${index + 1}`}
                   />
@@ -115,7 +114,6 @@ const ProductInfo = ({ product, shopData }) => {
           </div>
         </div>
 
-        {/* Product Information */}
         <div className="xl:w-1/2 w-full flex flex-col justify-between gap-6 px-4 xl:px-0">
           <div className="text-2xl font-bold mb-2">{product.name}</div>
           <div className="flex items-center gap-4 mb-4">
@@ -153,7 +151,7 @@ const ProductInfo = ({ product, shopData }) => {
               <div className="w-1/2 flex items-center">
                 <Spin
                   className="w-fit"
-                  indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
+                  indicator={<Loader/>}
                 />
               </div>
             ) : (
@@ -207,8 +205,6 @@ const ProductInfo = ({ product, shopData }) => {
           <div className="flex flex-col gap-6">
             <div className="text-lg font-semibold mb-2">Thông tin sản phẩm</div>
             <div className="text-lg mb-4">{product.description}</div>
-            <div className="text-lg font-semibold mb-2">Hướng dẫn sử dụng</div>
-            <div className="text-lg">{product.usage}</div>
           </div>
         </section>
       </div>
