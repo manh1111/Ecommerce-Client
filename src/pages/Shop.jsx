@@ -17,6 +17,7 @@ import Loader from "@components/Loader";
 
 const Shop = () => {
   const [shop, setShop] = useState([]);
+  const [shopDetails, setShopDetails] = useState([]);
   const [catalogs, setCatalogs] = useState([]);
   const [categories, setCategories] = useState([]);
   const [allProduct, setAllProduct] = useState([]);
@@ -24,16 +25,22 @@ const Shop = () => {
   const { id } = useParams();
   const getRandomNumber = (min, max) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
-
+  console.log("sop", shop)
+  console.log(
+    "shopDetails",
+    shopDetails?.productsCount,
+    shopDetails?.reviewsCount
+  );
   const sellerData = {
     backgroundUrl: shop?.logo,
     Desc: shop.description,
     avatarUrl: shop?.logo,
-    productCount: shop?.productCount || getRandomNumber(10, 100),
-    followerCount: shop?.followerCount || getRandomNumber(10, 100),
-    followingCount: shop?.followingCount || getRandomNumber(10, 100),
+    productCount: shopDetails?.productsCount,
+    followerCount: shopDetails?.followerCount || getRandomNumber(10, 100),
+    followingCount: shopDetails?.followingCount || getRandomNumber(10, 100),
     sellerName: shop.shop_name,
     joinDate: shop.createdAt,
+    rating: shopDetails?.reviewsCount,
   };
 
   useEffect(() => {
@@ -43,6 +50,7 @@ const Shop = () => {
         // Fetch shop details
         const shopDetails = await getShopById(id);
         setShop(shopDetails.shop);
+        setShopDetails(shopDetails);
 
         // Fetch catalogs
         const catalogData = await getCatalogByShopId(id);
@@ -263,7 +271,7 @@ const Shop = () => {
       <div className="mt-4">
         <Gallery slidesPerView={1} />
       </div>
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <ProductGallery products={defaultProducts} />
       </div>
       <div className="mt-4">
@@ -280,7 +288,7 @@ const Shop = () => {
           imageSrc={productData3.imageSrc}
           links={productData3.links}
         />
-      </div>
+      </div> */}
 
       <div className="category flex flex-row mt-5">
         <CategoryMenu categories={categories} />

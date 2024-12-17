@@ -23,6 +23,7 @@ const ConfirmPayment = lazy(() => import("@pages/ConfirmPayment"));
 const MainPage = lazy(() => import("@pages/MainPage"));
 const SellerProfile = lazy(() => import("@pages/SellerProfile"));
 const Shop = lazy(() => import("@pages/Shop"));
+const Catalog = lazy(() => import("@pages/Catalog"));
 const Product = lazy(() => import("@pages/Product"));
 const SearchPage = lazy(() => import("@pages/SearchPage"));
 const Address = lazy(() => import("@pages/Address"));
@@ -114,6 +115,7 @@ const App = () => {
                     element={<GeneralSettings />}
                   />
                   <Route path="/shop/:id" element={<Shop />} />
+                  <Route path="/catalog" element={<Catalog />} />
                   <Route path="/product/:id" element={<Product />} />
                   <Route path="/search" element={<SearchPage />} />
                   <Route path="/address" element={<Address />} />

@@ -247,3 +247,21 @@ export const countProducts = async () => {
     throw error;
   }
 };
+
+
+export const getAllProductsCategoryId = async (categoryId) => {
+  try {
+    const config = checkToken("application/json");
+
+    // Fetch product by ID with token in Authorization header
+    const response = await axiosInstance.get(
+      `${URL_API}product/category/${categoryId}`,
+      config
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product data:", error);
+    throw error;
+  }
+};

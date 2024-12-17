@@ -9,28 +9,28 @@ function Gallery({ slidesPerView = 3, items = [] }) {
   const defaultItems = [
     {
       banner:
-        "https://photo-zmp3.zmdcdn.me/banner/1/4/5/3/1453793acd6e99638c757e7db976e01f.jpg",
-      link: "#link1",
+        "https://i.pinimg.com/736x/0a/fa/b1/0afab1ff2416d9da680f527c6fe06419.jpg",
+      // link: "#link1",
     },
     {
       banner:
-        "https://photo-zmp3.zmdcdn.me/banner/3/8/b/2/38b2ee1fa054de2b745e4e7d27fb2db0.jpg",
-      link: "#link2",
+        "https://i.pinimg.com/736x/7a/d4/27/7ad42704853ac6d77de1695224404749.jpg",
+      // link: "#link2",
     },
     {
       banner:
-        "https://photo-zmp3.zmdcdn.me/banner/1/4/5/3/1453793acd6e99638c757e7db976e01f.jpg",
-      link: "#link3",
+        "https://i.pinimg.com/736x/df/e2/bf/dfe2bf83f10b7a8c665d7ad47889c5d2.jpg",
+      // link: "#link3",
     },
     {
       banner:
-        "https://photo-zmp3.zmdcdn.me/banner/5/0/3/b/503b76b9c1d5102e06fe07c26b507a5c.jpg",
-      link: "#link4",
+        "https://i.pinimg.com/736x/43/50/56/435056f51ad4f0918d5f318938b6a5a6.jpg",
+      // link: "#link4",
     },
     {
       banner:
-        "https://photo-zmp3.zmdcdn.me/banner/b/d/d/e/bddeb09c0439d7fb5ce1b28751400483.jpg",
-      link: "#link5",
+        "https://i.pinimg.com/736x/69/9f/70/699f70c8f4229a7f77020d43e56198d4.jpg",
+      // link: "#link5",
     },
   ];
 
@@ -49,7 +49,7 @@ function Gallery({ slidesPerView = 3, items = [] }) {
               <img
                 src={item.src}
                 alt=""
-                className="w-full h-full max-h-80 rounded-lg"
+                className="w-full h-[200px] max-h-80 rounded-lg"
               />
             </figure>
           </Link>

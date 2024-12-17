@@ -3,6 +3,10 @@ const ROUTES = [
     name: "Sản phẩm",
     icon: "boxes-stacked-regular",
     path: "/products-management",
+    links: [
+      { name: "Quản lý sản phẩm", path: "/products-management" },
+      { name: "Danh mục hàng", path: "/catalog" },
+    ],
   },
   {
     name: "Đơn hàng",
