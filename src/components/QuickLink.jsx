@@ -64,7 +64,7 @@ const QuickLink = () => {
     <div className="overflow-x-auto">
       <div className="flex w-full justify-between">
         {links.map((link, index) => (
-          <a href={link.href} key={index} className="flex justify-center">
+          <div key={index} className="flex justify-center">
             <div className="quick-link-item w-[150px] flex flex-col items-center">
               <img
                 className="w-[45px] h-[45px]"
@@ -73,7 +73,7 @@ const QuickLink = () => {
               />
               <div className="title text-center mt-2">{link.title}</div>
             </div>
-          </a>
+          </div>
         ))}
       </div>
     </div>
