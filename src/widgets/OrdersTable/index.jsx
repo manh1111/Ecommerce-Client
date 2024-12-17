@@ -76,14 +76,14 @@ const OrdersTable = ({ initialOrders = [] }) => {
     try {
       await createReview(selectedProduct.productId, rating, comment);
       toast.success("Đánh giá đã được gửi thành công!");
-      setIsReviewModalOpen(false); // Close modal after submission
+      setIsReviewModalOpen(false); 
     } catch (error) {
       if (error.response.status === 400) {
         toast.error("Sản phẩm không còn tồn tại.");
       } else {
         toast.error("Có lỗi xảy ra khi gửi đánh giá.");
       }
-      setIsReviewModalOpen(false); // Close modal on error
+      setIsReviewModalOpen(false); 
     }
   };
 
