@@ -19,6 +19,19 @@ export const getCatalogByShopId = async (ShopId) => {
   }
 };
 
+export const getCatalogByShopToken = async () => {
+  try {
+    const response = await axiosInstance.get(
+      `${URL_API}catalogShop/shop/shop-ownerowner`
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product data:", error);
+    throw error;
+  }
+};
+
 
 export const updateCatalog = async (
   catalogId,

@@ -12,18 +12,6 @@ const TopProducts = ({ hasTitle = true }) => {
   const [currentPage, setCurrentPage] = useState({});
   const navigate = useNavigate();
 
-  // Define color themes
-  const categoryThemes = [
-    "from-blue-300 via-blue-400 to-blue-500",
-    "from-green-300 via-green-400 to-green-500",
-    "from-purple-300 via-purple-400 to-purple-500",
-    "from-yellow-300 via-yellow-400 to-yellow-500",
-    "from-red-300 via-red-400 to-red-500",
-    "from-pink-300 via-pink-400 to-pink-500",
-    "from-teal-300 via-teal-400 to-teal-500",
-    "from-indigo-300 via-indigo-400 to-indigo-500",
-  ];
-
   useEffect(() => {
     const fetchCategoriesWithProducts = async () => {
       setLoadingCategories(true);
@@ -80,9 +68,7 @@ const TopProducts = ({ hasTitle = true }) => {
             <div key={category._id} className="mb-10">
               {/* Category Name */}
               <h2
-                className={`text-2xl font-extrabold text-white bg-gradient-to-r ${
-                  categoryThemes[index % categoryThemes.length]
-                } p-4 rounded-lg shadow-lg border hover:scale-105 transition-transform duration-300 mb-6`}
+                className={`text-2xl font-extrabold text-white bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500 p-4 rounded-lg shadow-lg border hover:scale-105 transition-transform duration-300 mb-6`}
               >
                 {category.category_name}
               </h2>

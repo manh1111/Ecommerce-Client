@@ -7,16 +7,6 @@ const CategoryList = ({ categories = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const toggleDropdown = () => {
-    setDropdownOpen((prev) => !prev);
-  };
-
-  const handleSortOptionClick = (option) => {
-    setPriceSortOption(option);
-    setDropdownOpen(false);
-    setCurrentPage(1); // Reset to the first page when sorting changes
-  };
-
   // Handle sorting by price
   const sortedCategories = [...categories].sort((a, b) => {
     const priceA = parseInt(a.price.replace(/\D/g, "")); // Extract price as number
@@ -99,7 +89,7 @@ const CategoryList = ({ categories = [] }) => {
             ))}
           </div>
         ) : (
-          <p className="text-gray-700">No products available</p>
+          <p className="text-rose-500 text-center">Không có sản phẩm trong shop</p>
         )}
       </section>
     </div>

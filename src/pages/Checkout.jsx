@@ -121,11 +121,20 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
           paymentGateway,
           shippingAddress
         );
-         if (paymentMethod === "online" && response?.paymentUrl) {
+         if (
+           paymentMethod === "online" &&
+           response?.paymentUrl &&
+           paymentGateway === "VNPAY"
+         ) {
            window.location.href = response.paymentUrl;
+         } else if (
+           paymentMethod === "online" &&
+           response?.paymentUrl &&
+           paymentGateway === "MOMO"
+         ) {
          } else {
-           toast.success("Đặt hàng thành công!");
-        }
+            window.location.href = response.paymentUrl.payUrl;
+         }
         console.log("response.paymentUrl", response);
       }
     } catch (error) {

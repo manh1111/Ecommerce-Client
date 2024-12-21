@@ -37,10 +37,9 @@ const TabMenu = ({ categories }) => {
             activeTab === category.id && (
               <div
                 key={category.id}
-                className="opacity-100 transition-opacity duration-300"
+                className="opacity-100 transition-opacity duration-300 p-4"
               >
-                {/* <h2 className="text-xl font-semibold mb-4">{category.name}</h2> */}
-                {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {category.products.map((product) => (
                     <ProductCard
                       key={product.id}
@@ -58,7 +57,7 @@ const TabMenu = ({ categories }) => {
                       }}
                     />
                   ))}
-                </div> */}
+                </div>
               </div>
             )
         )}
