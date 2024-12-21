@@ -126,7 +126,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       setError(null);
     } catch (error) {
       console.error("Error fetching cart data:", error);
-      setError("Failed to load cart data");
+      setError("Không có sản phẩm trong giỏ hàng");
     } finally {
       setLoader(false);
     }
@@ -274,7 +274,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
           {loading ? (
             <Loader />
           ) : error ? (
-            <div className="text-red-500 text-center">{error}</div>
+            <div className="text-rose-500 text-center">{error}</div>
           ) : (
             listProduct.map((shop) => (
               <div key={shop.shopId}>

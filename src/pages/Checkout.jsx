@@ -26,44 +26,52 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
   const [loading, setLoader] = useState(false);
 
   useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        const response = await getAllAddresses();
-        setAddresses(response.data || []);
-        console.log("getAllAddresses", response);
-      } catch (error) {
-        console.error("Failed to fetch addresses:", error);
-        toast.error("Không thể tải danh sách địa chỉ. Vui lòng thử lại.");
+  const fetchAddresses = async () => {
+    try {
+      const response = await getAllAddresses();
+      const addressesData = response.data || [];
+      setAddresses(addressesData);
+
+      const defaultAddress = addressesData.find((addr) => addr.isDefault);
+      if (defaultAddress) {
+        setAddress(defaultAddress._id);
       }
-    };
 
-    fetchAddresses(); // Fetch addresses on component mount
-
-    const storedProducts = localStorage.getItem("selectedProducts");
-    if (storedProducts) {
-      const products = JSON.parse(storedProducts);
-      const grouped = products.reduce((acc, product) => {
-        if (!acc[product.shopId]) {
-          acc[product.shopId] = {
-            shopId: product.shopId,
-            shopName: product.shopName,
-            shopLogo: product.shopLogo,
-            products: [],
-          };
-        }
-        acc[product.shopId].products.push(product);
-        return acc;
-      }, {});
-      setGroupedProducts(grouped);
+      console.log("getAllAddresses", response);
+    } catch (error) {
+      console.error("Failed to fetch addresses:", error);
+      toast.error("Không thể tải danh sách địa chỉ. Vui lòng thử lại.");
     }
-  }, []);
+  };
+
+  fetchAddresses(); 
+
+  const storedProducts = localStorage.getItem("selectedProducts");
+  if (storedProducts) {
+    const products = JSON.parse(storedProducts);
+    const grouped = products.reduce((acc, product) => {
+      if (!acc[product.shopId]) {
+        acc[product.shopId] = {
+          shopId: product.shopId,
+          shopName: product.shopName,
+          shopLogo: product.shopLogo,
+          products: [],
+        };
+      }
+      acc[product.shopId].products.push(product);
+      return acc;
+    }, {});
+    setGroupedProducts(grouped);
+  }
+}, []);
+
 
   const handleAddressChange = (e) => {
     setAddress(e.target.value);
   };
 
   const handleBuyNow = async () => {
-    setLoader(true); // Set loading state
+    setLoader(true); 
     try {
       const storedProducts = localStorage.getItem("selectedProducts");
       console.log("groupedProducts", storedProducts);
@@ -107,32 +115,32 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
           paymentMethod = "online";
         }
         const shippingAddress = address || "456 Đường XYZ, Quận 1, TP.HCM";
-
-        console.log("Creating order with data:", {
-          orders,
-          paymentMethod,
-          paymentGateway,
-          shippingAddress,
-        });
-
         const response = await createOrder(
           orders,
           paymentMethod,
           paymentGateway,
           shippingAddress
         );
-         if (paymentMethod === "online" && response?.paymentUrl) {
-           // Redirect to the payment URL for online payment
+         if (
+           paymentMethod === "online" &&
+           response?.paymentUrl &&
+           paymentGateway === "VNPAY"
+         ) {
            window.location.href = response.paymentUrl;
+         } else if (
+           paymentMethod === "online" &&
+           response?.paymentUrl &&
+           paymentGateway === "MOMO"
+         ) {
          } else {
-           toast.success("Đặt hàng thành công!");
-        }
+            window.location.href = response.paymentUrl.payUrl;
+         }
         console.log("response.paymentUrl", response);
       }
     } catch (error) {
       toast.error("Đặt hàng thất bại, vui lòng thử lại.");
     } finally {
-      setLoader(false); // Reset loading state
+      setLoader(false);
     }
   };
 

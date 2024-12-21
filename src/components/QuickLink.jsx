@@ -13,15 +13,15 @@ const QuickLink = () => {
       href: "/mien-phi-van-chuyen",
       imgSrc:
         "https://cf.shopee.vn/file/vn-50009109-c7a2e1ae720f9704f92f72c9ef1a494a_xhdpi",
-      alt: "Miễn Phí Ship - Có Shopee",
-      title: "Miễn Phí Ship - Có Shopee",
+      alt: "Miễn Phí Ship - Có Shop",
+      title: "Miễn Phí Ship - Có Shop",
     },
     {
-      href: "/Shopee-Choice",
+      href: "/Shop-Choice",
       imgSrc:
         "https://cf.shopee.vn/file/vn-50009109-5bf65d4dc0eb8f6b42074751e8b736a7_xhdpi",
-      alt: "Shopee Choice Mua Nhiều Giảm Sâu",
-      title: "Shopee Choice Mua Nhiều Giảm Sâu",
+      alt: "Shop Choice Mua Nhiều Giảm Sâu",
+      title: "Shop Choice Mua Nhiều Giảm Sâu",
     },
     {
       href: "/ma-giam-gia",
@@ -34,15 +34,15 @@ const QuickLink = () => {
     //   href: "/shopee-sieu-re",
     //   imgSrc:
     //     "https://cf.shopee.vn/file/vn-50009109-91399a1d3ed283d272b069fac5ca989c_xhdpi",
-    //   alt: "Shopee Siêu Rẻ",
-    //   title: "Shopee Siêu Rẻ",
+    //   alt: "Shop Siêu Rẻ",
+    //   title: "Shop Siêu Rẻ",
     // },
     // {
     //   href: "/shopee-style",
     //   imgSrc:
     //     "https://cf.shopee.vn/file/vn-50009109-c02353c969d19918c53deaa4ea15bdbe_xhdpi",
-    //   alt: "Shopee Style Voucher 40%",
-    //   title: "Shopee Style Voucher 40%",
+    //   alt: "Shop Style Voucher 40%",
+    //   title: "Shop Style Voucher 40%",
     // },
     {
       href: "/sandealquocte",
@@ -64,7 +64,7 @@ const QuickLink = () => {
     <div className="overflow-x-auto">
       <div className="flex w-full justify-between">
         {links.map((link, index) => (
-          <a href={link.href} key={index} className="flex justify-center">
+          <div key={index} className="flex justify-center">
             <div className="quick-link-item w-[150px] flex flex-col items-center">
               <img
                 className="w-[45px] h-[45px]"
@@ -73,7 +73,7 @@ const QuickLink = () => {
               />
               <div className="title text-center mt-2">{link.title}</div>
             </div>
-          </a>
+          </div>
         ))}
       </div>
     </div>

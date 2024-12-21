@@ -21,7 +21,7 @@ const fetchProducts = async (category) => {
         stock: product.product_quantity || 0,
         price: product.product_price || 0,
         category: product.category_id?.category_name || "Chưa có",
-        rateCount: product.avgRating || Math.floor(Math.random() * 5) + 1,
+        rateCount: product.avgRating,
         date: product.createdAt || new Date().toISOString(),
         status: product.isPublic ? "publish" : product.isDeleted  ? "deleted" : "drafted",
       };

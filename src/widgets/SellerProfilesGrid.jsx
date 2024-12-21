@@ -37,7 +37,6 @@ const SellerProfilesGrid = ({ numberOfSellers = 24, fullGrid = false }) => {
               id: shop?._id, 
               logo: shop?.logo, 
               name: shop?.shop_name, 
-              website: "https://1.envato.market/tf-merkulove",
               address: shop?.address, 
               phone: shop?.phone_number, 
               email: `${shop?.shop_name

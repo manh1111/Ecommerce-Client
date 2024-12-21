@@ -6,10 +6,12 @@ import { getCategories } from "@api/categorie";
 import { createProduct, updateProduct, getProductById } from "@api/product"; // Import updateProduct and getProductById API functions
 import classNames from "classnames";
 import { useParams } from "react-router-dom";
+import { getCatalogByShopToken } from "@api/catalog ";
 
 const ProductEditor = () => {
   const { id } = useParams();
   const [categories, setCategories] = useState([]);
+  const [catalogs, setCatalogs] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const {
     register,
@@ -24,6 +26,7 @@ const ProductEditor = () => {
       description: "",
       salePrice: "",
       category_id: null,
+      catalog_id: null,
       qty: 0,
     },
   });
@@ -38,6 +41,16 @@ const ProductEditor = () => {
       }
     };
 
+    const fetchCatalogs = async () => {
+      try {
+        console.log("id", id)
+        const data = await getCatalogByShopToken();
+        setCatalogs(data);
+      } catch (error) {
+        toast.error("Không thể tải danh mục ngành hàng");
+      }
+    };
+
     const fetchProductData = async () => {
       if (id) {
         try {
@@ -46,9 +59,9 @@ const ProductEditor = () => {
           setValue("description", productData.product_desc);
           setValue("salePrice", productData.product_price);
           setValue("category_id", productData.category_id._id);
+          setValue("catalog_id", productData.catalog_id?._id);
           setValue("qty", productData.product_quantity);
 
-          // Handle images if provided
           const imageFiles = productData.product_img.map((imageUrl) => ({
             url: imageUrl,
           }));
@@ -61,6 +74,7 @@ const ProductEditor = () => {
     };
 
     fetchCategories();
+    fetchCatalogs();
     fetchProductData();
   }, [id, setValue]);
 
@@ -77,6 +91,7 @@ const ProductEditor = () => {
         product_price: data.salePrice,
         product_quantity: data.qty,
         category_id: data.category_id,
+        catalog_id: data.catalog_id,
         files,
         isDraft,
         isPublic: !isDraft,
@@ -122,7 +137,6 @@ const ProductEditor = () => {
       >
         <div className="flex flex-row w-full gap-4">
           <div className="w-1/2">
-            {/* Product Name */}
             <div className="field-wrapper">
               <label className="field-label" htmlFor="productName">
                 Tên sản phẩm
@@ -137,7 +151,6 @@ const ProductEditor = () => {
               />
             </div>
 
-            {/* Description */}
             <div className="field-wrapper">
               <label className="field-label" htmlFor="description">
                 Mô tả
@@ -152,7 +165,6 @@ const ProductEditor = () => {
               />
             </div>
 
-            {/* Sale Price */}
             <div className="field-wrapper">
               <label className="field-label" htmlFor="salePrice">
                 Giá bán
@@ -168,7 +180,6 @@ const ProductEditor = () => {
               />
             </div>
 
-            {/* Image Upload */}
             <div>
               <label className="field-label mb-2.5">Hình ảnh sản phẩm</label>
               <Controller
@@ -176,7 +187,6 @@ const ProductEditor = () => {
                 control={control}
                 render={({ field }) => (
                   <div className="border-2 border-slate-200 rounded-lg p-4">
-                    {/* Image Upload Button */}
                     <label
                       htmlFor="image-upload"
                       className="btn btn-primary cursor-pointer"
@@ -192,7 +202,6 @@ const ProductEditor = () => {
                       className="hidden"
                     />
 
-                    {/* Image Previews */}
                     <div className="image-preview-container mt-4">
                       {imagePreviews.map((image, index) => (
                         <div
@@ -235,7 +244,6 @@ const ProductEditor = () => {
           </div>
 
           <div className="w-1/2">
-            {/* Quantity */}
             <div className="field-wrapper">
               <label className="field-label" htmlFor="qty">
                 Số lượng
@@ -251,10 +259,9 @@ const ProductEditor = () => {
               />
             </div>
 
-            {/* Category Selection */}
             <div className="field-wrapper">
               <label className="field-label" htmlFor="category">
-                Danh mục
+                Ngành hàng
               </label>
               <Controller
                 name="category_id"
@@ -267,10 +274,10 @@ const ProductEditor = () => {
                     id="category"
                     {...field}
                   >
-                    <option value="">Chọn danh mục</option>
+                    <option value="">Chọn ngành hàng</option>
                     {categories.map((category) => (
                       <option key={category._id} value={category._id}>
-                        {category.category_name}
+                        {category.name}
                       </option>
                     ))}
                   </select>
@@ -278,6 +285,31 @@ const ProductEditor = () => {
               />
             </div>
 
+            <div className="field-wrapper">
+              <label className="field-label" htmlFor="catalog">
+                Danh mục
+              </label>
+              <Controller
+                name="catalog_id"
+                control={control}
+                render={({ field }) => (
+                  <select
+                    className={classNames("field-input", {
+                      "field-input--error": errors.catalog_id,
+                    })}
+                    id="catalog"
+                    {...field}
+                  >
+                    <option value="">Chọn danh mục</option>
+                    {catalogs.map((category) => (
+                      <option key={category._id} value={category._id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              />
+            </div>
             <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-11">
               {!id ? (
                 <button
@@ -287,12 +319,12 @@ const ProductEditor = () => {
                     handleSubmitProduct(data, true)
                   )}
                 >
-                  Lưu thành bản nháp
+                  Save as Draft
                 </button>
               ) : null}
 
               <button className="btn btn--secondary" type="submit">
-                {id ? "Cập nhật thông tin" : "Xuất bản sản phẩm"}
+                {id ? "Update Product" : "Publish"}
               </button>
             </div>
           </div>
@@ -303,3 +335,5 @@ const ProductEditor = () => {
 };
 
 export default ProductEditor;
+
+

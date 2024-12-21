@@ -30,10 +30,8 @@ export const GetOwnShop = async () => {
 
 export const GetAllShop = async () => {
   try {
-    const config = checkToken("application/json");
     const response = await axiosInstance.get(
       `${URL_API}shop/all`,
-      config
     );
 
     return response;
