@@ -189,7 +189,9 @@ const handleLoginWithGoogle = async () => {
                 hoặc
               </span>
             </div>
+          
             <div className="py-4">
+               {/* Bug 4:đăng nhập với gg */}
               <div className="btn btn--social" onClick={handleLoginWithGoogle}>
                 <img className="icon" src={google} alt="Google" />
                 Google

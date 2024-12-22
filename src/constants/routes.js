@@ -1,4 +1,11 @@
 const ROUTES = [
+
+  //Bug 3: không hiển thị icon thống kê
+  {
+    name: "Thống kê",
+    icon: "chart-bar-regular",
+    path: "/statistical",
+  },
   {
     name: "Sản phẩm",
     icon: "boxes-stacked-regular",
