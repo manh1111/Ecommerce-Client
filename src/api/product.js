@@ -128,6 +128,7 @@ export const createProduct = async ({
   product_price,
   product_quantity,
   category_id,
+  catalog_id,
   files,
   isDraft = false,
   isPublic = false,
@@ -139,6 +140,7 @@ export const createProduct = async ({
     formData.append("product_price", product_price);
     formData.append("product_quantity", product_quantity);
     formData.append("category_id", category_id);
+    formData.append("catalog_id", catalog_id);
 
     // Append each file to formData
     files.forEach((file) => formData.append("files", file));

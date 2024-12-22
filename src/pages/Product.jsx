@@ -80,11 +80,11 @@ const Product = () => {
         </h2>
         {console.log("reviews", reviews)}
         {reviews?.length > 0 && (
-          <div className="review-list bg-blue-100 space-y-6">
+          <div className="review-list space-y-6">
             {reviews.map((review) => (
               <div
                 key={review._id}
-                className="review-item p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                className="review-item p-6 bg-white rounded-lg shadow-md hover:shadow-lg hover:bg-blue-100 transition-shadow duration-300"
               >
                 <div className="review-header flex items-center space-x-4 mb-4">
                   <img

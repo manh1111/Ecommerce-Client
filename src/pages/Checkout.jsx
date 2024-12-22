@@ -4,6 +4,9 @@ import { createOrder } from "@api/order";
 import { getAllAddresses } from "@api/profile";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import vnpayLogo from '../assets/vnpay_logo.png';
+import momoLogo from '../assets/momo_logo.png';
+
 
 // Component to display shop information
 const ShopInfo = ({ shopName, shopLogo }) => {
@@ -110,6 +113,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
           return acc;
         }, {});
 
+        //Bug 1: thanh toán MoMo
         const orders = Object.values(groupedOrders);
         if (paymentGateway === "MOMO" || paymentGateway === "VNPAY") {
           paymentMethod = "online";
@@ -217,25 +221,26 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
                   />
                   Thanh toán khi nhận hàng (COD)
                 </label>
-                <label>
+                <label className="flex items-center gap-2">
                   <input
                     type="radio"
                     value="VNPAY"
                     checked={paymentGateway === "VNPAY"}
                     onChange={() => setPaymentGateway("VNPAY")}
                   />
-                  VNPAY
+                  <img src={vnpayLogo} alt="VNPAY" className="w-10 h-10" />
                 </label>
-                <label>
+                <label className="flex items-center gap-2">
                   <input
                     type="radio"
                     value="MOMO"
                     checked={paymentGateway === "MOMO"}
                     onChange={() => setPaymentGateway("MOMO")}
                   />
-                  MOMO
+                  <img src={momoLogo} alt="MOMO" className="w-8 h-8" />
                 </label>
               </div>
+
             </div>
 
             <button

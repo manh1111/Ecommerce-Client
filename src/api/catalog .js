@@ -21,8 +21,10 @@ export const getCatalogByShopId = async (ShopId) => {
 
 export const getCatalogByShopToken = async () => {
   try {
+    const config = checkToken("application/json");
     const response = await axiosInstance.get(
-      `${URL_API}catalogShop/shop/shop-ownerowner`
+      `${URL_API}catalogShop/shop-owner`,
+      config
     );
 
     return response.data;

@@ -101,7 +101,8 @@ const AppBar = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full px-5 py-5 z-50 bg-white">
+    <div className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
+                   lg:items-center lg:gap-4">
       <div className="mb-5 w-full">
         <div style={{ zIndex: 999 }}>
           <div className="flex items-center justify-between">

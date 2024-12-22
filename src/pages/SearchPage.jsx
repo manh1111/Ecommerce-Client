@@ -19,7 +19,7 @@ const SearchPage = () => {
   const [priceSortOption, setPriceSortOption] = useState("Giá");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
   const [activeCategory, setActiveCategory] = useState("");
 
   useEffect(() => {

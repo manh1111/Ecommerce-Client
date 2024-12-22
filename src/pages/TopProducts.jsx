@@ -68,7 +68,7 @@ const TopProducts = ({ hasTitle = true }) => {
             <div key={category._id} className="mb-10">
               {/* Category Name */}
               <h2
-                className={`text-2xl font-extrabold text-white bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500 p-4 rounded-lg shadow-lg border hover:scale-105 transition-transform duration-300 mb-6`}
+                className={`text-xl font-extrabold text-white bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500 p-4 rounded-lg shadow-lg border hover:scale-105 transition-transform duration-300 mb-6`}
               >
                 {category.category_name}
               </h2>
