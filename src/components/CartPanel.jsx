@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useMeasure } from "react-use";
 import DrawerBase from "@ui/DrawerBase";
 import { getCart } from "@api/cart";
@@ -8,6 +8,7 @@ import Loader from "@components/Loader";
 import { changeQuantityProduct, deleteProductById } from "../api/cart";
 import { toast } from "react-toastify";
 
+let timeoutId;
 const ProductItem = ({
   product,
   selectedIds,
@@ -15,6 +16,22 @@ const ProductItem = ({
   handleQuantityChange,
   handleRemoveItem,
 }) => {
+  const [quantity, setQuantity] = useState(product.quantity || 1)
+
+  useLayoutEffect(() => {
+    setQuantity(product.quantity)
+  }, [product])
+
+  useEffect(() => {
+    if (quantity !== product.quantity) {
+      timeoutId = setTimeout(() => {
+        handleQuantityChange(product.productId, quantity)
+      }, 500);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [quantity]);
+
+
   return (
     <div className="flex items-center py-4 border-b">
       <input
@@ -35,14 +52,14 @@ const ProductItem = ({
       <div className="text-end w-1/6 font-semibold flex items-end pl-6">
         <button
           className="bg-gray-200 px-2 py-1 rounded"
-          onClick={() => handleQuantityChange(product.productId, -1)}
+          onClick={() => setQuantity(quantity - 1)}
         >
           -
         </button>
-        <span className="mx-2">{product.quantity || 1}</span>
+        <span className="mx-2">{quantity}</span>
         <button
           className="bg-gray-200 px-2 py-1 rounded"
-          onClick={() => handleQuantityChange(product.productId, 1)}
+          onClick={() => setQuantity(quantity + 1)}
         >
           +
         </button>
@@ -140,7 +157,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
     });
   };
 
-  const handleQuantityChange = async (id, delta) => {
+  const handleQuantityChange = async (id, newQuantity) => {
     try {
       // Find the current product in the list
       const updatedProduct = listProduct.flatMap((shop) =>
@@ -148,7 +165,6 @@ const CartPanel = ({ open, onOpen, onClose }) => {
       )[0];
 
       const oldQuantity = updatedProduct.quantity;
-      const newQuantity = oldQuantity + delta;
 
       // Prevent the quantity from being less than 1
       if (newQuantity < 1) {
@@ -166,9 +182,9 @@ const CartPanel = ({ open, onOpen, onClose }) => {
           shop.products = shop.products.map((item) =>
             item.productId === id
               ? {
-                  ...item,
-                  quantity: newQuantity,
-                }
+                ...item,
+                quantity: newQuantity,
+              }
               : item
           );
           return shop;
