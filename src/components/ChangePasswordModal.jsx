@@ -26,7 +26,7 @@ const ChangePasswordModal = ({ show, onClose, onSubmit }) => {
 
   return (
     <Modal
-      title="Change Password"
+      title="Đổi mật khẩu"
       open={show}
       onCancel={onClose}
       footer={null}
@@ -37,9 +37,9 @@ const ChangePasswordModal = ({ show, onClose, onSubmit }) => {
       }}
     >
       <div className="field-wrapper">
-        <label htmlFor="currentPassword">Current Password</label>
+        <label htmlFor="currentPassword">Mật khẩu hiện tại</label>
         <Input
-          // type={showCurrentPassword ? "text" : "password"}
+          type={showCurrentPassword ? "text" : "password"}
           id="currentPassword"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
@@ -57,7 +57,7 @@ const ChangePasswordModal = ({ show, onClose, onSubmit }) => {
       </div>
 
       <div className="field-wrapper">
-        <label htmlFor="newPassword">New Password</label>
+        <label htmlFor="newPassword">Mật khẩu mới</label>
         <Input
           type={showNewPassword ? "text" : "password"}
           id="newPassword"
@@ -76,14 +76,14 @@ const ChangePasswordModal = ({ show, onClose, onSubmit }) => {
 
       <div className="flex justify-between mt-4">
         <Button onClick={onClose} className="btn btn--secondary">
-          Cancel
+          Huỷ
         </Button>
         <Button
           type="primary"
           onClick={onFormSubmit}
           className="btn btn--primary"
         >
-          Update Password
+          Đổi mật khẩu
         </Button>
       </div>
     </Modal>
