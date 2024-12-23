@@ -5,11 +5,8 @@ import ProductEditor from "@widgets/ProductEditor";
 
 const EditProduct = () => {
   const { id } = useParams();
-  const title = id ? "Chỉnh sửa sản phẩm" : "Tạo sản phẩm";
-
   return (
     <>
-      <PageHeader title={title} />
       <ProductEditor />
     </>
   );

@@ -61,13 +61,6 @@ const SignUpLayout = () => {
      }
      if (response.status === 201) {
        setUserEmail(data.email);
-      //  const otpResponse = await SendOTP(data.email);
-      //  if (otpResponse.status === 200) {
-      //    setIsConfirming(true);
-      //    toast.success("OTP đã được gửi đến email của bạn.");
-      //  } else {
-      //    toast.error("Không thể gửi OTP. Vui lòng thử lại.");
-      //  }
      } else if (response.status === 409) {
        toast.error("Tài khoản đã tồn tại.");
      } else if (response.status === 500) {
