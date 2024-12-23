@@ -19,16 +19,17 @@ const ProductEditor = () => {
     control,
     formState: { errors },
     setValue,
-    getValues
+    getValues,
+    reset
   } = useForm({
     defaultValues: {
-      image1: [],
+      image: [],
       productName: "",
       description: "",
       salePrice: "",
       category_id: null,
       catalog_id: null,
-      qty: 0,
+      product_quantity: 0,
     },
   });
 
@@ -56,19 +57,20 @@ const ProductEditor = () => {
       if (id) {
         try {
           const productData = await getProductById(id);
-          console.log("Product Data:", productData); // Kiểm tra dữ liệu trả về
+          console.log("Product Data:", productData);
+          setValue("product_quantity", productData.product_quantity);
           setValue("productName", productData.product_name);
           setValue("description", productData.product_desc);
           setValue("salePrice", productData.product_price);
           setValue("category_id", productData.category_id._id);
-          setValue("catalog_id", productData.catalog_id._id);
-          setValue("qty", productData.product_quantity);
-    
           const imageFiles = productData.product_img.map((imageUrl) => ({
             url: imageUrl,
           }));
           setImagePreviews(imageFiles);
-          setValue("image1", imageFiles);
+          setValue("image", imageFiles);
+          console.log("imageFiles", imageFiles)
+          setValue("catalog_id", productData.catalog_id);
+          
         } catch (error) {
           toast.error("Không thể tải dữ liệu sản phẩm");
         }
@@ -80,12 +82,13 @@ const ProductEditor = () => {
     fetchProductData();
   }, [id, setValue]);
 
+  console.log("productData.productName", getValues("image"))
   const handleSubmitProduct = async (data, isDraft) => {
-    console.log('data img1', data.image1);
-   const files = Array.isArray(data.image1)
-   ? data.image1
-       .filter((item) => item.file) // Lọc ra các item có file
-       .map((item) => item.file)   // Lấy ra đối tượng file
+    console.log('data img1', data.image);
+   const files = Array.isArray(data.image)
+   ? data.image
+       .filter((item) => item.file)
+       .map((item) => item.file)   
    : [];
 
 
@@ -96,7 +99,7 @@ const ProductEditor = () => {
         product_name: data.productName,
         product_desc: data.description,
         product_price: data.salePrice,
-        product_quantity: data.qty,
+        product_quantity: data.product_quantity,
         category_id: data.category_id,
         catalog_id: data.catalog_id,
         files,
@@ -111,6 +114,7 @@ const ProductEditor = () => {
         toast.success(
           `Sản phẩm đã ${id ? "cập nhật" : "xuất bản"} thành công!`
         );
+        reset();
       }
     } catch (error) {
       toast.error(
@@ -129,14 +133,14 @@ const ProductEditor = () => {
     }));
   
     setImagePreviews((prev) => [...prev, ...fileArray]);
-    const currentImages = getValues("image1") || []; // Lấy giá trị hiện tại hoặc khởi tạo mảng rỗng
-    setValue("image1", [...currentImages, ...fileArray]);
+    const currentImages = getValues("image") || []; // Lấy giá trị hiện tại hoặc khởi tạo mảng rỗng
+    setValue("image", [...currentImages, ...fileArray]);
   };  
 
   const removeImage = (index) => {
     const newImagePreviews = imagePreviews.filter((_, i) => i !== index);
     setImagePreviews(newImagePreviews);
-    setValue("image1", newImagePreviews);
+    setValue("image", newImagePreviews);
   };  
 
   return (
@@ -149,7 +153,7 @@ const ProductEditor = () => {
         onSubmit={handleSubmit((data) => handleSubmitProduct(data, false))}
       >
         <div className="flex flex-row w-full gap-4">
-          <div className="w-1/2">
+          <div className="w-1/2 flex flex-col gap-4">
             <div className="field-wrapper">
               <label className="field-label" htmlFor="productName">
                 Tên sản phẩm
@@ -174,6 +178,7 @@ const ProductEditor = () => {
                 })}
                 id="description"
                 placeholder="Nhập mô tả"
+                style={{ height: "176px" }} // Đặt chiều cao mặc định
                 {...register("description", { required: true })}
               />
             </div>
@@ -193,94 +198,25 @@ const ProductEditor = () => {
               />
             </div>
 
-          <div>
-            <label className="field-label mb-2.5">Hình ảnh sản phẩm</label>
-            <Controller
-              name="images"
-              control={control}
-              render={({ field }) => (
-                <div className="border-2 border-slate-200 rounded-lg p-4">
-                  <label
-                    htmlFor="image-upload"
-                    className="btn btn-primary cursor-pointer"
-                  >
-                    Chọn Hình Ảnh
-                  </label>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    name="images"
-                    multiple
-                    accept="image/*"
-                    onChange={(e) => handleImageChange(e.target.files)}
-                    className="hidden"
-                  />
-
-                  <div className="image-preview-container grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
-                    {imagePreviews.map((image, index) => (
-                      <div
-                        key={index}
-                        className="relative w-full h-48 border border-slate-300 rounded-lg overflow-hidden flex justify-center items-center"
-                      >
-                        {image ? (
-                          <>
-                            <img
-                              src={image.url || URL.createObjectURL(image)}
-                              alt={`preview-${index}`}
-                              className="object-cover w-full h-full cursor-pointer"
-                            />
-                            <button
-                              type="button"
-                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
-                              onClick={() => removeImage(index)}
-                            >
-                              &times;
-                            </button>
-                          </>
-                        ) : (
-                          <label
-                            htmlFor={`image-upload-${index}`}
-                            className="media-dropzone w-full h-full flex justify-center items-center cursor-pointer border-2 border-dashed border-slate-300 rounded-lg"
-                          >
-                            <span className="text-gray-500">Thêm Hình Ảnh</span>
-                            <input
-                              id={`image-upload-${index}`}
-                              type="file"
-                              name={`image${index + 1}`}
-                              onChange={(e) =>
-                                handleImageChange(e.target.files)
-                              }
-                              className="hidden"
-                            />
-                          </label>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            />
-          </div>
-
-          </div>
-
-          <div className="w-1/2">
             <div className="field-wrapper">
-              <label className="field-label" htmlFor="qty">
+              <label className="field-label" htmlFor="product_quantity">
                 Số lượng
               </label>
               <input
                 className={classNames("field-input", {
-                  "field-input--error": errors.qty,
+                  "field-input--error": errors.product_quantity,
                 })}
-                id="qty"
+                id="product_quantity"
                 type="number"
                 placeholder="Nhập số lượng"
-                {...register("qty", { required: true })}
+                {...register("product_quantity", { required: true })}
               />
             </div>
+            
+          </div>
 
-            <div className="field-wrapper">
+          <div className="w-1/2 flex flex-col gap-4">
+          <div className="field-wrapper">
               <label className="field-label" htmlFor="category">
                 Ngành hàng
               </label>
@@ -302,6 +238,75 @@ const ProductEditor = () => {
                       </option>
                     ))}
                   </select>
+                )}
+              />
+            </div>
+
+            <div>
+              <label className="field-label mb-2.5">Hình ảnh sản phẩm</label>
+              <Controller
+                name="images"
+                control={control}
+                render={({ field }) => (
+                  <div className="border-2 border-slate-200 rounded-lg p-4">
+                    <label
+                      htmlFor="image-upload"
+                      className="btn btn-primary cursor-pointer"
+                    >
+                      Chọn hình ảnh
+                    </label>
+                    <input
+                      id="image-upload"
+                      type="file"
+                      name="images"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(e.target.files)}
+                      className="hidden"
+                    />
+
+                    <div className="image-preview-container grid grid-cols-2 gap-4 mt-4 min-h-20">
+                      {imagePreviews.map((image, index) => (
+                        <div
+                          key={index}
+                          className="relative w-full h-48 border border-slate-300 rounded-lg overflow-hidden flex justify-center items-center"
+                        >
+                          {image ? (
+                            <>
+                              <img
+                                src={image.url || URL.createObjectURL(image)}
+                                alt={`preview-${index}`}
+                                className="object-cover w-full h-full cursor-pointer"
+                              />
+                              <button
+                                type="button"
+                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                                onClick={() => removeImage(index)}
+                              >
+                                &times;
+                              </button>
+                            </>
+                          ) : (
+                            <label
+                              htmlFor={`image-upload-${index}`}
+                              className="media-dropzone w-full h-full flex justify-center items-center cursor-pointer border-2 border-dashed border-slate-300 rounded-lg"
+                            >
+                              <span className="text-gray-500">Thêm Hình Ảnh</span>
+                              <input
+                                id={`image-upload-${index}`}
+                                type="file"
+                                name={`image${index + 1}`}
+                                onChange={(e) =>
+                                  handleImageChange(e.target.files)
+                                }
+                                className="hidden"
+                              />
+                            </label>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               />
             </div>
@@ -332,7 +337,7 @@ const ProductEditor = () => {
               />
             </div>
 
-            <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-11">
+            <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-14">
               {!id ? (
                 <button
                   type="button"
@@ -346,7 +351,7 @@ const ProductEditor = () => {
               ) : null}
 
               <button className="btn btn--secondary" type="submit">
-                {id ? "Cap nhật" : "Xuất bản"}
+                {id ? "Cập nhật" : "Xuất bản"}
               </button>
             </div>
           </div>

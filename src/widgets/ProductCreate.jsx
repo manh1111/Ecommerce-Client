@@ -166,7 +166,7 @@ const ProductCreate = () => {
           </div>
         </div>
 
-        <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-11">
+        <div className="grid gap-2 mt-5 sm:grid-cols-2 sm:mt-10 md:mt-14">
           <button
             className="btn btn--secondary"
             onClick={handleSubmit(handlePublish)}
