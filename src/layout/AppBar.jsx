@@ -33,9 +33,8 @@ const LocaleMenu = ({ active, setActive }) => {
             alt={locale.label}
           />
           <span
-            className={`text-sm font-medium transition group-hover:text-accent ${
-              active === locale.value ? "text-accent" : "text-header"
-            }`}
+            className={`text-sm font-medium transition group-hover:text-accent ${active === locale.value ? "text-accent" : "text-header"
+              }`}
           >
             {locale.label}
           </span>
@@ -50,9 +49,9 @@ const AppBar = () => {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [notificationsPanelOpen, setCartPanelOpen] = useState(false);
   const [messagesPanelOpen, setOrdersPanelOpen] = useState(false);
-  const [loginPromptOpen, setLoginPromptOpen] = useState(false); 
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [locale, setLocale] = useState("en-EN");
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { width } = useWindowSize();
   const { theme, toggleTheme } = useTheme();
   const { setOpen } = useSidebar();
@@ -94,19 +93,19 @@ const AppBar = () => {
 
   const handleMessagesClick = () => {
     if (!isAuthenticated) {
-      setLoginPromptOpen(true); 
+      setLoginPromptOpen(true);
     } else {
-      setOrdersPanelOpen(true); 
+      setOrdersPanelOpen(true);
     }
   };
 
   return (
     <div className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
                    lg:items-center lg:gap-4">
-      <div className="mb-5 w-full">
+      <div className="w-full mx-10">
         <div style={{ zIndex: 999 }}>
           <div className="flex items-center justify-between">
-            {roleNames.includes("shop") && (
+            {/* {roleNames.includes("shop") && (
               <button
                 className="icon text-2xl leading-none"
                 aria-label="Open sidebar"
@@ -114,9 +113,9 @@ const AppBar = () => {
               >
                 <i className="icon-bars-solid" />
               </button>
-            )}
+            )} */}
             {width >= 768 && (
-              <div className="flex w-full mx-7">
+              <div className="flex w-full gap-4">
                 <Logo />
                 <Search wrapperClass="flex-1 max-w-[1054px] ml-5 mr-auto 4xl:ml-0" />
               </div>
@@ -131,17 +130,18 @@ const AppBar = () => {
                   <i className="icon-magnifying-glass-solid" />
                 </button>
               )}
-              <button
-                className="text-2xl leading-none text-gray dark:text-gray-red"
-                aria-label="Change theme"
-                onClick={toggleTheme}
-              >
-                <i
-                  className={`icon-${
-                    theme === "light" ? "sun-bright" : "moon"
-                  }-regular`}
-                />
-              </button>
+              <div className="relative h-fit xl:self-center xl:mt-0 ">
+                <button
+                  className="text-2xl leading-none text-gray dark:text-gray-red"
+                  aria-label="Change theme"
+                  onClick={toggleTheme}
+                >
+                  <i
+                    className={`icon-${theme === "light" ? "sun-bright" : "moon"
+                      }-regular`}
+                  />
+                </button>
+              </div>
               {/* <CustomTooltip
                 title={<LocaleMenu active={locale} setActive={setLocale} />}
               >
@@ -152,10 +152,10 @@ const AppBar = () => {
                   <img src={activeLocale.icon} alt={activeLocale.label} />
                 </button>
               </CustomTooltip> */}
-              <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 ">
+              <div className="relative h-fit xl:self-center xl:mt-0 ">
                 <button
                   className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={handleCartClick} 
+                  onClick={handleCartClick}
                   aria-label="Notifications"
                 >
                   <i className="fas fa-shopping-cart" />
@@ -169,10 +169,10 @@ const AppBar = () => {
                   </span>
                 </span> */}
               </div>
-              <div className="relative h-fit mt-1.5 xl:self-end xl:mt-0 ">
+              <div className="relative h-fit xl:self-center xl:mt-0 ">
                 <button
                   className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={handleMessagesClick} 
+                  onClick={handleMessagesClick}
                   aria-label="Messages"
                 >
                   <i className="fas fa-truck" title="Theo dõi đơn hàng" />

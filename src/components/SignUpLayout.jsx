@@ -61,13 +61,6 @@ const SignUpLayout = () => {
      }
      if (response.status === 201) {
        setUserEmail(data.email);
-       const otpResponse = await SendOTP(data.email);
-       if (otpResponse.status === 200) {
-         setIsConfirming(true);
-         toast.success("OTP đã được gửi đến email của bạn.");
-       } else {
-         toast.error("Không thể gửi OTP. Vui lòng thử lại.");
-       }
      } else if (response.status === 409) {
        toast.error("Tài khoản đã tồn tại.");
      } else if (response.status === 500) {
@@ -93,7 +86,7 @@ const SignUpLayout = () => {
  };
 
   return (
-    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 4xl:grid-cols-[minmax(0,_1030px)_minmax(0,_1fr)]">
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 4xl:grid-cols-[minmax(0,_1030px)_minmax(0,_1fr)] h-screen">
       {width >= 1024 && (
         <div className="flex flex-col justify-center items-center lg:p-[60px]">
           <Logo imgClass="w-[60px]" textClass="text-[28px]" />

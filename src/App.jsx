@@ -72,9 +72,9 @@ const App = () => {
           style={{ padding: "20px" }}
         />
         {width < 1280 && withSidebar && <AppBar />}
-        <div className={`app ${!withSidebar ? "fluid" : ""}`} ref={appRef}>
+        <div className={`app fluid`} ref={appRef}>
           {/* <ScrollToTop /> */}
-          {withSidebar && <Sidebar />}
+          {/* {withSidebar && <Sidebar />} */}
           <div className="app_content">
             {width >= 1280 && withSidebar && <AppBar />}
             <Suspense fallback={<Loader />}>
