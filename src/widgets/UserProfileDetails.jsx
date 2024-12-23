@@ -267,10 +267,10 @@ const UserProfileDetails = () => {
               </div>
               <form onSubmit={handleSubmit(onSubmit)} className="">
                 <button
-                  className="btn btn--primary w-full mt-5 md:w-fit "
+                  className="btn btn--primary mt-5 w-[260px]"
                   type="submit"
                 >
-                  Thay đổi thông tin
+                  Cập nhật thông tin
                 </button>
               </form>
             </div>

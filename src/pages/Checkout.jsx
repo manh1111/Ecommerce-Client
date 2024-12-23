@@ -113,7 +113,6 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
           return acc;
         }, {});
 
-        //Bug 1: thanh toán MoMo
         const orders = Object.values(groupedOrders);
         if (paymentGateway === "MOMO" || paymentGateway === "VNPAY") {
           paymentMethod = "online";
@@ -136,6 +135,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
            response?.paymentUrl &&
            paymentGateway === "MOMO"
          ) {
+           window.location.href = response.paymentUrl.payUrl;
          } else {
             window.location.href = response.paymentUrl.payUrl;
          }

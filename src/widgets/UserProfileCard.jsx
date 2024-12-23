@@ -66,7 +66,8 @@ const UserProfileCard = () => {
     }
   };
 
-  const roleNames = userData?.roleNames || [];
+  console.log("userData", userData?.roles);
+
 
   return (
     <Spring
@@ -104,7 +105,7 @@ const UserProfileCard = () => {
           Đăng xuất
         </button>
       </div>
-      {!roleNames.includes("shop") && (
+      {(userData?.roles.length > 0 && !userData?.roles?.map( item => item.roleName == 'shop')) && (
         <button
           className="btn btn--primary w-full mt-5 md:w-fit"
           type="button"

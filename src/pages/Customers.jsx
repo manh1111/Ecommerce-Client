@@ -83,7 +83,7 @@ const Customers = () => {
             dataSource={customers}
             rowKey="_id"
             pagination={false}
-            className="rounded-lg shadow-lg "
+            className="rounded-lg shadow-lg ant-customers"
           />
         )}
       </div>

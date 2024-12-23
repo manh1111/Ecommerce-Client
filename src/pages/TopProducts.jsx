@@ -52,6 +52,8 @@ const TopProducts = ({ hasTitle = true }) => {
     navigate(`/product/${idProduct}`);
   };
 
+  console.log("category", categories);
+
   return (
     <div className="container mx-auto p-4">
       {hasTitle && (

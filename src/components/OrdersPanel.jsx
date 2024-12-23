@@ -28,7 +28,7 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
     shipped: "Đang vận chuyển",
     completed: "Hoàn thành",
     cancelled: "Đã hủy",
-    waiting: "Chờ thanh toán",
+    waiting: "Đã Thanh toán",
   };
 
   useEffect(() => {
@@ -183,13 +183,13 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
                 }
                 className="py-2 px-6 bg-blue-500 text-white rounded-md"
               >
-                Submit Review
+                Gửi đánh giá
               </button>
               <button
                 onClick={handleCloseModal}
                 className="py-2 px-6 bg-gray-500 text-white rounded-md"
               >
-                Cancel
+                Hủy
               </button>
             </div>
           </div>

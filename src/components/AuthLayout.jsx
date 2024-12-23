@@ -12,6 +12,7 @@ import google from "@assets/icons/google.png";
 import { signIn, signInWithGoogle } from "@api/auth";
 import { setCookie } from "@utils/cookie";
 import { useDispatch } from "react-redux";
+import { URL_API } from "../../src/config/config";
 import {
   CHANGE_STATUS_AUTH,
   CHANGE_VALUE_TOKEN,
@@ -80,23 +81,12 @@ const AuthLayout = () => {
     }
   };
 
-const handleLoginWithGoogle = async () => {
-  try {
-    const response = await signInWithGoogle();
-
-    const { response_type, redirect_uri, scope, client_id } = response.data;
-
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?response_type=${response_type}&redirect_uri=${encodeURIComponent(
-      redirect_uri
-    )}&scope=${encodeURIComponent(scope)}&client_id=${client_id}`;
-
+  const handleLoginWithGoogle = async () => {
+    const googleAuthUrl = `${URL_API}auth/google`;
     window.location.href = googleAuthUrl;
-    console.log("first", googleAuthUrl);
-  } catch (error) {
-    console.error("Lỗi khi gọi API cấu hình Google OAuth:", error);
-    toast.error("Không thể kết nối tới Google!");
-  }
-};
+  };
+
+
 
   const handleSignUp = () => {
     navigate("/sign-up");
@@ -189,9 +179,9 @@ const handleLoginWithGoogle = async () => {
                 hoặc
               </span>
             </div>
-          
+
             <div className="py-4">
-               {/* Bug 4:đăng nhập với gg */}
+              {/* Bug 4:đăng nhập với gg */}
               <div className="btn btn--social" onClick={handleLoginWithGoogle}>
                 <img className="icon" src={google} alt="Google" />
                 Google

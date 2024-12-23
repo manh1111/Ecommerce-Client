@@ -76,14 +76,14 @@ const OrdersTable = ({ initialOrders = [] }) => {
     try {
       await createReview(selectedProduct.productId, rating, comment);
       toast.success("Đánh giá đã được gửi thành công!");
-      setIsReviewModalOpen(false); 
+      setIsReviewModalOpen(false);
     } catch (error) {
       if (error.response.status === 400) {
         toast.error("Sản phẩm không còn tồn tại.");
       } else {
         toast.error("Có lỗi xảy ra khi gửi đánh giá.");
       }
-      setIsReviewModalOpen(false); 
+      setIsReviewModalOpen(false);
     }
   };
 
@@ -98,6 +98,8 @@ const OrdersTable = ({ initialOrders = [] }) => {
       : true;
     return isAfterStartDate && isBeforeEndDate;
   });
+
+  console.log("orders------", orders)
 
   return (
     <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
@@ -174,17 +176,18 @@ const OrdersTable = ({ initialOrders = [] }) => {
                 </p>
               </div>
               <div className="flex flex-col w-[250px] items-center justify-end">
-                <button
-                  className={`text-white w-10/12 bg-rose-500 rounded-xl px-4 py-2 ${
-                    order.order_status === "pending"
-                      ? "hover:opacity-80"
-                      : "opacity-50 cursor-not-allowed"
-                  }`}
-                  onClick={() => handleCancelOrder(order._id)}
-                  disabled={order.order_status !== "pending"}
-                >
-                  Hủy đơn hàng
-                </button>
+                {order.order_status === 'pending' &&
+                  <button
+                    className={`text-white w-10/12 bg-rose-500 rounded-xl px-4 py-2 ${order.order_status === "pending"
+                        ? "hover:opacity-80"
+                        : "opacity-50 cursor-not-allowed"
+                      }`}
+                    onClick={() => handleCancelOrder(order._id)}
+                    disabled={order.order_status !== "pending"}
+                  >
+                    Hủy đơn hàng
+                  </button>
+                }
 
                 {order.order_status === "completed" &&
                   order.order_products.map((product) => (

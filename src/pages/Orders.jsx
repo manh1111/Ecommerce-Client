@@ -26,7 +26,7 @@ const Orders = () => {
     { value: "shipped", name: "Đang vận chuyển" },
     { value: "completed", name: "Đã giao hàng" },
     { value: "cancelled", name: "Đã hủy" },
-    { value: "waiting", name: "Chờ thanh toán" },
+    { value: "waiting", name: "Thanh toán" },
   ];
 
   useEffect(() => {

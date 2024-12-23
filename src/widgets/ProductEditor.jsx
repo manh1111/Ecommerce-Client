@@ -19,6 +19,7 @@ const ProductEditor = () => {
     control,
     formState: { errors },
     setValue,
+    getValues
   } = useForm({
     defaultValues: {
       image1: [],
@@ -80,9 +81,14 @@ const ProductEditor = () => {
   }, [id, setValue]);
 
   const handleSubmitProduct = async (data, isDraft) => {
+    console.log('data img1', data.image1);
+   const files = Array.isArray(data.image1)
+   ? data.image1
+       .filter((item) => item.file) // Lọc ra các item có file
+       .map((item) => item.file)   // Lấy ra đối tượng file
+   : [];
 
-    //Bug 2: Chưa thêm nhiều hình anh khi tạo sản phẩm
-    const files = Array.isArray(data.image1) ? data.image1.filter((file) => file !== "") : [];
+
     try {
       const apiFunc = id ? updateProduct : createProduct;
       const response = await apiFunc({
@@ -98,7 +104,7 @@ const ProductEditor = () => {
         isPublic: !isDraft,
       });
   
-      console.log("product_name", data);
+      console.log("product", response);
       if (isDraft) {
         toast.info("Sản phẩm đã được lưu dưới dạng bản nháp!");
       } else {
@@ -123,7 +129,8 @@ const ProductEditor = () => {
     }));
   
     setImagePreviews((prev) => [...prev, ...fileArray]);
-    setValue("image1", (prev) => [...prev, ...fileArray]);
+    const currentImages = getValues("image1") || []; // Lấy giá trị hiện tại hoặc khởi tạo mảng rỗng
+    setValue("image1", [...currentImages, ...fileArray]);
   };  
 
   const removeImage = (index) => {
