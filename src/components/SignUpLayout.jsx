@@ -93,7 +93,7 @@ const SignUpLayout = () => {
  };
 
   return (
-    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 4xl:grid-cols-[minmax(0,_1030px)_minmax(0,_1fr)]">
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 4xl:grid-cols-[minmax(0,_1030px)_minmax(0,_1fr)] h-screen">
       {width >= 1024 && (
         <div className="flex flex-col justify-center items-center lg:p-[60px]">
           <Logo imgClass="w-[60px]" textClass="text-[28px]" />

@@ -9,7 +9,7 @@ import { useWindowSize } from "react-use";
 import classNames from "classnames";
 import media from "@assets/login.webp";
 import google from "@assets/icons/google.png";
-import { signIn, signInWithGoogle } from "@api/auth";
+import { signIn } from "@api/auth";
 import { setCookie } from "@utils/cookie";
 import { useDispatch } from "react-redux";
 import { URL_API } from "../../src/config/config";
@@ -95,7 +95,7 @@ const AuthLayout = () => {
   if (loading) return <Loader />;
 
   return (
-    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 4xl:grid-cols-[minmax(0,_1030px)_minmax(0,_1fr)]">
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 4xl:grid-cols-[minmax(0,_1030px)_minmax(0,_1fr)] h-screen">
       {width >= 1024 && (
         <div className="flex flex-col justify-center items-center lg:p-[60px]">
           <Logo imgClass="w-[60px]" textClass="text-[28px]" />
