@@ -52,6 +52,7 @@
     "reactjs-social-login": "^2.6.2",
     "recharts": "^2.4.3",
     "sass": "^1.62.1",
+    "shop_point": "file:",
     "styled-components": "^5.3.6",
     "styled-theming": "^2.2.0",
     "swiper": "^10.0.3",

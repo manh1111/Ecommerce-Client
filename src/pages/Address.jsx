@@ -6,6 +6,7 @@ import {
 } from "@api/profile";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Address = () => {
   const [addresses, setAddresses] = useState([]);
@@ -137,6 +138,10 @@ const Address = () => {
     };
 
     const handleAddAddress = async () => {
+      if (!newAddress.recipient_name || !newAddress.recipient_phone || !newAddress.specific_address || !newAddress.provinceName || !newAddress.districtName || !newAddress.wardName) {
+        toast.error("Vui lòng điền đầy đủ thông tin địa chỉ.");
+        return; 
+      }
       const fullAddress = `${newAddress.provinceName}, ${newAddress.districtName}, ${newAddress.wardName}`;
 
       const addressToAdd = {
@@ -151,11 +156,11 @@ const Address = () => {
         const addedAddress = await addNewAddress(addressToAdd);
         setAddresses((prevAddresses) => [...prevAddresses, addedAddress]);
         resetForm();
-        alert("Địa chỉ mới đã được thêm thành công!");
+        toast.success("Địa chỉ mới đã được thêm thành công!");
         await fetchAddresses();
       } catch (error) {
         console.error("Failed to add new address:", error);
-        alert("Không thể thêm địa chỉ mới. Vui lòng thử lại.");
+        toast.error("Không thể thêm địa chỉ mới. Vui lòng thử lại.");
       }
     };
 
@@ -179,22 +184,22 @@ const Address = () => {
         address: fullAddress,
       });
       resetForm();
-      alert("Địa chỉ đã được cập nhật thành công!");
-      await fetchAddresses(); // Fetch updated addresses after updating
+      toast.success("Địa chỉ đã được cập nhật thành công!");
+      await fetchAddresses();
     } catch (error) {
       console.error("Failed to update address:", error);
-      alert("Không thể cập nhật địa chỉ. Vui lòng thử lại.");
+      toast.error("Không thể cập nhật địa chỉ. Vui lòng thử lại.");
     }
   };
 
   const handleDeleteAddress = async (id) => {
     try {
       await deleteAddress(id);
-      alert("Địa chỉ đã được xóa thành công!");
+      toast.success("Địa chỉ đã được xóa thành công!");
       await fetchAddresses();
     } catch (error) {
       console.error("Failed to delete address:", error);
-      alert("Không thể xóa địa chỉ. Vui lòng thử lại.");
+      toast.error("Không thể xóa địa chỉ. Vui lòng thử lại.");
     }
   };
 
