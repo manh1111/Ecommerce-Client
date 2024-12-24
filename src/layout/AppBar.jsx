@@ -9,7 +9,7 @@ import ModalBase from "@ui/ModalBase";
 import { useTheme } from "@contexts/themeContext";
 import { useSidebar } from "@contexts/sidebarContext";
 import { useWindowSize } from "react-use";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { LOCALES } from "@constants/options";
 
 import avatar from "@assets/avatar.webp";
@@ -100,149 +100,154 @@ const AppBar = () => {
   };
 
   return (
-    <div className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
-                   lg:items-center lg:gap-4">
-      <div className="w-full mx-10">
-        <div style={{ zIndex: 999 }}>
-          <div className="flex items-center justify-between">
-            {/* {roleNames.includes("shop") && (
-              <button
-                className="icon text-2xl leading-none"
-                aria-label="Open sidebar"
-                onClick={() => setOpen(true)}
-              >
-                <i className="icon-bars-solid" />
-              </button>
-            )} */}
-            {width >= 768 && (
-              <div className="flex w-full gap-4">
-                <Logo />
-                <Search wrapperClass="flex-1 max-w-[1054px] ml-5 mr-auto 4xl:ml-0" />
-              </div>
-            )}
-            <div className="flex items-center gap-5 md:ml-5 xl:gap-[26px]">
-              {width < 768 && (
+    <div>
+      <div className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
+                    lg:items-center lg:gap-4">
+        <div className="w-full mx-10">
+          <div style={{ zIndex: 999 }}>
+            <div className="flex items-center justify-between">
+              {/* {roleNames.includes("shop") && (
                 <button
-                  className="text-[20px] leading-none text-gray dark:text-gray-red xl:text-2xl"
-                  aria-label="Open search"
-                  onClick={() => setSearchModalOpen(true)}
+                  className="icon text-2xl leading-none"
+                  aria-label="Open sidebar"
+                  onClick={() => setOpen(true)}
                 >
-                  <i className="icon-magnifying-glass-solid" />
+                  <i className="icon-bars-solid" />
                 </button>
+              )} */}
+              {width >= 768 && (
+                <div className="flex w-full gap-4">
+                  <Logo />
+                  <Search wrapperClass="flex-1 max-w-[1054px] ml-5 mr-auto 4xl:ml-0" />
+                </div>
               )}
-              <div className="relative h-fit xl:self-center xl:mt-0 ">
-                <button
-                  className="text-2xl leading-none text-gray dark:text-gray-red"
-                  aria-label="Change theme"
-                  onClick={toggleTheme}
+              <div className="flex items-center gap-5 md:ml-5 xl:gap-[26px]">
+                {width < 768 && (
+                  <button
+                    className="text-[20px] leading-none text-gray dark:text-gray-red xl:text-2xl"
+                    aria-label="Open search"
+                    onClick={() => setSearchModalOpen(true)}
+                  >
+                    <i className="icon-magnifying-glass-solid" />
+                  </button>
+                )}
+                <div className="relative h-fit xl:self-center xl:mt-0 ">
+                  <button
+                    className="text-2xl leading-none text-gray dark:text-gray-red"
+                    aria-label="Change theme"
+                    onClick={toggleTheme}
+                  >
+                    <i
+                      className={`icon-${theme === "light" ? "sun-bright" : "moon"
+                        }-regular`}
+                    />
+                  </button>
+                </div>
+                {/* <CustomTooltip
+                  title={<LocaleMenu active={locale} setActive={setLocale} />}
                 >
-                  <i
-                    className={`icon-${theme === "light" ? "sun-bright" : "moon"
-                      }-regular`}
-                  />
-                </button>
-              </div>
-              {/* <CustomTooltip
-                title={<LocaleMenu active={locale} setActive={setLocale} />}
-              >
-                <button
-                  className="w-6 h-6 rounded-full overflow-hidden xl:w-8 xl:h-8"
-                  aria-label="Change language"
-                >
-                  <img src={activeLocale.icon} alt={activeLocale.label} />
-                </button>
-              </CustomTooltip> */}
-              <div className="relative h-fit xl:self-center xl:mt-0 ">
-                <button
-                  className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={handleCartClick}
-                  aria-label="Notifications"
-                >
-                  <i className="fas fa-shopping-cart" />
-                </button>
-                {/* <span
-                  className="absolute w-3 h-3 rounded-full bg-red -top-1.5 -right-1.5 border-[2px] border-body
-                                      xl:w-6 xl:h-6 xl:-top-5 xl:-right-4 xl:flex xl:items-center xl:justify-center"
-                >
-                  <span className="hidden text-xs font-bold text-white dark:text-[#00193B] xl:block">
-                    7
-                  </span>
-                </span> */}
-              </div>
-              <div className="relative h-fit xl:self-center xl:mt-0 ">
-                <button
-                  className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
-                  onClick={handleMessagesClick}
-                  aria-label="Messages"
-                >
-                  <i className="fas fa-truck" title="Theo dõi đơn hàng" />
-                </button>
-                {/* <span
-                  className="absolute w-3 h-3 rounded-full bg-green -top-1.5 -right-1.5 border-[2px] border-body
-                                      xl:w-6 xl:h-6 xl:-top-5 xl:-right-4 xl:flex xl:items-center xl:justify-center"
-                >
-                  <span className="hidden text-xs font-bold text-white dark:text-[#00193B] xl:block">
-                    5
-                  </span>
-                </span> */}
-              </div>
-              <div className="relative">
-                <button
-                  className="h-8 w-8 rounded-full bg-accent text-widget text-sm flex items-center
-                                        justify-center relative xl:w-11 xl:h-11 xl:text-lg"
-                  onClick={() =>
-                    isAuthenticated
-                      ? navigate("/general-settings")
-                      : navigate("/login")
-                  }
-                  aria-label="Account menu"
-                >
-                  <img
-                    className="relative rounded-full w-full h-full"
-                    src={dataInforUser?.avatar ? dataInforUser?.avatar : avatar}
-                    alt="avatar"
-                  />
-                </button>
-                <span className="badge-online" />
+                  <button
+                    className="w-6 h-6 rounded-full overflow-hidden xl:w-8 xl:h-8"
+                    aria-label="Change language"
+                  >
+                    <img src={activeLocale.icon} alt={activeLocale.label} />
+                  </button>
+                </CustomTooltip> */}
+                <div className="relative h-fit xl:self-center xl:mt-0 ">
+                  <button
+                    className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
+                    onClick={handleCartClick}
+                    aria-label="Notifications"
+                  >
+                    <i className="fas fa-shopping-cart" />
+                  </button>
+                  {/* <span
+                    className="absolute w-3 h-3 rounded-full bg-red -top-1.5 -right-1.5 border-[2px] border-body
+                                        xl:w-6 xl:h-6 xl:-top-5 xl:-right-4 xl:flex xl:items-center xl:justify-center"
+                  >
+                    <span className="hidden text-xs font-bold text-white dark:text-[#00193B] xl:block">
+                      7
+                    </span>
+                  </span> */}
+                </div>
+                <div className="relative h-fit xl:self-center xl:mt-0 ">
+                  <button
+                    className="text-lg leading-none text-gray dark:text-gray-red xl:text-[20px]"
+                    onClick={handleMessagesClick}
+                    aria-label="Messages"
+                  >
+                    <i className="fas fa-truck" title="Theo dõi đơn hàng" />
+                  </button>
+                  {/* <span
+                    className="absolute w-3 h-3 rounded-full bg-green -top-1.5 -right-1.5 border-[2px] border-body
+                                        xl:w-6 xl:h-6 xl:-top-5 xl:-right-4 xl:flex xl:items-center xl:justify-center"
+                  >
+                    <span className="hidden text-xs font-bold text-white dark:text-[#00193B] xl:block">
+                      5
+                    </span>
+                  </span> */}
+                </div>
+                <div className="relative">
+                  <button
+                    className="h-8 w-8 rounded-full bg-accent text-widget text-sm flex items-center
+                                          justify-center relative xl:w-11 xl:h-11 xl:text-lg"
+                    onClick={() =>
+                      isAuthenticated
+                        ? navigate("/general-settings")
+                        : navigate("/login")
+                    }
+                    aria-label="Account menu"
+                  >
+                    <img
+                      className="relative rounded-full w-full h-full"
+                      src={dataInforUser?.avatar ? dataInforUser?.avatar : avatar}
+                      alt="avatar"
+                    />
+                  </button>
+                  <span className="badge-online" />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <ModalBase
-        open={loginPromptOpen}
-        onClose={() => setLoginPromptOpen(false)}
-      >
-        <div className="flex flex-col items-center justify-between p-10 w-[400px] bg-slate-100 rounded-xl">
-          <h2 className="text-xl font-bold">Bạn cần đăng nhập</h2>
-          <p className="mt-2">Vui lòng đăng nhập để tiếp tục.</p>
-          <div className="flex w-full justify-between">
-            <button
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-              onClick={() => {
-                setLoginPromptOpen(false);
-                navigate("/login"); // Redirect to login page
-              }}
-            >
-              Đăng nhập
-            </button>
-            <button
-              className="text-white bg-rose-500 rounded mt-4 px-4 py-2 hover:opacity-80"
-              onClick={() => setLoginPromptOpen(false)}
-            >
-              Hủy
-            </button>
+        <ModalBase
+          open={loginPromptOpen}
+          onClose={() => setLoginPromptOpen(false)}
+        >
+          <div className="flex flex-col items-center justify-between p-10 w-[400px] bg-slate-100 rounded-xl">
+            <h2 className="text-xl font-bold">Bạn cần đăng nhập</h2>
+            <p className="mt-2">Vui lòng đăng nhập để tiếp tục.</p>
+            <div className="flex w-full justify-between">
+              <button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() => {
+                  setLoginPromptOpen(false);
+                  navigate("/login"); // Redirect to login page
+                }}
+              >
+                Đăng nhập
+              </button>
+              <button
+                className="text-white bg-rose-500 rounded mt-4 px-4 py-2 hover:opacity-80"
+                onClick={() => setLoginPromptOpen(false)}
+              >
+                Hủy
+              </button>
+            </div>
           </div>
-        </div>
-      </ModalBase>
-      <CartPanel
-        open={notificationsPanelOpen}
-        onClose={() => setCartPanelOpen(false)}
-      />
-      <OrdersPanel
-        open={messagesPanelOpen}
-        onClose={() => setOrdersPanelOpen(false)}
-      />
+        </ModalBase>
+        <CartPanel
+          open={notificationsPanelOpen}
+          onClose={() => setCartPanelOpen(false)}
+        />
+        <OrdersPanel
+          open={messagesPanelOpen}
+          onClose={() => setOrdersPanelOpen(false)}
+        />
+      </div>
+      <div className="main">
+        <Outlet />
+      </div>
     </div>
   );
 };
