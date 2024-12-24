@@ -16,6 +16,7 @@ import AppBar from "@layout/AppBar";
 import CreaterProduct from "@pages/CreaterProduct";
 import Loader from "@components/Loader";
 import Checkout from "./pages/Checkout";
+import { AuthProvider } from "@components/Provider/AuthProvider";
 
 const Login = lazy(() => import("@pages/Login"));
 const SignUp = lazy(() => import("@pages/SignUp"));
@@ -80,50 +81,52 @@ const App = () => {
             <Suspense fallback={<Loader />}>
               <div className={withSidebar ? "main" : ""}>
                 <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/sign-up" element={<SignUp />} />
-                  <Route path="/payment-success" element={<ConfirmPayment />} />
-                  <Route path="/payment-failed" element={<ConfirmPayment />} />
-                  <Route path="/" element={<MainPage />} />
-                  <Route
-                    path="/products-management"
-                    element={<ProductsManagement />}
-                  />
-                  <Route path="/product-editor" element={<ProductEditor />} />
-                  <Route
-                    path="/product-editor/:id"
-                    element={<ProductEditor />}
-                  />
-                  <Route path="/seller-profile" element={<SellerProfile />} />
-                  <Route
-                    path="/revenue-by-period"
-                    element={<RevenueByPeriod />}
-                  />
-                  <Route path="/top-products" element={<TopProducts />} />
-                  <Route path="/products-grid" element={<ProductsGrid />} />
-                  <Route path="/product-creater" element={<CreaterProduct />} />
-                  <Route path="/orders" element={<Orders />} />
-                  <Route path="/statistics" element={<Statistics />} />
-                  <Route path="/reviews" element={<Reviews />} />
-                  <Route path="/customers" element={<Customers />} />
-                  <Route path="/transactions" element={<Transactions />} />
-                  <Route path="/connected-apps" element={<ConnectedApps />} />
-                  <Route path="/Checkout" element={<Checkout />} />
-                  <Route
-                    path="/general-settings"
-                    element={<GeneralSettings />}
-                  />
-                  <Route path="/shop/:id" element={<Shop />} />
-                  <Route path="/catalog" element={<Catalog />} />
-                  <Route path="/statistical" element={<Statistical />} />
-                  <Route path="/product/:id" element={<Product />} />
-                  <Route path="/search" element={<SearchPage />} />
-                  <Route path="/address" element={<Address />} />
-                  <Route path="/reset-password" element={<ForgotPassword />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="*" element={<Navigate to="/404" />} />
-                  <Route path="/start-selling" element={<StartSelling />} />
-                  <Route path="/404" element={<PageNotFound />} />
+                  <Route path="/" element={<AuthProvider />}>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/sign-up" element={<SignUp />} />
+                    <Route path="/payment-success" element={<ConfirmPayment />} />
+                    <Route path="/payment-failed" element={<ConfirmPayment />} />
+                    <Route path="/" element={<MainPage />} />
+                    <Route
+                      path="/products-management"
+                      element={<ProductsManagement />}
+                    />
+                    <Route path="/product-editor" element={<ProductEditor />} />
+                    <Route
+                      path="/product-editor/:id"
+                      element={<ProductEditor />}
+                    />
+                    <Route path="/seller-profile" element={<SellerProfile />} />
+                    <Route
+                      path="/revenue-by-period"
+                      element={<RevenueByPeriod />}
+                    />
+                    <Route path="/top-products" element={<TopProducts />} />
+                    <Route path="/products-grid" element={<ProductsGrid />} />
+                    <Route path="/product-creater" element={<CreaterProduct />} />
+                    <Route path="/orders" element={<Orders />} />
+                    <Route path="/statistics" element={<Statistics />} />
+                    <Route path="/reviews" element={<Reviews />} />
+                    <Route path="/customers" element={<Customers />} />
+                    <Route path="/transactions" element={<Transactions />} />
+                    <Route path="/connected-apps" element={<ConnectedApps />} />
+                    <Route path="/Checkout" element={<Checkout />} />
+                    <Route
+                      path="/general-settings"
+                      element={<GeneralSettings />}
+                    />
+                    <Route path="/shop/:id" element={<Shop />} />
+                    <Route path="/catalog" element={<Catalog />} />
+                    <Route path="/statistical" element={<Statistical />} />
+                    <Route path="/product/:id" element={<Product />} />
+                    <Route path="/search" element={<SearchPage />} />
+                    <Route path="/address" element={<Address />} />
+                    <Route path="/reset-password" element={<ForgotPassword />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="*" element={<Navigate to="/404" />} />
+                    <Route path="/start-selling" element={<StartSelling />} />
+                    <Route path="/404" element={<PageNotFound />} />
+                  </Route>
                 </Routes>
               </div>
             </Suspense>
