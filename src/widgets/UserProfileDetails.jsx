@@ -13,6 +13,7 @@ import classNames from "classnames";
 import { getCookie } from "@utils/cookie";
 import { GetOwnShop } from "@api/shop";
 import { changePassword, getProfileOwn } from "@api/profile";
+import { WEB_DOMAIN } from "../config/config";
 
 const UserProfileDetails = () => {
   const navigate = useNavigate();
@@ -402,7 +403,7 @@ const UserProfileDetails = () => {
                   Chi tiết cửa hàng của bạn
                 </button>
                 <button
-                  onClick={() => navigate('/products-management')}
+                  onClick={() => window.open(`${WEB_DOMAIN}/shop/statistical`, '_blank')}
                   className="text-btn"
                 >
                   Quản lý cửa hàng

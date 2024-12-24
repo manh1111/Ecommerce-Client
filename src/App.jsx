@@ -87,10 +87,16 @@ const App = () => {
                     <Route path="/payment-success" element={<ConfirmPayment />} />
                     <Route path="/payment-failed" element={<ConfirmPayment />} />
                     <Route path="/" element={<MainPage />} />
-                    <Route
-                      path="/products-management"
-                      element={<ProductsManagement />}
-                    />
+                    <Route path="shop/" element={<Sidebar />}>
+                      <Route path="statistical/" element={<Statistical />} />
+                      <Route path="products-management/" element={<ProductsManagement />} />
+                      <Route path="orders/" element={<Orders />} />
+                      <Route path="statistics/" element={<Statistics />} />
+                      <Route path="reviews/" element={<Reviews />} />
+                      <Route path="customers/" element={<Customers />} />
+                      <Route path="transactions/" element={<Transactions />} />
+                      <Route path="catalog/" element={<Catalog />} />
+                    </Route>
                     <Route path="/product-editor" element={<ProductEditor />} />
                     <Route
                       path="/product-editor/:id"
@@ -104,11 +110,6 @@ const App = () => {
                     <Route path="/top-products" element={<TopProducts />} />
                     <Route path="/products-grid" element={<ProductsGrid />} />
                     <Route path="/product-creater" element={<CreaterProduct />} />
-                    <Route path="/orders" element={<Orders />} />
-                    <Route path="/statistics" element={<Statistics />} />
-                    <Route path="/reviews" element={<Reviews />} />
-                    <Route path="/customers" element={<Customers />} />
-                    <Route path="/transactions" element={<Transactions />} />
                     <Route path="/connected-apps" element={<ConnectedApps />} />
                     <Route path="/Checkout" element={<Checkout />} />
                     <Route
@@ -116,8 +117,6 @@ const App = () => {
                       element={<GeneralSettings />}
                     />
                     <Route path="/shop/:id" element={<Shop />} />
-                    <Route path="/catalog" element={<Catalog />} />
-                    <Route path="/statistical" element={<Statistical />} />
                     <Route path="/product/:id" element={<Product />} />
                     <Route path="/search" element={<SearchPage />} />
                     <Route path="/address" element={<Address />} />

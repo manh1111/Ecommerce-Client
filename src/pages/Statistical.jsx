@@ -142,7 +142,7 @@ const Catalog = () => {
   ];
 
   return (
-    <div className="p-4 bg-gray-50 min-h-screen">
+    <div >
       <ToastContainer />
       <PageHeader title="Quản lý danh mục" />
       <Button
