@@ -23,7 +23,7 @@ const UserProfilePanel = () => {
         <span className="font-semibold text-lg tracking-wide">Địa chỉ</span>
       </button>
 
-      <button
+      {/* <button 
         className="flex items-center gap-4 w-full p-4 bg-rose-500 text-white rounded-full hover:bg-rose-600 shadow-md transition-all duration-200 ease-in-out transform hover:-translate-y-1"
         onClick={() => handleNavigation("/forgot-password")}
       >
@@ -33,7 +33,7 @@ const UserProfilePanel = () => {
         <span className="font-semibold text-lg tracking-wide">
           Quên mật khẩu
         </span>
-      </button>
+      </button> */}
     </Spring>
   );
 };

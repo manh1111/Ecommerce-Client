@@ -42,6 +42,24 @@ const AuthLayout = () => {
     },
   });
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const accessToken = searchParams.get("access_token");
+    const refreshToken = searchParams.get("refresh_token");
+
+    if (accessToken && refreshToken) {
+      dispatch(CHANGE_STATUS_AUTH(true));
+      dispatch(CHANGE_VALUE_TOKEN(accessToken));
+
+      setCookie("token", accessToken, expirationHours);
+      setCookie("refresh_token", refreshToken, expirationHours);
+      setCookie("user_login", accessToken);
+      navigate("/");
+    } else if (googleLoginAttempt) {
+      toast.error("Không thể đăng nhập bằng Google!");
+      setGoogleLoginAttempt(false);
+    }
+  }, [location.search, googleLoginAttempt, dispatch, navigate]);
 
   const onSubmit = async (data) => {
     setLoader(true);
@@ -141,7 +159,10 @@ const AuthLayout = () => {
             <div className="flex flex-col items-center gap-6 mt-4 mb-10">
               <button
                 className="text-btn"
-                onClick={() => handleNavigation("/forgot-password")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigation("/forgot-password")
+                }}
               >
                 Quên mật khẩu?
               </button>
