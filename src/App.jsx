@@ -74,13 +74,10 @@ const App = () => {
         />
         {width < 1280 && withSidebar && <AppBar />}
         <div className={`app fluid`} ref={appRef}>
-          {/* <ScrollToTop /> */}
-          {/* {withSidebar && <Sidebar />} */}
           <div className="app_content">
-            {width >= 1280 && withSidebar && <AppBar />}
             <Suspense fallback={<Loader />}>
-              <div className={withSidebar ? "main" : ""}>
-                <Routes>
+              <Routes>
+                <Route path="/" element={<AppBar />}>
                   <Route path="/" element={<AuthProvider />}>
                     <Route path="/login" element={<Login />} />
                     <Route path="/sign-up" element={<SignUp />} />
@@ -126,8 +123,8 @@ const App = () => {
                     <Route path="/start-selling" element={<StartSelling />} />
                     <Route path="/404" element={<PageNotFound />} />
                   </Route>
-                </Routes>
-              </div>
+                </Route>
+              </Routes>
             </Suspense>
           </div>
         </div>

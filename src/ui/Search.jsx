@@ -1,33 +1,28 @@
 import { useSearchProduct } from "@contexts/searchProductContext";
 import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 
 const Search = ({ placeholder = "Tìm kiếm...", wrapperClass }) => {
   const { searchProducts, setSearchTerm } = useSearchProduct();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const isSearching = useRef(false);
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      if (query.trim() && !isSearching.current) {
-        isSearching.current = true;
-        searchProducts(query.trim()).then(() => {
-          navigate(`/search?searchQuery=${query}`);
-          setSearchTerm(query.trim());
-          isSearching.current = false;
-        });
-      }
-    }, 300);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [navigate, searchProducts, setSearchTerm]);
+    setQuery(searchParams.get('searchQuery'))
+  }, [])
 
   const handleSearch = () => {
-    setQuery(query)
+    if (query.trim() && !isSearching) {
+      setIsSearching(true)
+      searchProducts(query.trim()).then(() => {
+        navigate(`/search?searchQuery=${query}`);
+        setSearchTerm(query.trim());
+        setIsSearching(false)
+      });
+    }
     setSearchTerm(query);
   };
 
@@ -46,9 +41,7 @@ const Search = ({ placeholder = "Tìm kiếm...", wrapperClass }) => {
         }}
       />
       <button
-        className={`field-btn text-red !right-[40px] transition ${
-          query ? "opacity-100" : "opacity-0"
-        }`}
+        className={`field-btn text-red !right-[40px] transition ${query ? "opacity-100" : "opacity-0"}`}
         onClick={() => {
           setQuery(""); // Clear query
           setSearchTerm(""); // Clear search term in context

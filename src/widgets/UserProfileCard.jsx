@@ -26,7 +26,6 @@ const UserProfileCard = () => {
       try {
         const data = await getProfileOwn();
         setUserData(data);
-        console.log("firstDATA", data)
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -58,16 +57,13 @@ const UserProfileCard = () => {
     if (file) {
       try {
         await updateProfileAvatar(file);
-        const updatedData = await getProfileOwn(); 
-        setUserData(updatedData); 
+        const updatedData = await getProfileOwn();
+        setUserData(updatedData);
       } catch (error) {
         console.error("Failed to update profile picture:", error);
       }
     }
   };
-
-  console.log("userData", userData?.roles);
-
 
   return (
     <Spring
@@ -89,7 +85,7 @@ const UserProfileCard = () => {
         />
         <label
           htmlFor="profileImageUpload"
-          className="absolute z-10 right-0 bottom-0 h-10 w-10 bg-green text-widget rounded-full border-[3px]
+          className="absolute z-10 right-0 bottom-0 px-2 py-1 bg-green text-widget rounded-full border-[3px]
                     border-widget border-solid transition hover:bg-green-darker cursor-pointer"
           aria-label="Change profile picture"
         >
@@ -105,7 +101,7 @@ const UserProfileCard = () => {
           Đăng xuất
         </button>
       </div>
-      {(userData?.roles.length > 0 && !userData?.roles?.map( item => item.roleName == 'shop')) && (
+      {(userData?.roles.length > 0 && !userData?.roles?.map(item => item.roleName == 'shop')) && (
         <button
           className="btn btn--primary w-full mt-5 md:w-fit"
           type="button"
