@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import { GetAllProduct } from '@api/product';
 import { useEffect, useState } from 'react';
 import ProductCard from "@widgets/Shop/ProductCard";
+import { useLocation } from 'react-router-dom';
 
 // Decode JWT Token to get User Info
 if (getCookie("user_login")) {
@@ -22,6 +23,9 @@ if (getCookie("user_login")) {
 
 const MainPage = () => {
   const [products, setProducts] = useState([]);
+  const location = useLocation()
+
+  
 
  useEffect(() => {
    const fetchProductData = async () => {
