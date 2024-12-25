@@ -1,6 +1,5 @@
 import { checkToken } from "@utils/auth";
 import axiosInstance from "./axiosInstance";
-
 import { URL_API } from "../../src/config/config";
 
 export const getAllAddresses = async () => {

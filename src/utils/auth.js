@@ -27,5 +27,7 @@ export function checkToken(contentType = "application/json") {
     },
   };
 
+  console.log(config)
+
   return config
 }

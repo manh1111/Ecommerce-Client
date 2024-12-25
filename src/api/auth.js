@@ -48,13 +48,10 @@ export const signUp = async (
 };
 
 export const refreshAccessToken = async (refreshToken) => {
-  const config = checkToken("application/json");
-
   try {
     const response = await axiosInstance.post(
       `${URL_API}refresh-token`,
-      {refreshToken}, 
-      config
+      { refreshToken }
     );
     return response.data;
   } catch (error) {

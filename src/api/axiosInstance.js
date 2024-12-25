@@ -26,7 +26,7 @@ const processQueue = (error, token = null) => {
 // Request interceptor
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const token = getCookie("token"); // Lấy Access Token từ cookie
+    const token = JSON.parse(getCookie("token")); // Lấy Access Token từ cookie
     if (token) {
       config.headers.Authorization = `Bearer ${token}`; // Thêm token vào header
     }

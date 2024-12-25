@@ -3,42 +3,42 @@ import ChangePasswordModal from "@components/ChangePasswordModal";
 import { useForm, Controller } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "react-toastify";
-
-// hooks
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-// utils
 import classNames from "classnames";
 import { getCookie } from "@utils/cookie";
 import { GetOwnShop } from "@api/shop";
 import { changePassword, getProfileOwn } from "@api/profile";
-import { WEB_DOMAIN } from "../config/config";
+import { WEB_DOMAIN, URL_API } from "../config/config";
+import axiosInstance from "@api/axiosInstance";
 
 const UserProfileDetails = () => {
-  const navigate = useNavigate();
-  const [cities, setCities] = useState([]);
+  // const navigate = useNavigate();
+  // const [cities, setCities] = useState([]);
   const [shopData, setShopData] = useState(null);
   const [userInfo, setUserInfo] = useState({}); // Initialize as an empty object
-  const [showShopDetails, setShowShopDetails] = useState(false);
+  // const [showShopDetails, setShowShopDetails] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [activeTab, setActiveTab] = useState('profileDetail')
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const token = getCookie("user_login");
-      if (token) {
-        try {
-          // const decodedToken = jwtDecode(token);
-          const userData = await getProfileOwn();
-          setUserInfo(userData);
-        } catch (error) {
-          console.error("Invalid token", error);
-        }
-      }
-    };
     fetchUserData();
   }, []);
+
+  const fetchUserData = async () => {
+    const token = JSON.parse(getCookie('user_login'));
+    console.log(token)
+    console.log(token.replace(/\\/g, ""))
+    if (token) {
+      try {
+        // const decodedToken = jwtDecode(token);
+        const userData = await getProfileOwn();
+        setUserInfo(userData);
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  };
 
   const {
     register,
