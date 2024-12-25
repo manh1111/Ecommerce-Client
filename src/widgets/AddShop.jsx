@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { createShop } from "@api/shop";
+import { refreshAccessToken } from '@api/auth'
 import { toast } from "react-toastify";
+import { getCookie, setCookie } from "@utils/cookie";
+import {
+  CHANGE_VALUE_TOKEN,
+  CHANGE_STATUS_AUTH
+} from "@redux/slice/auth/authSlice";
+import { useDispatch } from "react-redux";
 
 const AddShop = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [file, setLogo] = useState(null);
+  const dispatch = useDispatch();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm({
     defaultValues: {
       shop_name: "",
@@ -29,18 +38,16 @@ const AddShop = () => {
       formData.append("address", data.address);
       formData.append("phone_number", data.phone_number);
       formData.append("email", data.email);
-
       if (file) {
         formData.append("file", file);
       }
-
-      console.log("Đang gửi formData:", formData);
-      const result = await createShop(formData);
+      await createShop(formData);
       toast.success("Tạo cửa hàng thành công!", {
         autoClose: 1000,
       });
+      reset()
+      await callToRefreshToken()
     } catch (error) {
-      console.error("Có lỗi xảy ra khi gọi API:", error);
       toast.error("Tạo cửa hàng thất bại. Vui lòng thử lại.", {
         autoClose: 1000,
       });
@@ -57,6 +64,17 @@ const AddShop = () => {
       setLogo(null);
     }
   };
+
+  const callToRefreshToken = async () => {
+    const rfToken = JSON.parse(getCookie('refresh_token'))
+    const { accessToken, refreshToken } = await refreshAccessToken(rfToken)
+    console.log('accessToken', accessToken)
+    dispatch(CHANGE_STATUS_AUTH(true));
+    dispatch(CHANGE_VALUE_TOKEN(accessToken));
+    setCookie("token", accessToken, 3);
+    setCookie("refresh_token", refreshToken, 3);
+    setCookie("user_login", accessToken);
+  }
 
   return (
     <div className="card">
@@ -94,7 +112,7 @@ const AddShop = () => {
                   {...register("shop_name", { required: true })}
                 />
                 {errors.shop_name && (
-                  <p className="text-red-500">Tên cửa hàng là bắt buộc</p>
+                  <p className="text-rose-500">Tên cửa hàng là bắt buộc</p>
                 )}
               </div>
 
@@ -112,7 +130,7 @@ const AddShop = () => {
                   {...register("description", { required: true })}
                 />
                 {errors.description && (
-                  <p className="text-red-500">Mô tả là bắt buộc</p>
+                  <p className="text-rose-500">Mô tả là bắt buộc</p>
                 )}
               </div>
             </div>
@@ -129,7 +147,7 @@ const AddShop = () => {
                   {...register("address", { required: true })}
                 />
                 {errors.address && (
-                  <p className="text-red-500">Địa chỉ là bắt buộc</p>
+                  <p className="text-rose-500">Địa chỉ là bắt buộc</p>
                 )}
               </div>
 
@@ -147,7 +165,7 @@ const AddShop = () => {
                   {...register("phone_number", { required: true })}
                 />
                 {errors.phone_number && (
-                  <p className="text-red-500">Số điện thoại là bắt buộc</p>
+                  <p className="text-rose-500">Số điện thoại là bắt buộc</p>
                 )}
               </div>
 
@@ -165,10 +183,10 @@ const AddShop = () => {
                   })}
                 />
                 {errors.email?.type === "required" && (
-                  <p className="text-red-500">Email là bắt buộc</p>
+                  <p className="text-rose-500">Email là bắt buộc</p>
                 )}
                 {errors.email?.type === "pattern" && (
-                  <p className="text-red-500">Định dạng email không hợp lệ</p>
+                  <p className="text-rose-500">Định dạng email không hợp lệ</p>
                 )}
               </div>
             </div>
@@ -180,6 +198,16 @@ const AddShop = () => {
               type="submit"
             >
               Tạo cửa hàng
+            </button>
+            <button
+              className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
+              onClick={async (e) => {
+                e.preventDefault()
+                // await apiService.refreshToken();
+                // console.log(123)
+              }}
+            >
+              refresh
             </button>
           </div>
         </form>

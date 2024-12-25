@@ -12,10 +12,9 @@ import { jwtDecode } from "jwt-decode";
 import { Navigate, useNavigate } from "react-router-dom";
 import { DELETE_ALL_VALUES } from "@redux/slice/user/userSlice";
 import { useDispatch } from "react-redux";
-
-// Import the profile update API function
 import { updateProfileAvatar, getProfileOwn } from "@api/profile";
 import { useEffect, useState } from "react";
+
 const UserProfileCard = () => {
   const [userData, setUserData] = useState(null);
   const dispatch = useDispatch();
