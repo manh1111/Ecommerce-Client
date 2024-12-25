@@ -72,17 +72,16 @@ const App = () => {
           autoClose={2000}
           style={{ padding: "20px" }}
         />
-        {width < 1280 && withSidebar && <AppBar />}
         <div className={`app fluid`} ref={appRef}>
           <div className="app_content">
             <Suspense fallback={<Loader />}>
               <Routes>
-                <Route path="/" element={<AppBar />}>
-                  <Route path="/" element={<AuthProvider />}>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/sign-up" element={<SignUp />} />
-                    <Route path="/payment-success" element={<ConfirmPayment />} />
-                    <Route path="/payment-failed" element={<ConfirmPayment />} />
+                <Route path="/" element={<AuthProvider />}>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/sign-up" element={<SignUp />} />
+                  <Route path="/payment-success" element={<ConfirmPayment />} />
+                  <Route path="/payment-failed" element={<ConfirmPayment />} />
+                  <Route path="/" element={<AppBar />}>
                     <Route path="/" element={<MainPage />} />
                     <Route path="shop/" element={<Sidebar />}>
                       <Route path="statistical/" element={<Statistical />} />
@@ -121,8 +120,8 @@ const App = () => {
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="*" element={<Navigate to="/404" />} />
                     <Route path="/start-selling" element={<StartSelling />} />
-                    <Route path="/404" element={<PageNotFound />} />
                   </Route>
+                  <Route path="/404" element={<PageNotFound />} />
                 </Route>
               </Routes>
             </Suspense>

@@ -42,25 +42,6 @@ const AuthLayout = () => {
     },
   });
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const accessToken = searchParams.get("access_token");
-    const refreshToken = searchParams.get("refresh_token");
-
-    if (accessToken && refreshToken) {
-      dispatch(CHANGE_STATUS_AUTH(true));
-      dispatch(CHANGE_VALUE_TOKEN(accessToken));
-
-      setCookie("token", accessToken, expirationHours);
-      setCookie("refresh_token", refreshToken, expirationHours);
-      setCookie("user_login", accessToken);
-      navigate("/");
-    } else if (googleLoginAttempt) {
-      toast.error("Không thể đăng nhập bằng Google!");
-      setGoogleLoginAttempt(false);
-    }
-  }, [location.search, googleLoginAttempt, dispatch, navigate]);
-
   const onSubmit = async (data) => {
     setLoader(true);
     try {

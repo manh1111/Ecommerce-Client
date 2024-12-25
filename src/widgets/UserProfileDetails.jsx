@@ -264,7 +264,11 @@ const UserProfileDetails = () => {
             <div className="flex w-full justify-between mt-2.5">
               <button
                 className="text-red font-bold"
-                onClick={() => setShowPasswordModal(true)} // Show modal on click
+                onClick={(e) => {
+                  e.preventDefault()
+                  setShowPasswordModal(true)
+                  console.log(123123)
+                }} // Show modal on click
               >
                 Đổi mật khẩu
               </button>
@@ -419,15 +423,13 @@ const UserProfileDetails = () => {
               </button>
             )}
           </div>
-          {showPasswordModal && (
-            <ChangePasswordModal
-              show={showPasswordModal}
-              onClose={() => setShowPasswordModal(false)}
-              onSubmit={handlePasswordSubmit}
-            />
-          )}
         </>
       )}
+      <ChangePasswordModal
+        show={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        onSubmit={handlePasswordSubmit}
+      />
     </Spring>
   );
 };

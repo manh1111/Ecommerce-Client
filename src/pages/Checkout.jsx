@@ -29,44 +29,44 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
   const [loading, setLoader] = useState(false);
 
   useEffect(() => {
-  const fetchAddresses = async () => {
-    try {
-      const response = await getAllAddresses();
-      const addressesData = response.data || [];
-      setAddresses(addressesData);
+    const fetchAddresses = async () => {
+      try {
+        const response = await getAllAddresses();
+        const addressesData = response.data || [];
+        setAddresses(addressesData);
 
-      const defaultAddress = addressesData.find((addr) => addr.isDefault);
-      if (defaultAddress) {
-        setAddress(defaultAddress._id);
+        const defaultAddress = addressesData.find((addr) => addr.isDefault);
+        if (defaultAddress) {
+          setAddress(defaultAddress._id);
+        }
+
+        console.log("getAllAddresses", response);
+      } catch (error) {
+        console.error("Failed to fetch addresses:", error);
+        toast.error("Không thể tải danh sách địa chỉ. Vui lòng thử lại.");
       }
+    };
 
-      console.log("getAllAddresses", response);
-    } catch (error) {
-      console.error("Failed to fetch addresses:", error);
-      toast.error("Không thể tải danh sách địa chỉ. Vui lòng thử lại.");
+    fetchAddresses();
+
+    const storedProducts = localStorage.getItem("selectedProducts");
+    if (storedProducts) {
+      const products = JSON.parse(storedProducts);
+      const grouped = products.reduce((acc, product) => {
+        if (!acc[product.shopId]) {
+          acc[product.shopId] = {
+            shopId: product.shopId,
+            shopName: product.shopName,
+            shopLogo: product.shopLogo,
+            products: [],
+          };
+        }
+        acc[product.shopId].products.push(product);
+        return acc;
+      }, {});
+      setGroupedProducts(grouped);
     }
-  };
-
-  fetchAddresses(); 
-
-  const storedProducts = localStorage.getItem("selectedProducts");
-  if (storedProducts) {
-    const products = JSON.parse(storedProducts);
-    const grouped = products.reduce((acc, product) => {
-      if (!acc[product.shopId]) {
-        acc[product.shopId] = {
-          shopId: product.shopId,
-          shopName: product.shopName,
-          shopLogo: product.shopLogo,
-          products: [],
-        };
-      }
-      acc[product.shopId].products.push(product);
-      return acc;
-    }, {});
-    setGroupedProducts(grouped);
-  }
-}, []);
+  }, []);
 
 
   const handleAddressChange = (e) => {
@@ -74,75 +74,75 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
   };
 
   const handleBuyNow = async () => {
-    setLoader(true); 
+    setLoader(true);
     try {
-        const storedProducts = localStorage.getItem("selectedProducts");
-        if (storedProducts) {
-            const products = JSON.parse(storedProducts);
-            
-            // Group products by shopId
-            const groupedOrders = products.reduce((acc, product) => {
-                const {
-                    shopId,
-                    productId,
-                    quantity,
-                    price,
-                    productName,
-                    productThumb,
-                } = product;
+      const storedProducts = localStorage.getItem("selectedProducts");
+      if (storedProducts) {
+        const products = JSON.parse(storedProducts);
 
-                if (!acc[shopId]) {
-                    acc[shopId] = {
-                        shopId,
-                        products: [],
-                        totalPrice: 0,
-                    };
-                }
+        // Group products by shopId
+        const groupedOrders = products.reduce((acc, product) => {
+          const {
+            shopId,
+            productId,
+            quantity,
+            price,
+            productName,
+            productThumb,
+          } = product;
 
-                acc[shopId].products.push({
-                    productId,
-                    quantity,
-                    price,
-                    product_name: productName,
-                    product_thumb: productThumb,
-                });
+          if (!acc[shopId]) {
+            acc[shopId] = {
+              shopId,
+              products: [],
+              totalPrice: 0,
+            };
+          }
 
-                acc[shopId].totalPrice += price * quantity;
+          acc[shopId].products.push({
+            productId,
+            quantity,
+            price,
+            product_name: productName,
+            product_thumb: productThumb ?? '',
+          });
 
-                return acc;
-            }, {});
-            
-            const orders = Object.values(groupedOrders);
-            
-            if (paymentGateway === "MOMO" || paymentGateway === "VNPAY") {
-                paymentMethod = "online";
-            } else {
-                paymentMethod = "cod"; 
-            }
+          acc[shopId].totalPrice += price * quantity;
 
-            const shippingAddress = address;
-            const response = await createOrder(
-                orders,
-                paymentMethod,
-                paymentGateway,
-                shippingAddress
-            );
+          return acc;
+        }, {});
 
-            if (paymentMethod === "online" && response?.paymentUrl) {
-                if (paymentGateway === "VNPAY") {
-                    window.location.href = response.paymentUrl; 
-                } else if (paymentGateway === "MOMO") {
-                    window.location.href = response.paymentUrl.payUrl || '/fallback-url'; 
-                }
-            } else {
-                toast.success("Đặt đơn hàng thành công");
-            }
+        const orders = Object.values(groupedOrders);
+
+        if (paymentGateway === "MOMO" || paymentGateway === "VNPAY") {
+          paymentMethod = "online";
+        } else {
+          paymentMethod = "cod";
         }
-    } catch (error) {    
-        console.log(error, "lỗi đm");
-        toast.error("Đặt hàng thất bại, vui lòng thử lại.");
+
+        const shippingAddress = address;
+        const response = await createOrder(
+          orders,
+          paymentMethod,
+          paymentGateway,
+          shippingAddress
+        );
+
+        if (paymentMethod === "online" && response?.paymentUrl) {
+          if (paymentGateway === "VNPAY") {
+            window.location.href = response.paymentUrl;
+          } else if (paymentGateway === "MOMO") {
+            window.location.href = response.paymentUrl.payUrl || '/fallback-url';
+          }
+        } else {
+          toast.success("Đặt đơn hàng thành công");
+        }
+      }
+    } catch (error) {
+      console.log(error, "lỗi đm");
+      toast.error("Đặt hàng thất bại, vui lòng thử lại.");
     } finally {
-        setLoader(false);
+      setLoader(false);
     }
   };
 
@@ -200,7 +200,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
                 {addresses.map((addr, index) => (
                   <option key={index} value={addr.id}>
                     {addr.address}
-                  </option> 
+                  </option>
                 ))}
               </select>
             </div>
