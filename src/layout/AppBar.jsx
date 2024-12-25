@@ -17,6 +17,10 @@ import { checkAvailableLogin } from "@utils/auth";
 import { getCookie } from "@utils/cookie";
 import { jwtDecode } from "jwt-decode";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import axiosInstance from "@api/axiosInstance";
+import { checkToken } from "@utils/auth";
+
+import { URL_API } from "../../src/config/config";
 
 const LocaleMenu = ({ active, setActive }) => {
   return (
@@ -57,6 +61,19 @@ const AppBar = () => {
   const { setOpen } = useSidebar();
   const isAuthenticated = checkAvailableLogin();
   const activeLocale = LOCALES.find((l) => l.value === locale);
+  const [count, setCount] = useState()
+
+
+  const fetchCartData = async () => {
+    const config = checkToken("application/json");
+    const response = await axiosInstance.get(`${URL_API}cart`, config);
+    setCount(response.data.cart_products.length);
+    console.log("1111",response.data.cart_products.length);
+};
+
+useEffect(() => {
+    fetchCartData();
+}, []);
 
   let dataInforUser;
   if (getCookie("user_login")) {
@@ -162,6 +179,7 @@ const AppBar = () => {
                     aria-label="Notifications"
                   >
                     <i className="fas fa-shopping-cart" />
+                    <span className="px-1 bg-blue-500 text-white rounded-full text-xs absolute right-[-8px] top-[-8px]">{count}</span>
                   </button>
                   {/* <span
                     className="absolute w-3 h-3 rounded-full bg-red -top-1.5 -right-1.5 border-[2px] border-body

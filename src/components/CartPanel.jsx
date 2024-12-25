@@ -279,7 +279,26 @@ const CartPanel = ({ open, onOpen, onClose }) => {
           </div>
 
           <div className="flex items-center border-b p-4">
-            <input type="checkbox" className="mr-2" />
+            <input
+              type="checkbox"
+              className="mr-2"
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setSelectedIds((prev) => {
+                  const newSelectedIds = new Set(prev);
+                  listProduct.forEach((shop) => {
+                    shop.products.forEach((product) => {
+                      if (checked) {
+                        newSelectedIds.add(product.productId);
+                      } else {
+                        newSelectedIds.delete(product.productId);
+                      }
+                    });
+                  });
+                  return newSelectedIds;
+                });
+              }}
+            />
             <span className="font-semibold w-1/3">Sản phẩm</span>
             <span className="font-semibold w-1/6">Giá</span>
             <span className="font-semibold w-1/6">Số lượng</span>
