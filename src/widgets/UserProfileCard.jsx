@@ -38,6 +38,8 @@ const UserProfileCard = () => {
     navigate("/start-selling");
   };
 
+  
+
   const handleLogout = async () => {
     try {
       clearAllCookies();
@@ -64,6 +66,7 @@ const UserProfileCard = () => {
       }
     }
   };
+  console.log('user', userData)
 
   return (
     <Spring
@@ -101,7 +104,7 @@ const UserProfileCard = () => {
           Đăng xuất
         </button>
       </div>
-      {(userData?.roles.length > 0 && !userData?.roles?.map(item => item.roleName == 'shop')) && (
+      {(userData?.roles.length > 0 && !userData?.roles?.find(item =>  item.roleName === 'shop')) && (
         <button
           className="btn btn--primary w-full mt-5 md:w-fit"
           type="button"
