@@ -24,16 +24,17 @@ const processQueue = (error, token = null) => {
 };
 
 // Request interceptor
-axiosInstance.interceptors.request.use(
-  async (config) => {
-    const token = (getCookie("token")); // Lấy Access Token từ cookie
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`; // Thêm token vào header
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// axiosInstance.interceptors.request.use(
+//   async (config) => {
+//     const token = (getCookie("token")); // Lấy Access Token từ cookie
+//     console.log('intercepter')
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`; // Thêm token vào header
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
 axiosInstance.interceptors.response.use(
   (response) => {

@@ -27,8 +27,6 @@ const UserProfileDetails = () => {
 
   const fetchUserData = async () => {
     const token = JSON.parse(getCookie('user_login'));
-    console.log(token)
-    console.log(token.replace(/\\/g, ""))
     if (token) {
       try {
         // const decodedToken = jwtDecode(token);

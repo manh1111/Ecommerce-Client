@@ -21,23 +21,23 @@ const UserProfileCard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const data = await getProfileOwn();
-        setUserData(data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
     fetchUserData();
   }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const data = await getProfileOwn();
+      setUserData(data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   const handleStartSelling = () => {
     navigate("/start-selling");
   };
 
-  
+
 
   const handleLogout = async () => {
     try {
@@ -103,7 +103,7 @@ const UserProfileCard = () => {
           Đăng xuất
         </button>
       </div>
-      {(userData?.roles.length > 0 && !userData?.roles?.find(item =>  item.roleName === 'shop')) && (
+      {(userData?.roles.length > 0 && !userData?.roles?.find(item => item.roleName === 'shop')) && (
         <button
           className="btn btn--primary w-full mt-5 md:w-fit"
           type="button"
