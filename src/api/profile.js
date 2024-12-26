@@ -117,3 +117,14 @@ export const deleteAddress = async (addressId) => {
   );
   return result.data;
 };
+
+export const updateProfile = async (data) => {
+  const config = checkToken("application/json");
+
+  const result = await axiosInstance.post(
+    `${URL_API}profile/own`,
+    data,
+    config
+  );
+  return result.data;
+}

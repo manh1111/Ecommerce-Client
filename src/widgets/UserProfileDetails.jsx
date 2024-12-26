@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { getCookie } from "@utils/cookie";
 import { GetOwnShop } from "@api/shop";
-import { changePassword, getProfileOwn } from "@api/profile";
+import { changePassword, getProfileOwn, updateProfile } from "@api/profile";
 import { WEB_DOMAIN, URL_API } from "../config/config";
 import axiosInstance from "@api/axiosInstance";
 
@@ -59,28 +59,28 @@ const UserProfileDetails = () => {
   });
 
   useEffect(() => {
-    if (userInfo?.roles?.some((role) => role.roleName === "shop")) {
-      const fetchShopData = async () => {
-        try {
-          const response = await GetOwnShop();
-          if (response) {
-            setShopData(response);
-            populateShopFields(response);
-          } else {
-            setShopData(null);
-            populateUserFields(userInfo);
-          }
-        } catch (error) {
-          console.error("Error fetching shop data", error);
-          populateUserFields(userInfo);
-        }
-      };
-
+    if (userInfo?.roles?.find((role) => role.roleName === "shop")) {
       fetchShopData();
     } else {
       populateUserFields(userInfo);
     }
   }, [userInfo]);
+
+  const fetchShopData = async () => {
+    try {
+      const response = await GetOwnShop();
+      if (response) {
+        setShopData(response);
+        populateShopFields(response);
+      } else {
+        setShopData(null);
+        populateUserFields(userInfo);
+      }
+    } catch (error) {
+      console.error("Error fetching shop data", error);
+      populateUserFields(userInfo);
+    }
+  };
 
   const populateShopFields = (shopData) => {
     setValue("shopName", shopData.shop_name || "");
@@ -103,8 +103,8 @@ const UserProfileDetails = () => {
     setValue("sellerPhone", "");
   }
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    await updateProfile({ ...data, dateOfBirth: data.dob })
     toast.success("Profile updated successfully");
   };
 
@@ -271,14 +271,12 @@ const UserProfileDetails = () => {
                 Đổi mật khẩu
               </button>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="">
-              <button
-                className="btn btn--primary mt-5 w-[260px]"
-                type="submit"
-              >
-                Cập nhật thông tin
-              </button>
-            </form>
+            <button
+              className="btn btn--primary mt-5 w-[260px]"
+              type="submit"
+            >
+              Cập nhật thông tin
+            </button>
           </div>
         </form>
       </div>
