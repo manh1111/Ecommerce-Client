@@ -27,6 +27,9 @@ const ProductInfo = ({ product, shopData }) => {
       const response = await addCart(product.id, 1);
       if (response?.status === 200) {
         toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500); 
       } else {
         toast.error("Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.");
       }

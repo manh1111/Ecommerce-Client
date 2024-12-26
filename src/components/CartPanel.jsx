@@ -206,11 +206,14 @@ const CartPanel = ({ open, onOpen, onClose }) => {
         });
       });
 
-      alert("Xóa sản phẩm thành công!");
+      toast.success("Xóa sản phẩm thành công!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500); 
     } catch (error) {
       console.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng:", error);
 
-      alert("Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.");
+      toast.error("Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.");
     }
   };
 
@@ -313,11 +316,13 @@ const CartPanel = ({ open, onOpen, onClose }) => {
           ) : (
             listProduct.map((shop) => (
               <div key={shop.shopId}>
-                <ShopInfo
-                  shopId={shop.shopId}
-                  shopName={shop.shopName}
-                  shopLogo={shop.shopLogo}
-                />
+                {shop.products.length > 0 && (
+                  <ShopInfo
+                    shopId={shop.shopId}
+                    shopName={shop.shopName}
+                    shopLogo={shop.shopLogo}
+                  />
+                )}
                 <div className="p-4">
                   {shop.products.map((product) => (
                     <ProductItem

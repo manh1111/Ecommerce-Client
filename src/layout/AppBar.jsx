@@ -68,7 +68,6 @@ const AppBar = () => {
     const config = checkToken("application/json");
     const response = await axiosInstance.get(`${URL_API}cart`, config);
     setCount(response.data.cart_products.length);
-    console.log("1111",response.data.cart_products.length);
 };
 
 useEffect(() => {
