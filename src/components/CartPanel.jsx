@@ -7,6 +7,8 @@ import { getProductById } from "@api/product";
 import Loader from "@components/Loader";
 import { changeQuantityProduct, deleteProductById } from "../api/cart";
 import { toast } from "react-toastify";
+import { useAppDispatch } from "@redux/store";
+import { reduceCart } from "@redux/slice/app/appSlice";
 
 let timeoutId;
 const ProductItem = ({
@@ -100,6 +102,7 @@ const CartPanel = ({ open, onOpen, onClose }) => {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [loading, setLoader] = useState(false);
   const [error, setError] = useState(null);
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (open) {
@@ -198,18 +201,14 @@ const CartPanel = ({ open, onOpen, onClose }) => {
   const handleRemoveItem = async (id) => {
     try {
       await deleteProductById(id);
-
       setListProduct((prev) => {
         return prev.map((shop) => {
           shop.products = shop.products.filter((item) => item.productId !== id);
           return shop;
         });
       });
-
       toast.success("Xóa sản phẩm thành công!");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500); 
+      dispatch(reduceCart())
     } catch (error) {
       console.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng:", error);
 

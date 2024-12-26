@@ -66,7 +66,7 @@ const TopProducts = ({ hasTitle = true }) => {
         <Loader />
       ) : (
         <div className="widgets-grid grid-cols-1 lg:!gap-10 xl:mb-[50px]">
-          {categories.map((category, index) => (
+          {categories.slice(0, 5).map((category, index) => (
             <div key={category._id} className="mb-10">
               {/* Category Name */}
               <h2

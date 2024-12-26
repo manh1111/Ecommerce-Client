@@ -63,6 +63,15 @@ const MainPage = () => {
       <div className="section m-6">
         <QuickLinks />
       </div>
+      <div className="section mb-4">
+        <a target="_self" href="#">
+          <img
+            className="banner-image"
+            src="https://cf.shopee.vn/file/vn-11134258-7r98o-lylx97r9vezl4e"
+            alt="Banner"
+          />
+        </a>
+      </div>
       <div className="section">
         <div
           className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
@@ -81,17 +90,6 @@ const MainPage = () => {
           <h1 className="text-3xl flex-1 text-center lg:text-left">Ngành hàng</h1>
         </div>
         <TopProducts hasTitle={false} />
-      </div>
-
-
-      <div className="section">
-        <a target="_self" href="#">
-          <img
-            className="banner-image"
-            src="https://cf.shopee.vn/file/vn-11134258-7r98o-lylx97r9vezl4e"
-            alt="Banner"
-          />
-        </a>
       </div>
 
       <div className="grid grid-cols-6 gap-5 my-5">

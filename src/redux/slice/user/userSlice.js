@@ -4,7 +4,7 @@ const initialState = {
   info: [],
 };
 
-export const infoSlice = createSlice({
+export const userSlice = createSlice({
   name: "info",
   initialState,
   reducers: {
@@ -17,6 +17,4 @@ export const infoSlice = createSlice({
   },
 });
 
-export const { CHANGE_VALUE_USER, DELETE_ALL_VALUES } = infoSlice.actions;
-
-export default infoSlice.reducer; 
+export const { CHANGE_VALUE_USER, DELETE_ALL_VALUES } = userSlice.actions;

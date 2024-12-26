@@ -19,4 +19,3 @@ export const authSlice = createSlice({
 });
 
 export const { CHANGE_VALUE_TOKEN, CHANGE_STATUS_AUTH } = authSlice.actions;
-export default authSlice.reducer;

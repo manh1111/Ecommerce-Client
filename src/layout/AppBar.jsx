@@ -21,6 +21,9 @@ import axiosInstance from "@api/axiosInstance";
 import { checkToken } from "@utils/auth";
 
 import { URL_API } from "../../src/config/config";
+import { useAppDispatch, useAppSelector } from "@redux/store";
+import { useSelector } from "react-redux";
+import { setCountCart } from "@redux/slice/app/appSlice";
 
 const LocaleMenu = ({ active, setActive }) => {
   return (
@@ -61,18 +64,20 @@ const AppBar = () => {
   const { setOpen } = useSidebar();
   const isAuthenticated = checkAvailableLogin();
   const activeLocale = LOCALES.find((l) => l.value === locale);
-  const [count, setCount] = useState()
+  const { countCart } = useAppSelector(state => state.app)
+  const dispatch = useAppDispatch()
 
 
-  const fetchCartData = async () => {
-    const config = checkToken("application/json");
-    const response = await axiosInstance.get(`${URL_API}cart`, config);
-    setCount(response.data.cart_products.length);
-};
+  // const fetchCartData = async () => {
+  //   const config = checkToken("application/json");
+  //   const response = await axiosInstance.get(`${URL_API}cart`, config);
+  //   const cartLength = response.data.cart_products.length
+  //   dispatch(setCountCart(cartLength))
+  // };
 
-useEffect(() => {
-    fetchCartData();
-}, []);
+  // useEffect(() => {
+  //   fetchCartData();
+  // }, []);
 
   let dataInforUser;
   if (getCookie("user_login")) {
@@ -115,7 +120,7 @@ useEffect(() => {
     }
   };
 
-  
+
 
   return (
     <div>
@@ -178,7 +183,7 @@ useEffect(() => {
                     aria-label="Notifications"
                   >
                     <i className="fas fa-shopping-cart" />
-                    <span className="px-1 bg-blue-500 text-white rounded-full text-xs absolute right-[-8px] top-[-8px]">{count}</span>
+                    <span className="px-1 bg-blue-500 text-white rounded-full text-xs absolute right-[-8px] top-[-8px]">{countCart}</span>
                   </button>
                   {/* <span
                     className="absolute w-3 h-3 rounded-full bg-red -top-1.5 -right-1.5 border-[2px] border-body

@@ -17,6 +17,7 @@ import CreaterProduct from "@pages/CreaterProduct";
 import Loader from "@components/Loader";
 import Checkout from "./pages/Checkout";
 import { AuthProvider } from "@components/Provider/AuthProvider";
+import { CountCartHelper } from "@components/Helper/CountCartHelper";
 
 const Login = lazy(() => import("@pages/Login"));
 const SignUp = lazy(() => import("@pages/SignUp"));
@@ -72,6 +73,7 @@ const App = () => {
           autoClose={2000}
           style={{ padding: "20px" }}
         />
+        <CountCartHelper />
         <div className={`app fluid`} ref={appRef}>
           <div className="app_content">
             <Suspense fallback={<Loader />}>
