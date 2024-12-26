@@ -9,6 +9,7 @@ import {
   CHANGE_STATUS_AUTH
 } from "@redux/slice/auth/authSlice";
 import { useDispatch } from "react-redux";
+import { WEB_DOMAIN } from "../config/config";
 
 const AddShop = () => {
   const [imagePreview, setImagePreview] = useState(null);
@@ -47,6 +48,7 @@ const AddShop = () => {
       });
       reset()
       await callToRefreshToken()
+      window.open(`${WEB_DOMAIN}/shop/statistical`, '_blank')
     } catch (error) {
       toast.error("Tạo cửa hàng thất bại. Vui lòng thử lại.", {
         autoClose: 1000,
@@ -68,8 +70,6 @@ const AddShop = () => {
   const callToRefreshToken = async () => {
     const rfToken = JSON.parse(getCookie('refresh_token'))
     const { accessToken, refreshToken } = await refreshAccessToken(rfToken)
-    console.log('accessToken', accessToken)
-    dispatch(CHANGE_STATUS_AUTH(true));
     dispatch(CHANGE_VALUE_TOKEN(accessToken));
     setCookie("token", accessToken, 3);
     setCookie("refresh_token", refreshToken, 3);
@@ -198,16 +198,6 @@ const AddShop = () => {
               type="submit"
             >
               Tạo cửa hàng
-            </button>
-            <button
-              className="btn btn--primary w-full mt-5 md:w-fit md:px-[70px]"
-              onClick={async (e) => {
-                e.preventDefault()
-                // await apiService.refreshToken();
-                // console.log(123)
-              }}
-            >
-              refresh
             </button>
           </div>
         </form>

@@ -1,9 +1,8 @@
 import axiosInstance from "@api/axiosInstance";
 import { checkToken } from "@utils/auth";
+import { URL_API } from "../config/config";
 
 // Get the base API URL from environment variables
-const URL_API =
-  "https://ecommerce-server-0mcc.onrender.com/v1/api/";
 
 export const getCatalogByShopId = async (ShopId) => {
   try {

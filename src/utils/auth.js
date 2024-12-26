@@ -18,16 +18,12 @@ export function checkToken(contentType = "application/json") {
   if (!token) {
     throw new Error("No authentication token found");
   }
-
-  console.log("token", token)
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": contentType,
     },
   };
-
-  console.log(config)
 
   return config
 }

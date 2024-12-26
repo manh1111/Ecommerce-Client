@@ -29,8 +29,6 @@ export const addCart = async (id, quantity = 1) => {
       },
       config
     );
-
-    console.log(config);
     return result; 
   } catch (error) {
     console.error("Error adding product to cart:", error);

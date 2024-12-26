@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 import { addCart } from "@api/cart";
 import Loader from "@components/Loader";
+import { increaseCart, setCountCart } from "@redux/slice/app/appSlice";
+import { useAppDispatch } from "@redux/store";
 
 const VND = new Intl.NumberFormat("vi-VN", {
   style: "currency",
@@ -14,6 +16,7 @@ const ProductInfo = ({ product, shopData }) => {
   const [loadingCart, setLoaderCart] = useState(false);
   const [open, setOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const dispatch = useAppDispatch()
 
   const showModal = () => {
     setOpen(true);
@@ -25,11 +28,9 @@ const ProductInfo = ({ product, shopData }) => {
     setLoaderCart(true);
     try {
       const response = await addCart(product.id, 1);
+      dispatch(setCountCart(response.data.cart_products.length))
       if (response?.status === 200) {
         toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500); 
       } else {
         toast.error("Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.");
       }
@@ -76,7 +77,7 @@ const ProductInfo = ({ product, shopData }) => {
   }
 
   return (
-    <div className="w-full h-full mt-12 px-4 xl:px-8">
+    <div className="w-full mt-12 px-4 xl:px-8">
       <div className="flex flex-row xl:flex-row gap-8">
         {/* Product Images */}
         <div className="xl:w-1/2 w-full max-h-80 flex flex-col items-center justify-center gap-8 relative">
@@ -94,9 +95,8 @@ const ProductInfo = ({ product, shopData }) => {
               {product?.mainImage?.map((image, index) => (
                 <div
                   key={index}
-                  className={`w-full max-h-48 flex items-center justify-center ${
-                    index === currentImageIndex ? "block" : "hidden"
-                  }`}
+                  className={`w-full max-h-48 flex items-center justify-center ${index === currentImageIndex ? "block" : "hidden"
+                    }`}
                 >
                   <Image
                     className="object-contain max-h-80 h-fit w-fit"
@@ -150,24 +150,16 @@ const ProductInfo = ({ product, shopData }) => {
             </section>
           </div>
           <div className="flex gap-4">
-            {loadingCart ? (
-              <div className="w-1/2 flex items-center">
-                <Spin
-                  className="w-fit"
-                  indicator={<Loader/>}
-                />
-              </div>
-            ) : (
-              <Button
-                className="w-1/2"
-                onClick={handleAddToCart}
-                shape="round"
-                size="large"
-                style={{ borderColor: "#E0E0E0" }}
-              >
-                Thêm vào giỏ hàng
-              </Button>
-            )}
+            <Button
+              disabled={loadingCart}
+              className="w-1/2"
+              onClick={handleAddToCart}
+              shape="round"
+              size="large"
+              style={{ borderColor: "#E0E0E0" }}
+            >
+              Thêm vào giỏ hàng
+            </Button>
             <Button
               className="w-1/2"
               type="primary"
