@@ -9,6 +9,7 @@ import {
   CHANGE_STATUS_AUTH
 } from "@redux/slice/auth/authSlice";
 import { useDispatch } from "react-redux";
+import { WEB_DOMAIN } from "../config/config";
 
 const AddShop = () => {
   const [imagePreview, setImagePreview] = useState(null);
@@ -47,6 +48,7 @@ const AddShop = () => {
       });
       reset()
       await callToRefreshToken()
+      window.open(`${WEB_DOMAIN}/shop/statistical`, '_blank')
     } catch (error) {
       toast.error("Tạo cửa hàng thất bại. Vui lòng thử lại.", {
         autoClose: 1000,
