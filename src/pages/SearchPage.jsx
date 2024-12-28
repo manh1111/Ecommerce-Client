@@ -22,19 +22,19 @@ const SearchPage = () => {
   const itemsPerPage = 20;
   const [activeCategory, setActiveCategory] = useState("");
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const catalogData = await getCategories();
-        setCategories(catalogData);
-        if (catalogData.length > 0) {
-          setActiveCategory(catalogData[0]._id);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
+  const fetchCategories = async () => {
+    try {
+      const catalogData = await getCategories();
+      setCategories(catalogData);
+      if (catalogData.length > 0) {
+        setActiveCategory(catalogData[0]._id);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+  
+  useEffect(() => {
     fetchCategories();
   }, []);
 

@@ -5,11 +5,13 @@ import { useEffect } from "react"
 
 export const CountCartHelper = () => {
   const dispatch = useAppDispatch()
-
-  useEffect(async () => {
+  const fetchCartData = async () => {
     const cartData = await getCart();
-    dispatch(setCountCart(cartData.cart_products.length))
-  }, [])
+    dispatch(setCountCart(cartData.cart_products.length));
+  };
+  useEffect(() => {
+    fetchCartData()
+  }, [dispatch])
 
   return null
 }
