@@ -28,7 +28,6 @@ const SearchPage = () => {
       console.error("Error fetching categories:", error);
     }
   };
-
   useEffect(() => {
     fetchCategories();
   }, []);
