@@ -2,7 +2,7 @@ import {
   getAllAddresses,
   addNewAddress,
   updateAddress,
-  deleteAddress,
+  deleteAddress 
 } from "@api/profile";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -43,7 +43,7 @@ const Address = () => {
       setAddresses(response.data);
     } catch (error) {
       console.error("Failed to fetch addresses:", error);
-      alert("Không thể tải địa chỉ. Vui lòng thử lại.");
+      toast.error("Không thể tải địa chỉ. Vui lòng thử lại.");
     }
   };
 
@@ -53,7 +53,7 @@ const Address = () => {
       setLocationData((prev) => ({ ...prev, provinces: response.data }));
     } catch (error) {
       console.error("Failed to fetch provinces:", error);
-      alert("Không thể tải danh sách tỉnh/thành phố. Vui lòng thử lại.");
+      toast.error("Không thể tải danh sách tỉnh/thành phố. Vui lòng thử lại.");
     }
   };
 
@@ -73,7 +73,7 @@ const Address = () => {
         wardName: "",
       }));
 
-      try {
+    try {
         const response = await axios.get(
           `https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`
         );
@@ -84,25 +84,25 @@ const Address = () => {
         }));
       } catch (error) {
         console.error("Failed to fetch districts:", error);
-        alert("Không thể tải danh sách quận/huyện. Vui lòng thử lại.");
-      }
-    };
+      toast.error("Không thể tải danh sách quận/huyện. Vui lòng thử lại.");
+    }
+  };
 
-    const handleDistrictChange = async (e) => {
-      const districtCode = e.target.value;
+  const handleDistrictChange = async (e) => {
+    const districtCode = e.target.value;
       const selectedDistrict = locationData.districts.find(
         (district) => district.code === Number(districtCode)
       );
 
-      setNewAddress((prevAddress) => ({
-        ...prevAddress,
-        district: districtCode,
-        ward: "",
-        districtName: selectedDistrict ? selectedDistrict.name : "",
-        wardName: "",
-      }));
+    setNewAddress((prev) => ({
+      ...prev,
+      district: districtCode,
+      ward: "",
+      districtName: selectedDistrict?.name || "",
+      wardName: "",
+    }));
 
-      try {
+    try {
         const response = await axios.get(
           `https://provinces.open-api.vn/api/d/${districtCode}?depth=2`
         );
@@ -112,9 +112,9 @@ const Address = () => {
         }));
       } catch (error) {
         console.error("Failed to fetch wards:", error);
-        alert("Không thể tải danh sách phường/xã. Vui lòng thử lại.");
-      }
-    };
+      toast.error("Không thể tải danh sách phường/xã. Vui lòng thử lại.");
+    }
+  };
 
     const handleWardChange = (e) => {
       const wardCode = e.target.value;
@@ -137,7 +137,7 @@ const Address = () => {
       }));
     };
 
-    const handleAddAddress = async () => {
+  const handleAddAddress = async () => {
       if (!newAddress.recipient_name || !newAddress.recipient_phone || !newAddress.specific_address || !newAddress.provinceName || !newAddress.districtName || !newAddress.wardName) {
         toast.error("Vui lòng điền đầy đủ thông tin địa chỉ.");
         return; 
@@ -152,26 +152,22 @@ const Address = () => {
         isDefault: newAddress.isDefault,
       };
 
-      try {
-        const addedAddress = await addNewAddress(addressToAdd);
-        setAddresses((prevAddresses) => [...prevAddresses, addedAddress]);
-        resetForm();
-        toast.success("Địa chỉ mới đã được thêm thành công!");
-        await fetchAddresses();
-      } catch (error) {
-        console.error("Failed to add new address:", error);
-        toast.error("Không thể thêm địa chỉ mới. Vui lòng thử lại.");
-      }
-    };
+    try {
+      const addedAddress = await addNewAddress(addressToAdd);
+      setAddresses((prevAddresses) => [...prevAddresses, addedAddress]);
+      resetForm();
+      toast.success("Địa chỉ mới đã được thêm thành công!");
+      resetForm();
+      fetchAddresses();
+    } catch (error) {
+      console.error("Failed to add address:", error);
+      toast.error("Không thể thêm địa chỉ mới. Vui lòng thử lại.");
+    }
+  };
 
   const handleEditAddress = (address) => {
     setEditingAddress(address);
-    setNewAddress({
-      ...address,
-      provinceName: address.province,
-      districtName: address.district,
-      wardName: address.ward,
-    });
+    setNewAddress({ ...address });
     setIsAddingNewAddress(true);
   };
 
@@ -179,13 +175,10 @@ const Address = () => {
     const fullAddress = `${newAddress.provinceName}, ${newAddress.districtName}, ${newAddress.wardName}`;
 
     try {
-      await updateAddress(editingAddress._id, {
-        ...newAddress,
-        address: fullAddress,
-      });
-      resetForm();
+      await updateAddress(editingAddress._id, { ...newAddress, address: fullAddress });
       toast.success("Địa chỉ đã được cập nhật thành công!");
-      await fetchAddresses();
+      resetForm();
+      fetchAddresses();
     } catch (error) {
       console.error("Failed to update address:", error);
       toast.error("Không thể cập nhật địa chỉ. Vui lòng thử lại.");
@@ -196,7 +189,7 @@ const Address = () => {
     try {
       await deleteAddress(id);
       toast.success("Địa chỉ đã được xóa thành công!");
-      await fetchAddresses();
+      fetchAddresses();
     } catch (error) {
       console.error("Failed to delete address:", error);
       toast.error("Không thể xóa địa chỉ. Vui lòng thử lại.");
@@ -223,12 +216,12 @@ const Address = () => {
 
   return (
     <div className="w-full mx-auto p-6">
-      <div className="flex flex-row justify-between pb-4">
+      <div className="flex justify-between pb-4">
         <h2 className="text-2xl font-bold mb-4">Địa chỉ của tôi</h2>
         {!isAddingNewAddress && (
           <button
             onClick={() => setIsAddingNewAddress(true)}
-            className="bg-blue-500 text-white px-4 py-2 mt-4 rounded"
+            className="bg-blue-500 text-white px-4 py-2 rounded"
           >
             Thêm địa chỉ mới
           </button>
@@ -246,7 +239,7 @@ const Address = () => {
               </h3>
               {address.isDefault && <div className="text-blue-500 border-blue-100 border-2 w-fit p-2 rounded-lg">Mặc định</div>}
             </div>
-            <p>{address.recipient_phone}</p>
+      <p>{address.recipient_phone}</p>
             <p>
               {address.specific_address}, {address.address}
             </p>

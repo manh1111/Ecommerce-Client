@@ -409,6 +409,8 @@ const UserProfileDetails = () => {
                   Quản lý cửa hàng
                 </button>
 
+                {console.log("WEB_DOMAIN", WEB_DOMAIN)}
+
               </div>
             ) : (
               <button

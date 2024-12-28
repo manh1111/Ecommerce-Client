@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import vnpayLogo from '../assets/vnpay_logo.png';
 import momoLogo from '../assets/momo_logo.png';
-
+import { useNavigate } from "react-router-dom";
 
 // Component to display shop information
 const ShopInfo = ({ shopName, shopLogo }) => {
@@ -28,6 +28,11 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
   const [paymentGateway, setPaymentGateway] = useState("cod");
   const [loading, setLoader] = useState(false);
 
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
@@ -68,12 +73,16 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
     }
   }, []);
 
-
   const handleAddressChange = (e) => {
     setAddress(e.target.value);
   };
 
   const handleBuyNow = async () => {
+    if (!address) {
+      toast.error("Vui lòng chọn địa chỉ giao hàng.");
+      return;
+    }
+
     setLoader(true);
     try {
       const storedProducts = localStorage.getItem("selectedProducts");
@@ -189,20 +198,32 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
               <h3 className="text-xl font-semibold mb-2">
                 Chọn địa chỉ giao hàng
               </h3>
-              <select
-                className="w-full p-2 border border-gray-300 rounded"
-                value={address}
-                onChange={handleAddressChange}
-              >
-                <option value="" disabled>
-                  Chọn địa chỉ giao hàng
-                </option>
-                {addresses.map((addr, index) => (
-                  <option key={index} value={addr.id}>
-                    {addr.address}
+              {addresses.length === 0 ? (
+                <div>
+                  <p className="text-red-500">Chưa có địa chỉ giao hàng. Vui lòng tạo mới.</p>
+                  <button
+                    onClick={() => handleNavigation("/address")}
+                    className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
+                  >
+                    Tạo mới địa chỉ
+                  </button>
+                </div>
+              ) : (
+                <select
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={address}
+                  onChange={handleAddressChange}
+                >
+                  <option value="" disabled>
+                    Chọn địa chỉ giao hàng
                   </option>
-                ))}
-              </select>
+                  {addresses.map((addr, index) => (
+                    <option key={index} value={addr.id}>
+                      {addr.address}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
             <div className="mt-6">
@@ -238,7 +259,6 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
                   <img src={momoLogo} alt="MOMO" className="w-8 h-8" />
                 </label>
               </div>
-
             </div>
 
             <button

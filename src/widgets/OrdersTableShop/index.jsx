@@ -1,14 +1,18 @@
 import dayjs from "dayjs";
 import { useState } from "react";
 import { updateOrderStatus } from "@api/order";
+import { Pagination } from "antd";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "antd/dist/reset.css"; // Ant Design styles
 
 const OrdersTable = ({ initialOrders }) => {
   const [orders, setOrders] = useState(initialOrders);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [isCancelling, setIsCancelling] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   const handleCancelOrderForShop = async (orderId) => {
     try {
@@ -20,7 +24,7 @@ const OrdersTable = ({ initialOrders }) => {
             ? { ...order, order_status: "cancelled" }
             : order
         );
-        setOrders(updatedOrders); // Đặt lại danh sách đơn hàng
+        setOrders(updatedOrders);
         toast.success("Trạng thái đơn hàng đã được cập nhật thành 'Đã hủy'.", {
           toastId: `cancel_${orderId}`,
         });
@@ -54,7 +58,7 @@ const OrdersTable = ({ initialOrders }) => {
           nextStatus = "completed";
           break;
         default:
-          return; // Không có trạng thái tiếp theo
+          return;
       }
 
       const success = await updateOrderStatus(orderId, nextStatus);
@@ -78,9 +82,6 @@ const OrdersTable = ({ initialOrders }) => {
     }
   };
 
-   {
-     console.log("filteredOrders", orders);
-   }
   const filteredOrders = orders.filter((order) => {
     const orderDate = dayjs(order.createdAt);
     const isAfterStartDate = startDate
@@ -92,84 +93,70 @@ const OrdersTable = ({ initialOrders }) => {
     return isAfterStartDate && isBeforeEndDate;
   });
 
+  // Pagination logic
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedOrders = filteredOrders.slice(
+    startIndex,
+    startIndex + pageSize
+  );
+
+  const handlePageChange = (page, size) => {
+    setCurrentPage(page);
+    setPageSize(size);
+  };
+
   return (
     <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
-      {/* Bộ lọc ngày */}
+      {/* Date Filters */}
       <div className="mb-4 flex space-x-4">
         <div className="w-full">
-          <label
-            htmlFor="start-date"
-            className="block text-lg font-medium text-gray-700"
-          >
+          <label htmlFor="start-date" className="block text-lg font-medium">
             Ngày bắt đầu:
           </label>
           <input
             type="date"
             id="start-date"
-            className="mt-1 block w-full border-2 border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+            className="mt-1 block w-full p-2 rounded-md shadow-sm"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
         <div className="w-full">
-          <label
-            htmlFor="end-date"
-            className="block text-lg font-medium text-gray-700"
-          >
+          <label htmlFor="end-date" className="block text-lg font-medium">
             Ngày kết thúc:
           </label>
           <input
             type="date"
             id="end-date"
-            className="mt-1 block w-full border-2 border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+            className="mt-1 block w-full p-2 rounded-md shadow-sm"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Danh sách đơn hàng */}
-      {console.log("filteredOrders", filteredOrders)}
-      {filteredOrders.length === 0 ? (
-        <p className="text-gray-600 text-center">
+      {/* Orders List */}
+      {paginatedOrders.length === 0 ? (
+        <p className="text-gray-600 text-center h-60">
           Không có đơn hàng nào để hiển thị.
         </p>
       ) : (
-        filteredOrders.map((order) => (
+        paginatedOrders.map((order) => (
           <div
             key={order._id}
-            className="border-b py-4 px-6 bg-white rounded-lg shadow-md"
+            className="border-b py-4 px-6 min-h-60 bg-white rounded-lg shadow-md"
           >
-            <div className="flex justify-between items-start">
-              <div className="w-full">
-                <h3 className="text-lg font-semibold text-gray-800">
+            {/* Order Details */}
+            <div className="flex justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">
                   Mã đơn hàng:{" "}
                   <span className="text-blue-600">
                     {order.order_trackingNumber}
                   </span>
                 </h3>
-                <p className="text-sm text-gray-600">
-                  Ngày tạo: {dayjs(order.createdAt).format("DD/MM/YYYY")}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Trạng thái:{" "}
-                  <span className="font-medium">{order.order_status}</span>
-                </p>
-                <p className="text-sm text-gray-600">
-                  Địa chỉ giao hàng: {order.order_shipping_address}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Phương thức thanh toán:{" "}
-                  <span className="font-medium">
-                    {order.order_payment_method.toUpperCase()}
-                  </span>
-                </p>
-                <p className="text-sm font-semibold text-gray-800">
-                  Tổng tiền:{" "}
-                  <span className="text-red-600">
-                    {order.order_total_price.toLocaleString()}₫
-                  </span>
-                </p>
+                <p>Ngày tạo: {dayjs(order.createdAt).format("DD/MM/YYYY")}</p>
+                <p>Trạng thái: {order.order_status}</p>
               </div>
               <div className="flex flex-col gap-5">
                 {/* Hủy đơn hàng */}
@@ -206,6 +193,15 @@ const OrdersTable = ({ initialOrders }) => {
           </div>
         ))
       )}
+
+      {/* Pagination */}
+      <Pagination
+        current={currentPage}
+        pageSize={pageSize}
+        total={filteredOrders.length}
+        onChange={handlePageChange}
+        className="mt-4"
+      />
 
       <ToastContainer />
     </div>

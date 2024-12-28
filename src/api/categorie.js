@@ -1,5 +1,5 @@
 import axiosInstance from "@api/axiosInstance";
-
+import { checkToken } from "@utils/auth";
 import { URL_API } from "../../src/config/config";
 
 export const createCategories = async () => {
@@ -24,4 +24,16 @@ export const getCategories = async () => {
   }
 };
 
-
+export const statisticCategoryForShop = async () => {
+  try {
+    const config = checkToken("application/json");
+    const response = await axiosInstance.get(
+      `${URL_API}category/statistical/shop`,
+      config
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch category statistics", error);
+    throw error;
+  }
+};

@@ -115,6 +115,7 @@ const ProductEditor = () => {
           `Sản phẩm đã ${id ? "cập nhật" : "xuất bản"} thành công!`
         );
         reset();
+        setImagePreviews()
       }
     } catch (error) {
       toast.error(
