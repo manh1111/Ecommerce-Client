@@ -14,6 +14,7 @@ import { DELETE_ALL_VALUES } from "@redux/slice/user/userSlice";
 import { useDispatch } from "react-redux";
 import { updateProfileAvatar, getProfileOwn } from "@api/profile";
 import { useEffect, useState } from "react";
+import { CHANGE_STATUS_AUTH } from "@redux/slice/auth/authSlice";
 
 const UserProfileCard = () => {
   const [userData, setUserData] = useState(null);
@@ -46,6 +47,7 @@ const UserProfileCard = () => {
       document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 
       dispatch(DELETE_ALL_VALUES());
+      dispatch(CHANGE_STATUS_AUTH(false))
       navigate("/");
       window.location.reload();
     } catch (error) {
