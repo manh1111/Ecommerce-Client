@@ -255,12 +255,8 @@ export const countProducts = async () => {
 
 export const getAllProductsCategoryId = async (categoryId) => {
   try {
-    // const config = checkToken("application/json");
-
-    // Fetch product by ID with token in Authorization header
     const response = await axiosInstance.get(
       `${URL_API}product/category/${categoryId}`,
-      // config
     );
 
     return response.data;

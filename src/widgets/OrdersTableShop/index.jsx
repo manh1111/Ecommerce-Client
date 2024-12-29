@@ -4,7 +4,7 @@ import { updateOrderStatus } from "@api/order";
 import { Pagination } from "antd";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "antd/dist/reset.css"; // Ant Design styles
+import "antd/dist/reset.css"; 
 
 const OrdersTable = ({ initialOrders }) => {
   const [orders, setOrders] = useState(initialOrders);

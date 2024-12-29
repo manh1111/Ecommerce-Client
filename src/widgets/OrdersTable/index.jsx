@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useState, useEffect, useRef } from "react";
 import { deleteOrderById } from "@api/order";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { createReview } from "@api/review"; // Import createReview API
 
 const OrdersTable = ({ initialOrders = [] }) => {
@@ -98,8 +98,15 @@ const OrdersTable = ({ initialOrders = [] }) => {
       : true;
     return isAfterStartDate && isBeforeEndDate;
   });
-
-  console.log("orders------", orders)
+  const handleButtonClick = (order, action) => {
+   if (action === "pay") {
+      console.log("Proceeding with payment for order", order);
+    } else if (action === "cancel") {
+      console.log("Canceling order", order);
+    } else if (action === "changePaymentMethod") {
+      console.log("Changing payment method for order", order);
+    }
+  };
 
   return (
     <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
@@ -188,6 +195,32 @@ const OrdersTable = ({ initialOrders = [] }) => {
                     Hủy đơn hàng
                   </button>
                 }
+                {console.log("order.order_status", order.order_status)}
+
+                 {/* Handle 'waiting' status */}
+                {order.order_status === "waiting" && (
+                    <div className="flex flex-col gap-4">
+                    <button
+                      onClick={() => handleButtonClick(order, "pay")}
+                      className="w-40 py-2 px-4 bg-blue-500 text-white rounded-md"
+                    >
+                      Thanh toán lại
+                    </button>
+                    <button
+                      onClick={() => handleCancelOrder(order._id)}
+                      className="w-40 py-2 px-4 bg-rose-500 text-white rounded-md"
+                    >
+                      Hủy đơn
+                    </button>
+                    <button
+                      onClick={() => handleButtonClick(order, "changePaymentMethod")}
+                      className="w-40 py-2 px-4 bg-emerald-500 text-white rounded-md"
+                    >
+                      Đổi phương thức
+                    </button>
+                  </div>
+                  
+                )}
 
                 {order.order_status === "completed" &&
                   order.order_products.map((product) => (

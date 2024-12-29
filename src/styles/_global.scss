@@ -210,3 +210,9 @@ a[href^="https://maps.google.com/maps"] {
 .ant-table{
     min-height: 600px;
 }
+
+.ant-modal-wrap{
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+}

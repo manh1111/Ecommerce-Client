@@ -23,9 +23,10 @@ const TopProducts = ({ hasTitle = true }) => {
             return { ...category, products };
           })
         );
+        
         setCategories(
           categoriesWithProducts.filter(
-            (category) => category.products.length > 0
+            (category) => category.products.length > 0 && category.level === 0
           )
         ); // Chỉ giữ các danh mục có sản phẩm
       } catch (error) {

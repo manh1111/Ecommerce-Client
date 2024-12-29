@@ -2,7 +2,7 @@ import Spring from "@components/Spring";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { getCategories } from "@api/categorie";
+import { getCategoriesTree } from "@api/categorie";
 import { createProduct, updateProduct, getProductById } from "@api/product"; // Import updateProduct and getProductById API functions
 import classNames from "classnames";
 import { useParams } from "react-router-dom";
@@ -36,7 +36,7 @@ const ProductEditor = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await getCategories();
+        const data = await getCategoriesTree();
         setCategories(data.filter((category) => category.value !== "all"));
       } catch (error) {
         toast.error("Không thể tải danh mục");
@@ -134,7 +134,7 @@ const ProductEditor = () => {
     }));
   
     setImagePreviews((prev) => [...prev, ...fileArray]);
-    const currentImages = getValues("image") || []; // Lấy giá trị hiện tại hoặc khởi tạo mảng rỗng
+    const currentImages = getValues("image") || []; 
     setValue("image", [...currentImages, ...fileArray]);
   };  
 
@@ -179,7 +179,7 @@ const ProductEditor = () => {
                 })}
                 id="description"
                 placeholder="Nhập mô tả"
-                style={{ height: "176px" }} // Đặt chiều cao mặc định
+                style={{ height: "176px" }} 
                 {...register("description", { required: true })}
               />
             </div>
@@ -218,29 +218,71 @@ const ProductEditor = () => {
 
           <div className="w-1/2 flex flex-col gap-4">
           <div className="field-wrapper">
-              <label className="field-label" htmlFor="category">
-                Ngành hàng
-              </label>
-              <Controller
-                name="category_id"
-                control={control}
-                render={({ field }) => (
+            <Controller
+              name="category_id"
+              control={control}
+              render={({ field }) => (
+                <div className="field-wrapper">
+                  <label className="field-label" htmlFor="category">
+                    Ngành hàng
+                  </label>
                   <select
                     className={classNames("field-input", {
                       "field-input--error": errors.category_id,
                     })}
                     id="category"
                     {...field}
+                    disabled={categories.length === 0} 
+                    onChange={(e) => {
+                      const selectedCategory = categories.find(
+                        (category) => category._id === e.target.value
+                      );
+                      if (selectedCategory) {
+                        if (selectedCategory.children?.length > 0) {
+                          setCategories((prevCategories) => {
+                            const updatedCategories = prevCategories.map((cat) =>
+                              cat._id === selectedCategory._id
+                                ? { ...cat, children: selectedCategory.children }
+                                : cat
+                            );
+                            return updatedCategories;
+                          });
+                          field.onChange(""); 
+                        } else {
+                          field.onChange(e.target.value); 
+                        }
+                      }
+                    }}
                   >
                     <option value="">Chọn ngành hàng</option>
-                    {categories.map((category) => (
-                      <option key={category._id} value={category._id}>
-                        {category.category_name}
+                    {categories.length > 0 ? (
+                      categories.flatMap((category) => [
+                        <option
+                          key={category._id}
+                          value={category._id}
+                          className={category.children?.length > 0 ? "font-bold" : "font-normal"}
+                        >
+                          {category.category_name}
+                        </option>,
+                        ...(category.children || []).map((child) => (
+                          <option key={child._id} value={child._id} className="pl-4">
+                            {`--${child.category_name}`}
+                          </option>
+                        )),
+                      ])
+                    ) : (
+                      <option value="" disabled>
+                        Đang tải danh mục...
                       </option>
-                    ))}
+                    )}
                   </select>
-                )}
-              />
+                  {errors.category_id && (
+                    <span className="error-message">Vui lòng chọn ngành hàng</span>
+                  )}
+                </div>
+              )}
+            />
+
             </div>
 
             <div>
@@ -292,7 +334,7 @@ const ProductEditor = () => {
                               htmlFor={`image-upload-${index}`}
                               className="media-dropzone w-full h-full flex justify-center items-center cursor-pointer border-2 border-dashed border-slate-300 rounded-lg"
                             >
-                              <span className="text-gray-500">Thêm Hình Ảnh</span>
+                              <span className="text-gray-500">Thêm hình ảnh</span>
                               <input
                                 id={`image-upload-${index}`}
                                 type="file"

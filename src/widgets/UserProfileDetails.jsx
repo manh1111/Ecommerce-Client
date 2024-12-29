@@ -13,8 +13,6 @@ import { WEB_DOMAIN, URL_API } from "../config/config";
 import axiosInstance from "@api/axiosInstance";
 
 const UserProfileDetails = () => {
-  // const navigate = useNavigate();
-  // const [cities, setCities] = useState([]);
   const [shopData, setShopData] = useState(null);
   const [userInfo, setUserInfo] = useState({}); // Initialize as an empty object
   // const [showShopDetails, setShowShopDetails] = useState(false);
@@ -29,7 +27,6 @@ const UserProfileDetails = () => {
     const token = JSON.parse(getCookie('user_login'));
     if (token) {
       try {
-        // const decodedToken = jwtDecode(token);
         const userData = await getProfileOwn();
         setUserInfo(userData);
       } catch (error) {
@@ -55,6 +52,8 @@ const UserProfileDetails = () => {
       pickupAddress: "",
       sellerEmail: "",
       sellerPhone: "",
+      dob: "",
+      gender: "",
     },
   });
 
@@ -90,13 +89,16 @@ const UserProfileDetails = () => {
     setValue("userName", shopData.owner_id.userName || "");
     setValue("email", shopData.owner_id.email || "");
     setValue("phone", shopData.owner_id.phoneNumber || "");
+    setValue("gender", userInfo.gender || "");
+    setValue("dob", userInfo.dateOfBirth || "");
   };
 
   const populateUserFields = (userInfo) => {
-    console.log("userInfo", userInfo);
     setValue("userName", userInfo.userName || "");
     setValue("email", userInfo.email || "");
     setValue("phone", userInfo.phoneNumber || "");
+    setValue("gender", userInfo.gender || "");
+    setValue("dob", userInfo.dateOfBirth || "");
     setValue("shopName", "");
     setValue("Address", userInfo ? userInfo.address || "" : "");
     setValue("sellerEmail", "");
@@ -105,7 +107,7 @@ const UserProfileDetails = () => {
 
   const onSubmit = async (data) => {
     await updateProfile({ ...data, dateOfBirth: data.dob })
-    toast.success("Profile updated successfully");
+    toast.success("Hồ sơ được cập nhật thành công");
   };
 
   const handlePasswordSubmit = async (passwordData) => {
@@ -113,13 +115,22 @@ const UserProfileDetails = () => {
       const { currentPassword, newPassword } = passwordData;
       const res = await changePassword(currentPassword, newPassword);
       console.log("Password change response:", res);
-      toast.success("Password changed successfully");
+      toast.success("Đã thay đổi mật khẩu thành công");
       setShowPasswordModal(false);
 
     } catch (error) {
-      toast.error("Failed to change password");
+      toast.error("Không thể thay đổi mật khẩu");
       console.error(error);
     }
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`; // The input type="date" expects YYYY-MM-DD format
   };
 
   const roleNames = userInfo?.roles?.map((role) => role.roleName) || [];
@@ -200,61 +211,77 @@ const UserProfileDetails = () => {
                 )}
               </div>
 
-              <div className="field-wrapper">
-                <label className="field-label" htmlFor="gender">
-                  Giới tính
-                </label>
-                <div className="flex gap-4">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      value="Male"
-                      {...register("gender", { required: true })}
-                      className="field-radio"
-                    />
-                    <span className="ml-2">Nam</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      value="Female"
-                      {...register("gender", { required: true })}
-                      className="field-radio"
-                    />
-                    <span className="ml-2">Nữ</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      value="Other"
-                      {...register("gender", { required: true })}
-                      className="field-radio"
-                    />
-                    <span className="ml-2">Khác</span>
-                  </label>
-                </div>
-                {errors.gender && (
-                  <p className="error-message">Chọn giới tính</p>
+              <Controller name="gender" control={control}
+                render={({ field }) => (
+                  <div className="field-wrapper">
+                    <label className="field-label" htmlFor="gender">
+                      Giới tính
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center">
+                        <input
+                          checked={field.value === "male"}
+                          type="radio"
+                          value="male"
+                          {...register("gender", { required: true })}
+                          className="field-radio"
+                        />
+                        <span className="ml-2">Nam</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          checked={field.value === "female"}
+                          type="radio"
+                          value="female"
+                          {...register("gender", { required: true })}
+                          className="field-radio"
+                        />
+                        <span className="ml-2">Nữ</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          checked={field.value === "other"}
+                          type="radio"
+                          value="other"
+                          {...register("gender", { required: true })}
+                          className="field-radio"
+                        />
+                        <span className="ml-2">Khác</span>
+                      </label>
+                    </div>
+                    {errors.gender && (
+                      <p className="error-message">Chọn giới tính</p>
+                    )}
+                  </div>
                 )}
-              </div>
+              >
+              </Controller>
 
-              <div className="field-wrapper">
-                <label className="field-label" htmlFor="dob">
-                  Ngày sinh
-                </label>
-                <input
-                  className={classNames("field-input", {
-                    "field-input--error": errors.dob,
-                  })}
-                  type="date"
-                  id="dob"
-                  placeholder="Date of Birth"
-                  {...register("dob", { required: true })}
-                />
-                {errors.dob && (
-                  <p className="error-message">Nhập ngày sinh</p>
+
+              <Controller
+                name="dob"
+                control={control}
+                render={({ field }) => (
+                  <div className="field-wrapper">
+                    <label className="field-label" htmlFor="dob">
+                      Ngày sinh
+                    </label>
+                    <input
+                      className={classNames("field-input", {
+                        "field-input--error": errors.dob,
+                      })}
+                      type="date"
+                      id="dob"
+                      value={formatDate(field.value)} 
+                      {...register("dob", { required: true })}
+                    />
+                    {errors.dob && (
+                      <p className="error-message">Ngày sinh không được để trống</p>
+                    )}
+                  </div>
                 )}
-              </div>
+              >
+              </Controller>
             </div>
           </div>
 
@@ -265,8 +292,7 @@ const UserProfileDetails = () => {
                 onClick={(e) => {
                   e.preventDefault()
                   setShowPasswordModal(true)
-                  console.log(123123)
-                }} // Show modal on click
+                }} 
               >
                 Đổi mật khẩu
               </button>
@@ -367,7 +393,7 @@ const UserProfileDetails = () => {
                   )}
                 />
                 {errors.sellerPhone && (
-                  <p className="error-message">Số điện thoại băts buộc</p>
+                  <p className="error-message">Số điện thoại bắt buộc</p>
                 )}
               </div>
             </div>
@@ -408,9 +434,6 @@ const UserProfileDetails = () => {
                 >
                   Quản lý cửa hàng
                 </button>
-
-                {console.log("WEB_DOMAIN", WEB_DOMAIN)}
-
               </div>
             ) : (
               <button

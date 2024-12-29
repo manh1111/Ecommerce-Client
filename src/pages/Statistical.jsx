@@ -8,9 +8,9 @@ import { getRevenueByShopOwn } from "../api/statistic";
 import { statisticCategoryForShop } from "../api/categorie";
 import { GetOwnShop } from "../api/shop";
 
-const Boxes = ({ dataTotalRevenue, dataTotalOrders }) => {
+const Boxes = ({ wrapperClass, dataTotalRevenue, dataTotalOrders }) => {
   return (
-    <div className="grid w-full grid-cols-2 gap-5">
+    <div className={`grid w-full grid-cols-2 gap-5`}>
       <SellerProfileInfobox value={dataTotalRevenue} label="Tổng lợi nhuận" />
       <SellerProfileInfobox
         icon="barcode"
@@ -27,8 +27,8 @@ const SellerProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [shopData, setShopData] = useState(null);
-  const [dataTotalRevenue, setTotalRevenueData] = useState(0);
-  const [dataTotalOrders, setTotalOrdersData] = useState(0);
+  const [dataTotalRevenue, setTotalRevenueData] = useState([]);
+  const [dataTotalOrders, setTotalOrdersData] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
   const [statisticCategory, setStatisticCategory] = useState([]);
 
@@ -41,31 +41,33 @@ const SellerProfile = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const diffInDays = (end - start) / (1000 * 60 * 60 * 24);
+
     return diffInDays > 30 ? "month" : "day";
   };
 
   const fetchData = async (startDate, endDate) => {
     try {
       setLoading(true);
+
       const shopResponse = await GetOwnShop();
       setShopData(shopResponse);
 
       const groupBy = calculateGroupBy(startDate, endDate);
-      const revenueResponse = await getRevenueByShopOwn({
+      const revenueData = await getRevenueByShopOwn({
         startDate,
         endDate,
         groupBy,
       });
+      console.log("startDate", startDate, "endDate", endDate);
       const categoryResponse = await statisticCategoryForShop();
 
-      console.log("categoryResponse", categoryResponse);
       setStatisticCategory(categoryResponse);
-      setRevenueData(revenueResponse.breakdown || []);
-      setTotalRevenueData(revenueResponse.totalRevenue || 0);
-      setTotalOrdersData(revenueResponse.totalOrders || 0);
-    } catch (err) {
+      setRevenueData(revenueData.breakdown);
+      setTotalRevenueData(revenueData.totalRevenue);
+      setTotalOrdersData(revenueData.totalOrders);
+    } catch (error) {
       setError("Failed to fetch data.");
-      console.error(err);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -77,18 +79,18 @@ const SellerProfile = () => {
 
   const handleDateChange = ({ startDate, endDate }) => {
     setSelectedDates({
-      startDate,
-      endDate,
+      startDate: endDate[0],
+      endDate: endDate[1],
     });
   };
 
   if (loading) return <Loader />;
   if (error) return <div>{error}</div>;
 
-  console.log("Shop Data", shopData);
   return (
     <>
-      <div className="bg-white shadow-xl rounded-lg overflow-hidden border border-gray-200 mb-5">
+        <div className="bg-white shadow-xl rounded-lg overflow-hidden border border-gray-200 mb-5">
+        {/* Header */}
         <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6">
           <img
             src={shopData?.logo}
@@ -107,15 +109,15 @@ const SellerProfile = () => {
                     : "bg-red-500 text-white"
                 }`}
               >
-                {shopData?.status === "active"
-                  ? "Hoạt động"
-                  : "Ngừng hoạt động"}
+                {shopData?.status === "active" ? "Hoạt động" : "Ngừng hoạt động"}
               </span>
             </p>
           </div>
         </div>
 
+        {/* Content */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Địa chỉ */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex justify-center items-center">
               <i className="fas fa-map-marker-alt"></i>
@@ -125,6 +127,8 @@ const SellerProfile = () => {
               <p className="text-base text-gray-800">{shopData?.address}</p>
             </div>
           </div>
+
+          {/* Số điện thoại */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 text-green-600 rounded-full flex justify-center items-center">
               <i className="fas fa-phone-alt"></i>
@@ -134,10 +138,32 @@ const SellerProfile = () => {
               <p className="text-base text-gray-800">{shopData?.phone_number}</p>
             </div>
           </div>
+
+          {/* Số sản phẩm */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full flex justify-center items-center">
+              <i className="fas fa-box"></i>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase">Số sản phẩm</h3>
+              <p className="text-base text-gray-800">{shopData.productsCount}</p>
+            </div>
+          </div>
+
+          {/* Số đánh giá */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex justify-center items-center">
+              <i className="fas fa-star"></i>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase">Số đánh giá</h3>
+              <p className="text-base text-gray-800">{shopData.reviewsCount}</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 mb-5 lg:flex-row lg:justify-between">
+      <div className="flex flex-col gap-4 mb-5 md:mb-[26px] md:gap-5 lg:flex-row lg:justify-between">
         <CalendarSelector
           wrapperClass="md:max-w-[275px]"
           id="sellerPeriodSelector"
@@ -145,15 +171,16 @@ const SellerProfile = () => {
           selectedDates={selectedDates}
         />
       </div>
-
-      <div className="widgets-grid grid-cols-2 mb-10">
-        <PeriodSalesRevenue revenueData={revenueData} />
-        <div>
-          <Boxes
-            dataTotalRevenue={dataTotalRevenue}
-            dataTotalOrders={dataTotalOrders}
-          />
-          <SalesProfitByCategory statisticCategory={statisticCategory} />
+      <div className="widgets-grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-6 mb-10">
+        <div className="widgets-grid grid-cols-1 md:col-span-3 lg:grid-cols-2 2xl:col-span-6">
+          <PeriodSalesRevenue revenueData={revenueData} />
+          <div className="widgets-grid grid-cols-1">
+            <Boxes
+              dataTotalRevenue={dataTotalRevenue}
+              dataTotalOrders={dataTotalOrders}
+            />
+            <SalesProfitByCategory statisticCategory={statisticCategory} />
+          </div>
         </div>
       </div>
     </>

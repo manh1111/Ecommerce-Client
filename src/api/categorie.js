@@ -24,6 +24,18 @@ export const getCategories = async () => {
   }
 };
 
+
+export const getCategoriesTree = async () => {
+  try {
+    // Use the environment variable for the base API URL
+    const response = await axiosInstance.get(`${URL_API}category/buildTree`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch categories", error);
+    throw error;
+  }
+};
+
 export const statisticCategoryForShop = async () => {
   try {
     const config = checkToken("application/json");

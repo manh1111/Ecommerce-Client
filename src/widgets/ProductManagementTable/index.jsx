@@ -7,7 +7,8 @@ import {
   deletePermanentlyProducts,
   countProducts,
 } from "@api/product";
-import getProducts, { fetchProducts } from "@db/products_management"; 
+
+import getProducts, { fetchProducts } from "@db/products_management";
 import ProductManagementCollapseItem from "@components/ProductManagementCollapseItem";
 import FilterItem from "@ui/FilterItem";
 import Pagination from "@ui/Pagination";
@@ -21,10 +22,12 @@ import usePagination from "@hooks/usePagination";
 const ProductManagementTable = () => {
   const { width } = useWindowSize();
   const [products, setProducts] = useState([]);
+  const [productsSearch, setProductsSearch] = useState([]);
   const [category, setCategory] = useState("publish");
   const [activeCollapse, setActiveCollapse] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [change, setChange] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [productCounts, setProductCounts] = useState({
     totalDraft: 0,
@@ -45,24 +48,42 @@ const ProductManagementTable = () => {
     fetchProductCounts();
   }, []);
 
+  useEffect(() => {
+    const loadProducts = async () => {
+      await fetchProducts(category);  // Ensure this doesn't trigger an unnecessary update.
+      setProducts(getProducts(category));
+    };
+    loadProducts();
+  }, [category, change]);  // Keep the dependencies minimal.
+  
 
   useEffect(() => {
     const loadProducts = async () => {
-      console.log("category", category);
       await fetchProducts(category);
-      setProducts(getProducts(category)); 
+      const productsList = getProducts(category);
+      if (productsList !== products) {  // Check if the new data is different from the current state.
+        setProducts(productsList);
+      }
     };
     loadProducts();
-  }, [category, change]); 
+  }, [category, change, products]);  // Avoid unnecessary state changes.
+  
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handlePublishProduct = async (productId) => {
     try {
-      const response = await publishProducts([productId]);
+      await publishProducts([productId]);
       toast.success("Sản phẩm đã được xuất bản thành công!", {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 5000,
       });
-      // Reload products after successful publish
       await fetchProducts(category);
       setProducts(getProducts(category));
       setChange(!change);
@@ -77,17 +98,16 @@ const ProductManagementTable = () => {
 
   const handleDeleteProduct = async (productId) => {
     try {
-      const response = await deletePermanentlyProducts([productId]);
-      console.log("response", response);
-       toast.success("Sản phẩm đã được xóa vĩnh viễn!", {
-         position: toast.POSITION.TOP_RIGHT,
-         autoClose: 5000,
-       });
-       await fetchProducts(category);
+      await deletePermanentlyProducts([productId]);
+      toast.success("Sản phẩm đã được xóa vĩnh viễn!", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000,
+      });
+      await fetchProducts(category);
       setProducts(getProducts(category));
       setChange(!change);
     } catch (error) {
-      console.error("Error delete permanently the product:", error);
+      console.error("Error deleting the product:", error);
       toast.error("Lỗi khi xóa sản phẩm", {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 5000,
@@ -139,7 +159,7 @@ const ProductManagementTable = () => {
 
 
   const dataByStatus = () => {
-    return products;
+    return productsSearch;
   };
 
   const pagination = usePagination(dataByStatus(), 8);
@@ -160,6 +180,13 @@ const ProductManagementTable = () => {
     );
   };
 
+  useEffect(() => {
+    if(filteredProducts.length > 0) {
+      setProductsSearch(filteredProducts);
+    }else {
+      setProductsSearch(products);
+    }
+  }, [products]);
 
   const PRODUCTS_MANAGEMENT_COLUMN_DEFS = [
     {
@@ -290,10 +317,11 @@ const ProductManagementTable = () => {
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="flex flex-wrap gap-2 mb-4">
-        <span className="text-header">Sản phẩm:</span>
-        <div>
-          {PRODUCT_MANAGEMENT_OPTIONS.map((option, index) => (
+      <div className="flex flex-wrap gap-2 mb-4 w-full">
+        <div className="w-full">
+          <p>Xem sản phẩm: {pagination.showingOf()}</p>
+          <div className="w-full flex flex-row justify-between items-center"> 
+            <div>{PRODUCT_MANAGEMENT_OPTIONS.map((option, index) => (
             <FilterItem
               key={`filter-${index}`}
               text={option.label}
@@ -302,15 +330,28 @@ const ProductManagementTable = () => {
               active={category}
               onClick={setCategory}
             />
-          ))}
+            ))}
+          </div>
+          <button onClick={handleDeleteProducts} className="btn btn-danger text-white bg-rose-500 rounded-sm">
+              Xóa sản phẩm
+            </button>
+          </div>
         </div>
+        
       </div>
       <div className="flex flex-col-reverse gap-4 mt-4 mb-5 md:flex-row md:justify-between md:items-end md:mt-5 md:mb-6">
-        <p>Xem sản phẩm: {pagination.showingOf()}</p>
-        <button onClick={handleDeleteProducts} className="btn btn-danger">
-          Xóa sản phẩm
-        </button>
+        <div className="relative w-full max-w-md">
+          <input
+            type="text"
+            placeholder="Tìm kiếm sản phẩm..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="p-2 pl-10 border border-gray-300 rounded w-full"
+          />
+          <i className="icon-magnifying-glass-solid absolute left-3 top-1/2 transform -translate-y-1/2" />
+        </div>
       </div>
+
 
       <div className="flex flex-1 flex-col gap-[22px]">
         {width >= 768 ? (

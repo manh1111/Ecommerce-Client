@@ -156,6 +156,7 @@ const AppBar = () => {
                     aria-label="Notifications"
                   >
                     <i className="fas fa-shopping-cart" />
+                    {console.log("countCart", countCart)}
                     <span className="px-1 bg-blue-500 text-white rounded-full text-xs absolute right-[-8px] top-[-8px]">{countCart}</span>
                   </button>
                   {/* <span
