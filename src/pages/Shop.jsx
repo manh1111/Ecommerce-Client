@@ -1,10 +1,6 @@
 import Gallery from "@components/Gallery/Gallery";
-import ProductGallery from "@components/Gallery/ProductGallery";
 import CategoryList from "@widgets/Shop/CategoryList";
 import CategoryMenu from "@widgets/Shop/CategoryMenu";
-import ProductGrid from "@widgets/Shop/ProductGrid_1";
-import ProductGrid_2 from "@widgets/Shop/ProductGrid_2";
-import ProductGrid_3 from "@widgets/Shop/ProductGrid_3";
 import SellerOverview from "@widgets/Shop/SellerOverview";
 import TabMenu from "@widgets/Shop/TapMenu";
 import { useEffect, useState } from "react";

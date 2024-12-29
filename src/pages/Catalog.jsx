@@ -175,7 +175,7 @@ const Catalog = () => {
         style={{
           top: "30%",
           left: "30%",
-          maxWidth: "600px", // Optional: to limit the modal width
+          maxWidth: "600px"
         }}
       >
         <Form form={form} layout="vertical">

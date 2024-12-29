@@ -6,6 +6,7 @@ const ConfirmPayment = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  console.log("checkkkkkkk")
   // Lấy transactionId và status từ URL
   const params = new URLSearchParams(location.search);
   const transactionId = params.get("transactionId");

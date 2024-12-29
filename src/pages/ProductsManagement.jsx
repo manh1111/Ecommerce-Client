@@ -31,7 +31,6 @@ const ProductsManagement = () => {
             Xuất CSV <i className="icon-file-export-solid" />
           </CSVLink>
         </div>
-        <Search wrapperClass="lg:w-[326px]" placeholder="Tìm kiếm sản phẩm" />
       </div>
       <ProductManagementTable products={products} />
     </>

@@ -100,7 +100,7 @@ const App = () => {
                       path="/product-editor/:id"
                       element={<ProductEditor />}
                     />
-                    <Route path="/seller-profile" element={<SellerProfile />} />
+                    {/* <Route path="/seller-profile" element={<SellerProfile />} /> */}
                     <Route
                       path="/revenue-by-period"
                       element={<RevenueByPeriod />}

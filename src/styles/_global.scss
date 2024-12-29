@@ -125,7 +125,7 @@ label {
             padding: 0px 80px ;
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 200px);
+            height: calc(100vh - 110px);
             .widgets-grid {
                 display: grid;
                 gap: 20px;
@@ -205,4 +205,14 @@ a[href^="https://maps.google.com/maps"] {
 .ant-spin-container{
     display: flex;
     flex-direction: column;
+}
+
+.ant-table{
+    min-height: 600px;
+}
+
+.ant-modal-wrap{
+    display: flex; 
+    align-items: center;
+    justify-content: center;
 }

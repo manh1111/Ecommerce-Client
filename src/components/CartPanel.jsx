@@ -51,7 +51,7 @@ const ProductItem = ({
           {product?.product_price?.toLocaleString("vi-VN") + "₫"}
         </span>
       </div>
-      <div className="text-end w-1/6 font-semibold flex items-end pl-6">
+      <div className="text-end w-1/6 font-semibold flex items-center pl-6">
         <button
           className="bg-gray-200 px-2 py-1 rounded"
           onClick={() => setQuantity(quantity - 1)}

@@ -15,20 +15,20 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
   const orderStatuses = [
     "",
     "pending",
+    "waiting",
     "confirmed",
     "shipped",
     "completed",
-    "waiting",
     "cancelled",
   ];
 
   const statusTranslation = {
     pending: "Chờ xử lý",
     confirmed: "Đã xác nhận",
+    waiting: "Chờ thanh toán",
     shipped: "Đang vận chuyển",
     completed: "Hoàn thành",
     cancelled: "Đã hủy",
-    waiting: "Đã Thanh toán",
   };
 
   useEffect(() => {
@@ -55,6 +55,12 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
       setIsModalOpen(true);
     } else if (action === "notReceived") {
       console.log("Order not received", order);
+    } else if (action === "pay") {
+      console.log("Proceeding with payment for order", order);
+    } else if (action === "cancel") {
+      console.log("Canceling order", order);
+    } else if (action === "changePaymentMethod") {
+      console.log("Changing payment method for order", order);
     }
   };
 

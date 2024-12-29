@@ -26,8 +26,6 @@ const fetchProducts = async (category) => {
         status: product.isPublic ? "publish" : product.isDeleted  ? "deleted" : "drafted",
       };
     });
-
-    console.log("Products", Products);
   } catch (error) {
     console.error("Error fetching products data:", error);
   }

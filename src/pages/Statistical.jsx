@@ -1,198 +1,190 @@
-import React, { useState, useEffect } from "react";
-import { Button, Modal, Input, Form, Space } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import {
-  createCatalogs,
-  deleteCatalog,
-  getCatalogs,
-  updateCatalog,
-} from "@api/catalog ";
-import StyledTable from "@widgets/ProductManagementTable/styles";
-import PageHeader from "@layout/PageHeader";
+import CalendarSelector from "@components/CalendarSelector";
+import SalesProfitByCategory from "@widgets/SalesProfitByCategory";
+import PeriodSalesRevenue from "@widgets/PeriodSalesRevenue";
+import SellerProfileInfobox from "@components/SellerProfileInfobox";
+import Loader from "@components/Loader";
+import { useEffect, useState } from "react";
+import { getRevenueByShopOwn } from "../api/statistic";
+import { statisticCategoryForShop } from "../api/categorie";
+import { GetOwnShop } from "../api/shop";
 
-const Catalog = () => {
-  const [catalogs, setCatalogs] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [action, setAction] = useState("create");
-  const [selectedCatalog, setSelectedCatalog] = useState(null);
-  const [form] = Form.useForm();
+const Boxes = ({ wrapperClass, dataTotalRevenue, dataTotalOrders }) => {
+  return (
+    <div className={`grid w-full grid-cols-2 gap-5`}>
+      <SellerProfileInfobox value={dataTotalRevenue} label="Tổng lợi nhuận" />
+      <SellerProfileInfobox
+        icon="barcode"
+        color="green"
+        value={dataTotalOrders}
+        label="Tổng đơn hàng"
+        withCurrency={false}
+      />
+    </div>
+  );
+};
 
-  useEffect(() => {
-    fetchCatalogs();
-  }, []);
+const SellerProfile = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [shopData, setShopData] = useState(null);
+  const [dataTotalRevenue, setTotalRevenueData] = useState([]);
+  const [dataTotalOrders, setTotalOrdersData] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
+  const [statisticCategory, setStatisticCategory] = useState([]);
 
-  const fetchCatalogs = async () => {
-    setLoading(true);
+  const [selectedDates, setSelectedDates] = useState({
+    startDate: "2023-01-01",
+    endDate: "2024-12-31",
+  });
+
+  const calculateGroupBy = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffInDays = (end - start) / (1000 * 60 * 60 * 24);
+
+    return diffInDays > 30 ? "month" : "day";
+  };
+
+  const fetchData = async (startDate, endDate) => {
     try {
-      const data = await getCatalogs();
-      const transformedData = data.map((item) => ({
-        id: item._id,
-        catalogName: item.catalog_name,
-        catalogDescription: item.catalog_description,
-        shopId: item.shop_id,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-      }));
-      setCatalogs(transformedData);
+      setLoading(true);
+
+      const shopResponse = await GetOwnShop();
+      setShopData(shopResponse);
+
+      const groupBy = calculateGroupBy(startDate, endDate);
+      const revenueData = await getRevenueByShopOwn({
+        startDate,
+        endDate,
+        groupBy,
+      });
+      console.log("startDate", startDate, "endDate", endDate);
+      const categoryResponse = await statisticCategoryForShop();
+
+      setStatisticCategory(categoryResponse);
+      setRevenueData(revenueData.breakdown);
+      setTotalRevenueData(revenueData.totalRevenue);
+      setTotalOrdersData(revenueData.totalOrders);
     } catch (error) {
-      toast.error("Không thể tải danh sách danh mục");
+      setError("Failed to fetch data.");
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleModalOpen = (type, record = null) => {
-    setAction(type);
-    setSelectedCatalog(record);
-    form.resetFields();
-    if (record) {
-      form.setFieldsValue({
-        catalogName: record.catalogName,
-        catalogDescription: record.catalogDescription,
-      });
-    }
-    setShowModal(true);
+  useEffect(() => {
+    fetchData(selectedDates.startDate, selectedDates.endDate);
+  }, [selectedDates]);
+
+  const handleDateChange = ({ startDate, endDate }) => {
+    setSelectedDates({
+      startDate: endDate[0],
+      endDate: endDate[1],
+    });
   };
 
-  const handleModalClose = () => {
-    setShowModal(false);
-    setSelectedCatalog(null);
-  };
-
-  const handleSave = async () => {
-    try {
-      const values = await form.validateFields();
-      if (action === "create") {
-        await createCatalogs(values.catalogName, values.catalogDescription);
-        toast.success("Tạo danh mục thành công");
-      } else if (action === "edit" && selectedCatalog) {
-        await updateCatalog(selectedCatalog.id, {
-          catalogName: values.catalogName,
-          catalogDescription: values.catalogDescription,
-        });
-        toast.success("Cập nhật danh mục thành công");
-      }
-      fetchCatalogs();
-      handleModalClose();
-    } catch (error) {
-      toast.error(
-        `Không thể ${action === "create" ? "tạo" : "cập nhật"} danh mục`
-      );
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await deleteCatalog(id);
-      toast.success("Xóa danh mục thành công");
-      fetchCatalogs();
-    } catch (error) {
-      toast.error("Không thể xóa danh mục");
-    }
-  };
-
-  const columns = [
-    {
-      title: "Tên danh mục",
-      dataIndex: "catalogName",
-      key: "catalogName",
-    },
-    {
-      title: "Mô tả",
-      dataIndex: "catalogDescription",
-      key: "catalogDescription",
-    },
-    {
-      title: "Mã cửa hàng",
-      dataIndex: "shopId",
-      key: "shopId",
-    },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (text) => new Date(text).toLocaleString(),
-    },
-    {
-      title: "Hành động",
-      key: "actions",
-      render: (_, record) => (
-        <div className="flex flex-row items-center justify-between">
-          <Button
-            icon={<EditOutlined />}
-            onClick={() => handleModalOpen("edit", record)}
-            className="bg-blue-500 text-white hover:bg-blue-600"
-          >
-            Sửa
-          </Button>
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            onClick={() => handleDelete(record.id)}
-            className="bg-red-500 text-white hover:bg-red-600"
-          >
-            Xóa
-          </Button>
-        </div>
-      ),
-    },
-  ];
+  if (loading) return <Loader />;
+  if (error) return <div>{error}</div>;
 
   return (
-    <div >
-      <ToastContainer />
-      <PageHeader title="Quản lý danh mục" />
-      <Button
-        type="primary"
-        icon={<PlusOutlined />}
-        onClick={() => handleModalOpen("create")}
-        className="mb-4 bg-green-500 text-white hover:bg-green-600"
-      >
-        Thêm danh mục
-      </Button>
-      <StyledTable
-        dataSource={catalogs}
-        columns={columns}
-        rowKey="id"
-        loading={loading}
-        pagination={{
-          position: ["bottomCenter"],
-          style: { textAlign: "center" },
-        }}
-        className="bg-white rounded-lg shadow-md"
-      />
+    <>
+        <div className="bg-white shadow-xl rounded-lg overflow-hidden border border-gray-200 mb-5">
+        {/* Header */}
+        <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6">
+          <img
+            src={shopData?.logo}
+            alt={`${shopData?.shop_name} logo`}
+            className="absolute top-6 left-6 w-24 h-24 rounded-full border-4 border-white shadow-lg"
+          />
+          <div className="ml-32">
+            <h1 className="text-3xl font-bold">{shopData?.shop_name}</h1>
+            <p className="mt-1 text-sm italic">{shopData?.description}</p>
+            <p className="mt-2 text-sm">
+              <span className="font-medium">Trạng thái: </span>
+              <span
+                className={`px-2 py-1 rounded-full ${
+                  shopData?.status === "active"
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
+                }`}
+              >
+                {shopData?.status === "active" ? "Hoạt động" : "Ngừng hoạt động"}
+              </span>
+            </p>
+          </div>
+        </div>
 
-      <Modal
-        title={`${action === "create" ? "Thêm" : "Sửa"} danh mục`}
-        open={showModal}
-        onOk={handleSave}
-        onCancel={handleModalClose}
-        okText={action === "create" ? "Tạo mới" : "Lưu"}
-        className="rounded-lg"
-        style={{
-          top: "30%",
-          left: "30%",
-          maxWidth: "600px", // Optional: to limit the modal width
-        }}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            name="catalogName"
-            label="Tên danh mục"
-            rules={[{ required: true, message: "Vui lòng nhập tên danh mục" }]}
-          >
-            <Input placeholder="Nhập tên danh mục" />
-          </Form.Item>
-          <Form.Item name="catalogDescription" label="Mô tả">
-            <Input.TextArea placeholder="Nhập mô tả (không bắt buộc)" />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+        {/* Content */}
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Địa chỉ */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex justify-center items-center">
+              <i className="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase">Địa chỉ</h3>
+              <p className="text-base text-gray-800">{shopData?.address}</p>
+            </div>
+          </div>
+
+          {/* Số điện thoại */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-100 text-green-600 rounded-full flex justify-center items-center">
+              <i className="fas fa-phone-alt"></i>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase">Số điện thoại</h3>
+              <p className="text-base text-gray-800">{shopData?.phone_number}</p>
+            </div>
+          </div>
+
+          {/* Số sản phẩm */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full flex justify-center items-center">
+              <i className="fas fa-box"></i>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase">Số sản phẩm</h3>
+              <p className="text-base text-gray-800">{shopData.productsCount}</p>
+            </div>
+          </div>
+
+          {/* Số đánh giá */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex justify-center items-center">
+              <i className="fas fa-star"></i>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase">Số đánh giá</h3>
+              <p className="text-base text-gray-800">{shopData.reviewsCount}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 mb-5 md:mb-[26px] md:gap-5 lg:flex-row lg:justify-between">
+        <CalendarSelector
+          wrapperClass="md:max-w-[275px]"
+          id="sellerPeriodSelector"
+          onDateChange={handleDateChange}
+          selectedDates={selectedDates}
+        />
+      </div>
+      <div className="widgets-grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-6 mb-10">
+        <div className="widgets-grid grid-cols-1 md:col-span-3 lg:grid-cols-2 2xl:col-span-6">
+          <PeriodSalesRevenue revenueData={revenueData} />
+          <div className="widgets-grid grid-cols-1">
+            <Boxes
+              dataTotalRevenue={dataTotalRevenue}
+              dataTotalOrders={dataTotalOrders}
+            />
+            <SalesProfitByCategory statisticCategory={statisticCategory} />
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
-export default Catalog;
+export default SellerProfile;

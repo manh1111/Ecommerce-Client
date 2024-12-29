@@ -15,7 +15,6 @@ const LatestAcceptedReviews = ({ reviews }) => {
   console.log("reviews", reviews);
   const [sort, setSort] = useState(REVIEW_SORT_OPTIONS[0]);
 
-  // Sort the reviews based on the selected sort option
   const sortedData = [...reviews].sort((a, b) => {
     if (sort.value === "recent") {
       return new Date(b.createdAt) - new Date(a.createdAt);
@@ -30,13 +29,12 @@ const LatestAcceptedReviews = ({ reviews }) => {
     return 0;
   });
 
-  // Apply pagination to the sorted data
   const pagination = usePagination(sortedData, 4);
 
   return (
     <Spring className="flex flex-1 flex-col gap-[26px]">
       <div className="card !p-0 flex-1">
-        <div className="flex flex-col bg-blue-200 p-5 gap-2.5 md:flex-row md:justify-between md:items-center md:px-[26px] rounded-t-lg">
+        <div className="flex flex-col p-5 gap-2.5 md:flex-row md:px-[26px] rounded-t-lg justify-end">
           <Select
             value={sort}
             onChange={setSort}

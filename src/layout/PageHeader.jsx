@@ -29,13 +29,7 @@ const PageHeader = ({ title, changePageName = true }) => {
           className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
                  lg:items-center lg:gap-4"
         >
-          <h1 className="flex-1 text-center text-2xl lg:text-left lg:text-base">{title}</h1>
-          <button
-            className="group hidden w-fit xl:flex items-center gap-2 font-heading font-semibold
-                        text-header text-xs lg:text-sm"
-          >
-            <i className="icon icon-arrows-rotate-regular text-[16px] lg:text-[18px] group-hover:animate-spin-slow" />
-          </button>
+          <h1 className="page-header flex-1 text-center lg:text-start text-xl">{title}</h1>
         </div>
       )}
     </>

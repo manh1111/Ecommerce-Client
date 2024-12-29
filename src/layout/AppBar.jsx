@@ -65,19 +65,7 @@ const AppBar = () => {
   const isAuthenticated = checkAvailableLogin();
   const activeLocale = LOCALES.find((l) => l.value === locale);
   const { countCart } = useAppSelector(state => state.app)
-  const dispatch = useAppDispatch()
 
-
-  // const fetchCartData = async () => {
-  //   const config = checkToken("application/json");
-  //   const response = await axiosInstance.get(`${URL_API}cart`, config);
-  //   const cartLength = response.data.cart_products.length
-  //   dispatch(setCountCart(cartLength))
-  // };
-
-  // useEffect(() => {
-  //   fetchCartData();
-  // }, []);
 
   let dataInforUser;
   if (getCookie("user_login")) {
@@ -88,21 +76,6 @@ const AppBar = () => {
       console.error("Invalid token", error);
     }
   }
-
-  const roleNames = dataInforUser?.roleNames || [];
-
-  const isShop = () => {
-    const token = getCookie("user_login");
-    if (token) {
-      try {
-        const dataInforUser = jwtDecode(JSON.parse(token));
-        return dataInforUser?.roleNames?.includes("admin");
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    }
-    return false;
-  };
 
   const handleCartClick = () => {
     if (!isAuthenticated) {
@@ -183,6 +156,7 @@ const AppBar = () => {
                     aria-label="Notifications"
                   >
                     <i className="fas fa-shopping-cart" />
+                    {console.log("countCart", countCart)}
                     <span className="px-1 bg-blue-500 text-white rounded-full text-xs absolute right-[-8px] top-[-8px]">{countCart}</span>
                   </button>
                   {/* <span

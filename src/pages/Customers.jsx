@@ -8,11 +8,13 @@ const Customers = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  const [pageSize, setPageSize] = useState(10); // Số bản ghi mỗi trang
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const data = await getCustomer();
+        const data = await getCustomer(); // Giả sử API trả về tất cả khách hàng
         setCustomers(data);
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu khách hàng:", error);
@@ -37,7 +39,7 @@ const Customers = () => {
           alt="Avatar"
           className="rounded-full w-20 h-20 object-cover"
         />
-      ), // Cập nhật ảnh đại diện và tăng kích thước
+      ),
     },
     {
       title: "Tên người dùng",
@@ -68,7 +70,12 @@ const Customers = () => {
     },
   ];
 
-  // Render bảng
+  // Xử lý sự kiện phân trang
+  const handleTableChange = (pagination) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+  };
+
   return (
     <>
       <PageHeader title="Khách hàng" />
@@ -82,7 +89,14 @@ const Customers = () => {
             columns={columns}
             dataSource={customers}
             rowKey="_id"
-            pagination={false}
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              total: customers.length, // Tổng số bản ghi
+              showSizeChanger: true, // Hiển thị tùy chọn thay đổi số bản ghi
+              pageSizeOptions: ["5", "10", "20", "50"], // Các lựa chọn số bản ghi
+            }}
+            onChange={handleTableChange}
             className="rounded-lg shadow-lg ant-customers"
           />
         )}
