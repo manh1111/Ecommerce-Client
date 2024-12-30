@@ -8,36 +8,66 @@ import {
   updateAddress,
   deleteAddress,
 } from "@api/profile";
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Controller, useForm } from "react-hook-form";
+import { AddressFormModal } from "@components/AddressFormModal";
 
 const { Option } = Select;
 
+const addressSchema = z.object({
+  recipient_name: z.string().min(1),
+  recipient_phone: z.string().min(10),
+  specific_address: z.string({ required_error: 'Nhập địa chỉ' }).nonempty(),
+  isDefault: z.boolean().optional(),
+  province: z.number({ required_error: 'Chọn thành phố' }),
+  district: z.number({ required_error: 'Chọn quận/huyện' }),
+  ward: z.number({ required_error: 'Chọn phường/xã' }),
+})
+
+const defaultValues = {
+  recipient_name: "",
+  recipient_phone: "",
+  specific_address: "",
+  isDefault: false,
+  province: "",
+  district: "",
+  ward: ""
+}
+
 const Address = () => {
   const [addresses, setAddresses] = useState([]);
-  const [newAddress, setNewAddress] = useState({
-    recipient_name: "",
-    recipient_phone: "",
-    specific_address: "",
-    address: "",
-    isDefault: false,
-    province: "",
-    district: "",
-    ward: "",
-    provinceName: "",
-    districtName: "",
-    wardName: "",
-  });
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
+  const [loading, setLoading] = useState(false)
   const [locationData, setLocationData] = useState({
     provinces: [],
     districts: [],
     wards: [],
   });
 
+
   useEffect(() => {
+    setLoading(true)
     fetchAddresses();
-    fetchProvinces();
+    fetchProvinces().then(() => {
+      setLoading(false)
+    });
   }, []);
+
+
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm({
+    resolver: zodResolver(addressSchema),
+    defaultValues: defaultValues,
+    mode: "onSubmit"
+  })
+
 
   const fetchAddresses = async () => {
     try {
@@ -60,19 +90,6 @@ const Address = () => {
   };
 
   const handleProvinceChange = async (provinceCode) => {
-    const selectedProvince = locationData.provinces.find(
-      (province) => province.code === Number(provinceCode)
-    );
-    setNewAddress((prev) => ({
-      ...prev,
-      province: provinceCode,
-      district: "",
-      ward: "",
-      provinceName: selectedProvince ? selectedProvince.name : "",
-      districtName: "",
-      wardName: "",
-    }));
-
     try {
       const response = await axios.get(
         `https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`
@@ -89,17 +106,6 @@ const Address = () => {
   };
 
   const handleDistrictChange = async (districtCode) => {
-    const selectedDistrict = locationData.districts.find(
-      (district) => district.code === Number(districtCode)
-    );
-    setNewAddress((prev) => ({
-      ...prev,
-      district: districtCode,
-      ward: "",
-      districtName: selectedDistrict ? selectedDistrict.name : "",
-      wardName: "",
-    }));
-
     try {
       const response = await axios.get(
         `https://provinces.open-api.vn/api/d/${districtCode}?depth=2`
@@ -114,37 +120,34 @@ const Address = () => {
     }
   };
 
-  const handleWardChange = (wardCode) => {
+  // const handleWardChange = (wardCode) => {
+  //   const selectedWard = locationData.wards.find(
+  //     (ward) => ward.code === Number(wardCode)
+  //   );
+  //   setNewAddress((prev) => ({
+  //     ...prev,
+  //     ward: wardCode,
+  //     wardName: selectedWard ? selectedWard.name : "",
+  //   }));
+  // };
+
+  const handleAddOrUpdateAddress = async (data) => {
     const selectedWard = locationData.wards.find(
-      (ward) => ward.code === Number(wardCode)
+      (ward) => ward.code === data.ward
     );
-    setNewAddress((prev) => ({
-      ...prev,
-      ward: wardCode,
-      wardName: selectedWard ? selectedWard.name : "",
-    }));
-  };
+    const selectedDistrict = locationData.districts.find(
+      (district) => district.code === data.district
+    );
+    const selectedProvince = locationData.provinces.find(
+      (province) => province.code === data.province
+    );
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewAddress((prev) => ({ ...prev, [name]: value }));
-  };
 
-  const handleAddOrUpdateAddress = async () => {
-    if (
-      !newAddress.recipient_name ||
-      !newAddress.recipient_phone ||
-      !newAddress.specific_address ||
-      !newAddress.provinceName ||
-      !newAddress.districtName ||
-      !newAddress.wardName
-    ) {
-      toast.error("Vui lòng điền đầy đủ thông tin địa chỉ.");
-      return;
-    }
-
-    const fullAddress = `${newAddress.specific_address}, ${newAddress.wardName}, ${newAddress.districtName}, ${newAddress.provinceName}`;
-    const payload = { ...newAddress, address: fullAddress };
+    const fullAddress = `${data.specific_address}, ${selectedWard.name}, ${selectedDistrict.name}, ${selectedProvince.name}`;
+    const payload = {
+      ...data,
+      address: fullAddress
+    };
 
     try {
       if (editingAddress) {
@@ -154,7 +157,8 @@ const Address = () => {
         await addNewAddress(payload);
         toast.success("Địa chỉ mới đã được thêm thành công!");
       }
-      resetForm();
+      reset(defaultValues)
+      setIsAddingNewAddress(false)
       fetchAddresses();
     } catch (error) {
       console.error("Failed to save address:", error);
@@ -164,7 +168,6 @@ const Address = () => {
 
   const handleEditAddress = (address) => {
     setEditingAddress(address);
-    setNewAddress({ ...address });
     setIsAddingNewAddress(true);
   };
 
@@ -179,23 +182,7 @@ const Address = () => {
     }
   };
 
-  const resetForm = () => {
-    setNewAddress({
-      recipient_name: "",
-      recipient_phone: "",
-      specific_address: "",
-      address: "",
-      isDefault: false,
-      province: "",
-      district: "",
-      ward: "",
-      provinceName: "",
-      districtName: "",
-      wardName: "",
-    });
-    setIsAddingNewAddress(false);
-    setEditingAddress(null);
-  };
+
 
   return (
     <div className="w-full mx-auto p-6">
@@ -203,14 +190,17 @@ const Address = () => {
         <h2 className="text-2xl font-bold mb-4">Địa chỉ của tôi</h2>
         {!isAddingNewAddress && (
           <button
-            onClick={() => setIsAddingNewAddress(true)}
+            onClick={() => {
+              setIsAddingNewAddress(true)
+              reset(defaultValues)
+            }}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
             Thêm địa chỉ mới
           </button>
         )}
       </div>
-      {addresses.map((address) => (
+      {addresses && !loading && addresses.map((address) => (
         <div
           key={address._id}
           className="flex flex-row justify-between border-2 border-slate-200 bg-slate-50 mb-4 p-4 rounded-xl"
@@ -236,101 +226,21 @@ const Address = () => {
           </div>
         </div>
       ))}
-      <Modal
-        title={editingAddress ? "Cập nhật địa chỉ" : "Thêm địa chỉ mới"}
-        visible={isAddingNewAddress}
-        onCancel={resetForm}
-        footer={null}
-      >
-        <Form
-          layout="vertical"
-          onFinish={handleAddOrUpdateAddress}
-          initialValues={newAddress}
-        >
-          <Form.Item label="Tên người nhận" required>
-            <Input
-              name="recipient_name"
-              value={newAddress.recipient_name}
-              onChange={handleInputChange}
-            />
-          </Form.Item>
-          <Form.Item label="Số điện thoại" required>
-            <Input
-              name="recipient_phone"
-              value={newAddress.recipient_phone}
-              onChange={handleInputChange}
-            />
-          </Form.Item>
-          <Form.Item label="Địa chỉ cụ thể" required>
-            <Input
-              name="specific_address"
-              value={newAddress.specific_address}
-              onChange={handleInputChange}
-            />
-          </Form.Item>
-          <Form.Item label="Tỉnh/Thành phố" required>
-            <Select
-              value={newAddress.province}
-              onChange={handleProvinceChange}
-            >
-              {locationData.provinces.map((province) => (
-                <Option key={province.code} value={province.code}>
-                  {province.name}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label="Quận/Huyện" required>
-            <Select
-              value={newAddress.district}
-              onChange={handleDistrictChange}
-              disabled={!newAddress.province}
-            >
-              {locationData.districts.map((district) => (
-                <Option key={district.code} value={district.code}>
-                  {district.name}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label="Phường/Xã" required>
-            <Select
-              value={newAddress.ward}
-              onChange={handleWardChange}
-              disabled={!newAddress.district}
-            >
-              {locationData.wards.map((ward) => (
-                <Option key={ward.code} value={ward.code}>
-                  {ward.name}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Checkbox
-              checked={newAddress.isDefault}
-              onChange={(e) =>
-                setNewAddress((prev) => ({
-                  ...prev,
-                  isDefault: e.target.checked,
-                }))
-              }
-            >
-              Đặt làm địa chỉ mặc định
-            </Checkbox>
-          </Form.Item>
-          <Form.Item>
-            <div className="flex justify-end">
-              <Button onClick={resetForm} className="mr-2">
-                Hủy
-              </Button>
-              <Button type="primary" htmlType="submit">
-                Lưu
-              </Button>
-            </div>
-          </Form.Item>
-        </Form>
-      </Modal>
+      <AddressFormModal
+        control={control}
+        editingAddress={editingAddress}
+        isAddingNewAddress={isAddingNewAddress}
+        setIsAddingNewAddress={setIsAddingNewAddress}
+        setEditingAddress={setEditingAddress}
+        reset={reset}
+        errors={errors}
+        handleAddOrUpdateAddress={handleAddOrUpdateAddress}
+        locationData={locationData}
+        setLocationData={setLocationData}
+        handleDistrictChange={handleDistrictChange}
+        handleProvinceChange={handleProvinceChange}
+        handleSubmit={handleSubmit}
+      />
     </div>
   );
 };

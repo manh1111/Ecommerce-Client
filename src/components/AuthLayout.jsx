@@ -18,13 +18,14 @@ import {
   CHANGE_VALUE_TOKEN,
 } from "@redux/slice/auth/authSlice";
 import Loader from "@components/Loader";
+import { useAppDispatch } from "@redux/store";
 
 const AuthLayout = () => {
   const { width } = useWindowSize();
   const [googleLoginAttempt, setGoogleLoginAttempt] = useState(false);
   const [loading, setLoader] = useState(false);
   const expirationHours = 3;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const handleNavigation = (path) => {
