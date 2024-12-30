@@ -11,19 +11,13 @@ import { jwtDecode } from "jwt-decode";
 import { GetAllProduct } from '@api/product';
 import { getCategories } from '../api/categorie'; 
 import ProductCard from '@widgets/Shop/ProductCard';
-
-// Decode JWT Token to get User Info
-if (getCookie("user_login")) {
-  const token = JSON.parse(getCookie("user_login"));
-  try {
-    const dataInforUser = jwtDecode(token);
-  } catch (error) {}
-}
+import Loader from '@components/Loader'; // Import Loader
 
 const MainPage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]); // State for categories
   const [activeCategory, setActiveCategory] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const location = useLocation();
 
   // Extract the category ID from the URL
@@ -37,11 +31,15 @@ const MainPage = () => {
 
   // Fetch products and categories
   useEffect(() => {
-    const fetchProductData = async () => {
+    const fetchData = async () => {
+      setIsLoading(true); // Start loading
       try {
-        const product = await GetAllProduct();
-        const productData = product.data.productsWithCounts;
-        const mappedProducts = productData.map((product) => ({
+        const [productResponse, categoriesResponse] = await Promise.all([
+          GetAllProduct(),
+          getCategories()
+        ]);
+
+        const productData = productResponse.data.productsWithCounts.map((product) => ({
           imageSrc: product?.product_img[0],
           promotionOverlaySrc: product?.product_img[1],
           altText: product?.product_name,
@@ -51,26 +49,21 @@ const MainPage = () => {
           promotionText: "Flash Sale",
           rating: product?.avgRating,
           soldCount: product?.soldCount,
-          categoryId: product?.categoryId, // Assuming each product has a categoryId
+          categoryId: product?.categoryId,
         }));
-        setProducts(mappedProducts);
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      }
-    };
-    
-    const fetchCategoryData = async () => {
-      try {
-        const categoriesData = await getCategories();
-        const rootCategories = categoriesData.filter(category => category.level === 0);
+
+        const rootCategories = categoriesResponse.filter(category => category.level === 0);
+
+        setProducts(productData);
         setCategories(rootCategories);
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false); // Stop loading
       }
     };
 
-    fetchProductData();
-    fetchCategoryData();
+    fetchData();
   }, []);
 
   // Filter products by active category
@@ -81,82 +74,79 @@ const MainPage = () => {
   return (
     <>
       <PageHeader title="Discover" changePageName={false} />
-      
-      <div className="section flex flex-1 flex-col mb-5">
-        <Gallery />
-      </div>
-
-      <div className="section m-6">
-        <QuickLinks />
-      </div>
-      
-      <div className="section mb-4">
-        <a target="_self" href="#">
-          <img
-            className="banner-image"
-            src="https://cf.shopee.vn/file/vn-11134258-7r98o-lylx97r9vezl4e"
-            alt="Banner"
-          />
-        </a>
-      </div>
-      
-      <div className="section py-10 px-4 md:px-10 bg-gray-50">
-        <div className="card no-hover flex flex-col gap-5 !p-5 mb-8 md:mb-[30px] md:!p-[30px] lg:!py-5 lg:flex-row
-                        lg:items-center lg:gap-6 bg-white shadow-lg rounded-lg">
-          <h1 className="text-3xl font-semibold flex-1 text-center lg:text-left text-gray-800">Danh mục</h1>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-screen">
+          <Loader /> {/* Show Loader when loading */}
         </div>
-  
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category) => (
-            <div
-              key={category._id}
-              className={`category-card text-center bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300
-                          ${activeCategory === category._id ? 'bg-blue-100' : ''}`}
-            >
-              <a
-                href={`${WEB_DOMAIN}/search?category=${category._id}`}
-                className="block"
-              >
-                <img
-                  src={category.category_img}
-                  alt={category.category_name}
-                  className="w-32 h-32 object-cover rounded-full mb-3 transition-transform transform hover:scale-105 mx-auto"
-                />
-                <p className="font-semibold text-lg text-gray-700">{category.category_name}</p>
-              </a>
+      ) : (
+        <>
+          <div className="section flex flex-1 flex-col mb-5">
+            <Gallery />
+          </div>
+
+          <div className="section m-6">
+            <QuickLinks />
+          </div>
+          
+          <div className="section mb-4">
+            <a target="_self" href="#">
+              <img
+                className="banner-image"
+                src="https://cf.shopee.vn/file/vn-11134258-7r98o-lylx97r9vezl4e"
+                alt="Banner"
+              />
+            </a>
+          </div>
+          
+          <div className="section py-10 bg-gray-50">
+            <div className="card no-hover flex flex-col gap-5 !p-5 mb-8 md:mb-[30px] md:!p-[30px] lg:!py-5 lg:flex-row
+                            lg:items-center lg:gap-6 bg-white shadow-lg rounded-lg">
+              <h1 className="text-3xl font-semibold flex-1 text-center lg:text-left text-gray-800">Danh mục</h1>
             </div>
-          ))}
-        </div>
-      </div>
+      
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {categories.map((category) => (
+                <div
+                  key={category._id}
+                  className={`category-card text-center bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300
+                              ${activeCategory === category._id ? 'bg-blue-100' : ''}`}
+                >
+                  <a
+                    href={`${WEB_DOMAIN}/search?category=${category._id}`}
+                    className="block"
+                  >
+                    <img
+                      src={category.category_img}
+                      alt={category.category_name}
+                      className="w-32 h-32 object-cover rounded-full mb-3 transition-transform transform hover:scale-105 mx-auto"
+                    />
+                    <p className="font-semibold text-lg text-gray-700">{category.category_name}</p>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
 
-      <div className="section">
-        <div
-          className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
-                   lg:items-center lg:gap-4"
-        >
-          <h1 className="text-3xl flex-1 text-center lg:text-left">Cửa hàng</h1>
-        </div>
-        <SellerProfilesGrid numberOfSellers={6} fullGrid={false} />
-      </div>
+          <div className="section">
+            <div
+              className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
+                       lg:items-center lg:gap-4"
+            >
+              <h1 className="text-3xl flex-1 text-center lg:text-left">Cửa hàng</h1>
+            </div>
+            <SellerProfilesGrid numberOfSellers={6} fullGrid={false} />
+          </div>
 
-      <div className="section">
-        <div
-          className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
-                   lg:items-center lg:gap-4"
-        >
-          <h1 className="text-3xl flex-1 text-center lg:text-left">Ngành hàng</h1>
-        </div>
-        <TopProducts hasTitle={false} />
-      </div>
-
-      <div className="my-5 p-6 bg-gray-100 rounded-lg">
-        <h2 className="text-xl font-bold mb-4">Tất cả sản phẩm</h2>
-        <div className="grid grid-cols-6 gap-5">
-          {filteredProducts.map((product, index) => (
-            <ProductCard key={index} product={product} />
-          ))}
-        </div>
-      </div>
+          <div className="my-5 p-6 bg-gray-100 rounded-lg">
+            <h2 className="text-xl font-bold mb-4">Tất cả sản phẩm</h2>
+            <div className="grid grid-cols-6 gap-5">
+              {filteredProducts.map((product, index) => (
+                <ProductCard key={index} product={product} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

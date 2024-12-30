@@ -31,6 +31,12 @@ const OrdersTable = ({ initialOrders = [] }) => {
     };
   }, [isReviewModalOpen]);
 
+  const comment = [
+    "Sản phẩm rất tốt",
+    "Chất lượng tuyệt vời", 
+    "Giao hàng nhanh chóng",
+    "Đóng gói cẩn thận", 
+    "Hài lòng với sản phẩm"]
   const handleCancelOrder = async (orderId) => {
     const updatedOrders = orders.filter((order) => order._id !== orderId);
     setOrders(updatedOrders);
@@ -155,6 +161,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
             key={order._id}
             className="border-b py-4 px-6 bg-white rounded-lg shadow-md"
           >
+            {console.log("order.order_shipping_address", order)}
             <div className="flex justify-between items-start">
               <div className="w-full">
                 <h3 className="text-lg font-semibold text-gray-800">
@@ -267,48 +274,68 @@ const OrdersTable = ({ initialOrders = [] }) => {
         ))
       )}
 
-      {/* Review Modal */}
       {isReviewModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
           <div
             ref={modalRef}
-            className="bg-white p-6 rounded-lg shadow-lg w-96"
+            className="bg-white p-6 rounded-lg shadow-lg w-[48rem]" 
           >
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Đánh giá sản phẩm
             </h3>
 
+            {/* Star Rating */}
             <div className="mb-4">
-              <label className="block">Chọn đánh giá</label>
-              <select
-                value={
-                  reviewData[selectedOrder._id]?.[selectedProduct._id]
-                    ?.rating || 1
-                }
-                onChange={(e) => handleReviewChange("rating", e.target.value)}
-                className="mt-2 w-full border-2 border-gray-300 p-2 rounded-md"
-              >
+              <div className="flex items-center space-x-2 mt-2">
                 {[1, 2, 3, 4, 5].map((rating) => (
-                  <option key={rating} value={rating}>
-                    {rating} sao
-                  </option>
+                  <span
+                    key={rating}
+                    className={`cursor-pointer text-2xl ${
+                      rating <= (reviewData[selectedOrder._id]?.[selectedProduct._id]?.rating || 0)
+                        ? "text-amber-500"
+                        : "text-gray-300"
+                    }`}
+                    onClick={() => handleReviewChange("rating", rating)}
+                  >
+                    ★
+                  </span>
                 ))}
-              </select>
+              </div>
             </div>
 
+            {/* Comment Section */}
             <div className="mb-4">
+              {/* Suggestion Buttons */}
+              <div className="flex flex-wrap my-4 gap-2">
+                {["Sản phẩm rất tốt", "Chất lượng tuyệt vời", "Giao hàng nhanh chóng", "Đóng gói cẩn thận", "Hài lòng với sản phẩm"].map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() =>
+                      handleReviewChange(
+                        "comment",
+                        (reviewData[selectedOrder._id]?.[selectedProduct._id]?.comment || "") + " " + suggestion
+                      )
+                    }
+                    className="border-2 border-gray-400 bg-gray-200 px-3 py-2 rounded-full text-sm hover:bg-gray-300"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+
               <label className="block">Nhận xét</label>
               <textarea
                 rows={4}
                 value={
-                  reviewData[selectedOrder._id]?.[selectedProduct._id]
-                    ?.comment || ""
+                  reviewData[selectedOrder._id]?.[selectedProduct._id]?.comment || ""
                 }
                 onChange={(e) => handleReviewChange("comment", e.target.value)}
                 className="mt-2 w-full border-2 border-gray-300 p-2 rounded-md"
               />
             </div>
 
+            {/* Action Buttons */}
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => setIsReviewModalOpen(false)}
@@ -318,7 +345,16 @@ const OrdersTable = ({ initialOrders = [] }) => {
               </button>
               <button
                 onClick={handleSubmitReview}
-                className="text-white bg-blue-600 px-4 py-2 rounded-md"
+                disabled={
+                  !(reviewData[selectedOrder._id]?.[selectedProduct._id]?.rating &&
+                    reviewData[selectedOrder._id]?.[selectedProduct._id]?.comment)
+                }
+                className={`px-4 py-2 rounded-md ${
+                  reviewData[selectedOrder._id]?.[selectedProduct._id]?.rating &&
+                  reviewData[selectedOrder._id]?.[selectedProduct._id]?.comment
+                    ? "text-white bg-blue-600"
+                    : "text-white bg-blue-300 cursor-not-allowed"
+                }`}
               >
                 Gửi đánh giá
               </button>

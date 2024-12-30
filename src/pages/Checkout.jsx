@@ -41,8 +41,9 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
         setAddresses(addressesData);
 
         const defaultAddress = addressesData.find((addr) => addr.isDefault);
+        console.log("defaultAddress", defaultAddress);
         if (defaultAddress) {
-          setAddress(defaultAddress._id);
+          setAddress(defaultAddress.address);
         }
 
         console.log("getAllAddresses", response);

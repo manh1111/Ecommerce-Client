@@ -1,10 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const CategoryMenu = ({ categories = [] }) => {
+const CategoryMenu = ({ categories = [], onCategorySelect }) => {
   const [activeCategory, setActiveCategory] = useState(null);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      setActiveCategory(categories[0].id);
+      if (onCategorySelect) {
+        onCategorySelect(categories[0].id);
+      }
+    }
+  }, [categories, onCategorySelect]);
 
   const truncateText = (text, maxLength) => {
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
+  const handleCategoryClick = (categoryId) => {
+    console.log("categoryIdcategoryIdcategoryId", categoryId)
+    setActiveCategory(categoryId);
+    if (onCategorySelect) {
+      onCategorySelect(categoryId);
+    }
   };
 
   return (
@@ -34,7 +51,7 @@ const CategoryMenu = ({ categories = [] }) => {
                 ? "text-red font-bold"
                 : "text-black"
             }`}
-            onClick={() => setActiveCategory(category.id)}
+            onClick={() => handleCategoryClick(category.id)}
           >
             {activeCategory === category.id && (
               <svg viewBox="0 0 4 7" className="w-2 h-3 mr-2 fill-red ">

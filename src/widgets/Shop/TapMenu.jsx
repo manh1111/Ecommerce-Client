@@ -4,11 +4,6 @@ import ProductCard from "./ProductCard"; // Ensure ProductCard is imported
 const TabMenu = ({ categories }) => {
   const [activeTab, setActiveTab] = useState(categories?.[0]?.id || null);
 
-  useEffect(() => {
-    if (categories?.length > 0) {
-      setActiveTab(categories[0].id);
-    }
-  }, [categories]);
 
   const handleTabClick = (categoryId) => {
     setActiveTab(categoryId);
@@ -39,7 +34,7 @@ const TabMenu = ({ categories }) => {
                 key={category.id}
                 className="opacity-100 transition-opacity duration-300 p-4"
               >
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                   {category.products.map((product) => (
                     <ProductCard
                       key={product.id}

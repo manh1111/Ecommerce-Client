@@ -3,10 +3,10 @@ import ProductCard from "./ProductCard"; // Ensure this import is correct
 
 const CategoryList = ({ categories = [] }) => {
   const [priceSortOption, setPriceSortOption] = useState("Giá");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
+  console.log("categories", categories);
   // Handle sorting by price
   const sortedCategories = [...categories].sort((a, b) => {
     const priceA = parseInt(a.price.replace(/\D/g, "")); // Extract price as number
