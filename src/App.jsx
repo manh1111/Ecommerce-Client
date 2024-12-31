@@ -106,7 +106,6 @@ const App = () => {
                       element={<RevenueByPeriod />}
                     />
                     <Route path="/top-products" element={<TopProducts />} />
-                    <Route path="/products-grid" element={<ProductsGrid />} />
                     <Route path="/product-creater" element={<CreaterProduct />} />
                     <Route path="/connected-apps" element={<ConnectedApps />} />
                     <Route path="/Checkout" element={<Checkout />} />
