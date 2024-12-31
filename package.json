@@ -17,7 +17,7 @@
     "@reduxjs/toolkit": "^2.2.5",
     "@rollup/plugin-babel": "^6.0.3",
     "@vitejs/plugin-react": "^4.0.3",
-    "antd": "^5.5.0",
+    "antd": "^5.22.7",
     "axios": "^1.7.2",
     "babel-plugin-styled-components": "^2.1.4",
     "classnames": "^2.3.2",

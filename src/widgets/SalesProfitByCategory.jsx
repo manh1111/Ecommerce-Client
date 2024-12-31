@@ -37,8 +37,8 @@ const SalesProfitByCategory = ({ statisticCategory }) => {
 
   // Tính toán đánh giá trung bình từ các đánh giá
   const averageRating = review.length > 0
-    ? review.reduce((sum, r) => sum + r.rating, 0) / review.length
-    : 0;
+  ? Math.round((review.reduce((sum, r) => sum + r.rating, 0) / review.length) * 10) / 10
+  : 0;
 
   useEffect(() => {
     const getReviews = async () => {

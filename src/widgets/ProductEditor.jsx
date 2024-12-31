@@ -7,12 +7,16 @@ import { createProduct, updateProduct, getProductById } from "@api/product"; // 
 import classNames from "classnames";
 import { useParams } from "react-router-dom";
 import { getCatalogByShopToken } from "@api/catalog ";
+import React from "react";
+import { TreeSelect } from "antd";
 
 const ProductEditor = () => {
   const { id } = useParams();
   const [categories, setCategories] = useState([]);
   const [catalogs, setCatalogs] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [activeCategory, setActiveCategory] = React.useState(null);
+
   const {
     register,
     handleSubmit,
@@ -82,7 +86,6 @@ const ProductEditor = () => {
     fetchProductData();
   }, [id, setValue]);
 
-  console.log("productData.productName", getValues("image"))
   const handleSubmitProduct = async (data, isDraft) => {
     console.log('data img1', data.image);
    const files = Array.isArray(data.image)
@@ -107,7 +110,6 @@ const ProductEditor = () => {
         isPublic: !isDraft,
       });
   
-      console.log("product", response);
       if (isDraft) {
         toast.info("Sản phẩm đã được lưu dưới dạng bản nháp!");
       } else {
@@ -125,7 +127,20 @@ const ProductEditor = () => {
       );
     }
   };
+
+  const handleOptionsTreeData = (categories) => {
+    const mapCategoryToTreeData = (category) => {
+      const hasChildren = category.children && category.children.length > 0;
+      return {
+        title: category.category_name,
+        value: category._id,
+        children: category.children?.map(mapCategoryToTreeData) || [],
+        selectable: !hasChildren
+      };
+    };
   
+    return categories.map(mapCategoryToTreeData);
+  }
 
   const handleImageChange = (files) => {
     const fileArray = Array.from(files).map((file) => ({
@@ -160,7 +175,7 @@ const ProductEditor = () => {
                 Tên sản phẩm
               </label>
               <input
-                className={classNames("field-input", {
+                className={classNames("field-input py-2", {
                   "field-input--error": errors.productName,
                 })}
                 id="productName"
@@ -217,73 +232,28 @@ const ProductEditor = () => {
           </div>
 
           <div className="w-1/2 flex flex-col gap-4">
-          <div className="field-wrapper">
+          <div className="field-wrapper mb-4">
+            <label className="field-label" htmlFor="catalog_id">
+              Ngành hàng
+            </label>
             <Controller
-              name="category_id"
+              name="catalog_id"
               control={control}
+              rules={{ required: "Vui lòng chọn danh mục" }}
               render={({ field }) => (
-                <div className="field-wrapper">
-                  <label className="field-label" htmlFor="category">
-                    Ngành hàng
-                  </label>
-                  <select
-                    className={classNames("field-input", {
-                      "field-input--error": errors.category_id,
-                    })}
-                    id="category"
-                    {...field}
-                    disabled={categories.length === 0} 
-                    onChange={(e) => {
-                      const selectedCategory = categories.find(
-                        (category) => category._id === e.target.value
-                      );
-                      if (selectedCategory) {
-                        if (selectedCategory.children?.length > 0) {
-                          setCategories((prevCategories) => {
-                            const updatedCategories = prevCategories.map((cat) =>
-                              cat._id === selectedCategory._id
-                                ? { ...cat, children: selectedCategory.children }
-                                : cat
-                            );
-                            return updatedCategories;
-                          });
-                          field.onChange(""); 
-                        } else {
-                          field.onChange(e.target.value); 
-                        }
-                      }
-                    }}
-                  >
-                    <option value="">Chọn ngành hàng</option>
-                    {categories.length > 0 ? (
-                      categories.flatMap((category) => [
-                        <option
-                          key={category._id}
-                          value={category._id}
-                          className={category.children?.length > 0 ? "font-bold" : "font-normal"}
-                        >
-                          {category.category_name}
-                        </option>,
-                        ...(category.children || []).map((child) => (
-                          <option key={child._id} value={child._id} className="pl-4">
-                            {`--${child.category_name}`}
-                          </option>
-                        )),
-                      ])
-                    ) : (
-                      <option value="" disabled>
-                        Đang tải danh mục...
-                      </option>
-                    )}
-                  </select>
-                  {errors.category_id && (
-                    <span className="error-message">Vui lòng chọn ngành hàng</span>
-                  )}
-                </div>
+                <TreeSelect 
+                  placeholder='Chọn ngành hàng'
+                  treeData={handleOptionsTreeData(categories)}
+                  style={{ height: 44 }}
+                  onChange={(value)=>    setValue("category_id", value)}
+                />
               )}
             />
+            {errors.catalog_id && (
+              <span className="error-message">Vui lòng chọn danh mục</span>
+            )}
+          </div>
 
-            </div>
 
             <div>
               <label className="field-label mb-2.5">Hình ảnh sản phẩm</label>
@@ -309,7 +279,7 @@ const ProductEditor = () => {
                     />
 
                     <div className="image-preview-container grid grid-cols-2 gap-4 mt-4 min-h-20">
-                      {imagePreviews.map((image, index) => (
+                      {imagePreviews?.map((image, index) => (
                         <div
                           key={index}
                           className="relative w-full h-48 border border-slate-300 rounded-lg overflow-hidden flex justify-center items-center"
