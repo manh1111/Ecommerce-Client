@@ -1,0 +1,1 @@
+import{j as o}from"./mui-fa37789e.js";const i=({onClick:n})=>o.jsx("button",{className:"info-btn flex",onClick:n,"aria-label":"More info",children:o.jsx("i",{className:"icon-circle-info-solid"})});export{i as I};
