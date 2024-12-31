@@ -1,12 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useWindowSize } from "react-use";
+import { WEB_DOMAIN } from "../config/config";
 
 const ConfirmPayment = () => {
   const { width } = useWindowSize();
   const navigate = useNavigate();
   const location = useLocation();
 
-  console.log("checkkkkkkk")
   // Lấy transactionId và status từ URL
   const params = new URLSearchParams(location.search);
   const transactionId = params.get("transactionId");
@@ -14,7 +14,11 @@ const ConfirmPayment = () => {
 
   // Xác định xem trạng thái là thành công hay thất bại
   const isSuccess = status === "success";
-  const isFailure = status === "failure";
+  const isFailure = status === "failed";
+
+  const handleBackToStore = () => {
+    window.location.href = WEB_DOMAIN; // Redirect to store
+  };
 
   return (
     <div className="flex items-center justify-center h-screen bg-gradient-to-r">
@@ -71,6 +75,12 @@ const ConfirmPayment = () => {
             </p>
           </div>
         )}
+        <button
+          className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-lg font-semibold transition duration-300"
+          onClick={handleBackToStore}
+        >
+          Quay lại cửa hàng
+        </button>
       </div>
     </div>
   );

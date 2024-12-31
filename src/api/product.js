@@ -142,8 +142,9 @@ export const createProduct = async ({
     formData.append("category_id", category_id);
     formData.append("catalog_id", catalog_id);
 
-    // Append each file to formData
-    files.forEach((file) => formData.append("files", file));
+    files.forEach((file) => {
+      formData.append("files", file);
+    })
 
     // Append publication status
     if (isDraft) formData.append("isDraft", "true");
@@ -183,13 +184,14 @@ export const updateProduct = async ({
     formData.append("catalog_id", catalog_id);
 
     // Append each file to formData if there are any files
-    files.forEach((file) => formData.append("product_img", file));
-
+    files.forEach((file) => {
+      formData.append("files", file);
+    })
     const config = checkToken("multipart/form-data");
     const response = await axiosInstance.put(
-      `${URL_API}product/${id}`,
-      formData,
-      config
+      // `${URL_API}product/${id}`,
+      // formData,
+      // config
     );
 
     return response.data;

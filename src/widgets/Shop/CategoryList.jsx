@@ -3,10 +3,10 @@ import ProductCard from "./ProductCard"; // Ensure this import is correct
 
 const CategoryList = ({ categories = [] }) => {
   const [priceSortOption, setPriceSortOption] = useState("Giá");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
+  console.log("categories", categories);
   // Handle sorting by price
   const sortedCategories = [...categories].sort((a, b) => {
     const priceA = parseInt(a.price.replace(/\D/g, "")); // Extract price as number
@@ -84,8 +84,26 @@ const CategoryList = ({ categories = [] }) => {
       <section className="mt-4">
         {paginatedCategories.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {paginatedCategories.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {paginatedCategories.map((category) => (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              {category.products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={{
+                    id: product.id,
+                    imageSrc: product.imageSrc,
+                    altText: product.altText,
+                    price: product.price,
+                    discount: product.discount,
+                    rating: product.rating,
+                    soldCount: product.soldCount,
+                    promotionText: product.promotionText,
+                    voucherText: product.voucherText,
+                    promotionOverlaySrc: product.promotionOverlaySrc,
+                  }}
+                />
+              ))}
+            </div>
             ))}
           </div>
         ) : (

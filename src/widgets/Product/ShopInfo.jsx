@@ -35,7 +35,7 @@ const ShopInfo = ({ shopData }) => {
         {shopData?.onlineStatus && (
           <div
             className={`text-sm mt-1 ${
-              shopData.onlineStatus === "Online"
+              shopData.onlineStatus === "Online" || shopData.onlineStatus === "online" 
                 ? "text-green-500"
                 : "text-gray-500"
             }`}
