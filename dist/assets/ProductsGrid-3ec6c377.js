@@ -1,0 +1,1 @@
+import{j as r}from"./mui-fa37789e.js";import{P as t}from"./index-72516d3d.js";import"./antd-6c5b8b22.js";const i=()=>r.jsx(r.Fragment,{children:r.jsx(t,{title:"Products Grid"})});export{i as default};
