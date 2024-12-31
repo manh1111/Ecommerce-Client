@@ -6,14 +6,13 @@ const ProductCard = ({ product }) => {
   return (
     <div
       onClick={() => navigate(`/product/${product.id}`)}
-      className="flex flex-col bg-white cursor-pointer h-full border-2 border-gray-200 rounded-lg hover:border-blue-500"
+      className="card flex flex-col bg-white cursor-pointer h-full border-2 border-gray-200 rounded-lg hover:border-blue-500"
     >
-      <div className="relative w-full pt-[100%]">
-        <img
+      <div className="relative w-full">
+       {product?.imageSrc ?  <img
           src={product?.imageSrc}
-          className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
-        />
-        <div className="absolute bottom-0 left-0 w-full h-full rounded-t-lg"></div>
+          className=" text-btn absolute inset-0 w-full h-full object-cover rounded-t-lg"
+        /> : <div   className="text-btn absolute inset-0 w-44 h-44 object-cover rounded-t-lg"></div>}
         <div className="absolute bottom-0 right-0 flex pr-1 pb-1">
           <div
             className="w-5 h-5"
@@ -33,9 +32,6 @@ const ProductCard = ({ product }) => {
             <div className="flex-shrink min-w-0 mr-1 truncate text-xl flex items-center">
               {product?.price}₫
             </div>
-            {/* <div className="bg-rose-100 font-medium text-[#EE4D2D] p-1 ml-5">
-              - {product?.discount}
-            </div> */}
           </div>
         </div>
         <div className="flex-1 flex flex-col justify-between">

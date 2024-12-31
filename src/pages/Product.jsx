@@ -70,10 +70,11 @@ const Product = () => {
   };
 
   return (
-    <div className="bg-white">
+    <div className="card bg-white">
       <ProductInfo product={product} shopData={sellerData} />
-      <ShopInfo shopData={sellerData} />
-
+      <div className=" mt-3">
+        <ShopInfo shopData={sellerData} />
+      </div>
       <div className="reviews py-8 px-4 bg-gray-100 rounded-lg shadow-lg my-4">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           {`ĐÁNH GIÁ SẢN PHẨM (${reviews?.length})`}
@@ -84,7 +85,7 @@ const Product = () => {
             {reviews.map((review) => (
               <div
                 key={review._id}
-                className="review-item p-6 bg-white rounded-lg shadow-md hover:shadow-lg hover:bg-blue-100 transition-shadow duration-300"
+                className="card review-item p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
               >
                 <div className="review-header flex items-center space-x-4 mb-4">
                   <img

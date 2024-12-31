@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import PageHeader from '@layout/PageHeader';
-import TopProducts from './TopProducts';
 import SellerProfilesGrid from '@widgets/SellerProfilesGrid';
 import Gallery from '@components/Gallery/Gallery';
 import QuickLinks from '@components/QuickLink';
 import { WEB_DOMAIN } from "../config/config";
-import { getCookie } from '@utils/cookie';
-import { jwtDecode } from "jwt-decode";
-import { GetAllProduct } from '@api/product';
+import { GetAllProductForUser } from '@api/product';
 import { getCategories } from '../api/categorie'; 
 import ProductCard from '@widgets/Shop/ProductCard';
 import Loader from '@components/Loader'; // Import Loader
@@ -35,7 +32,7 @@ const MainPage = () => {
       setIsLoading(true); // Start loading
       try {
         const [productResponse, categoriesResponse] = await Promise.all([
-          GetAllProduct(),
+          GetAllProductForUser(),
           getCategories()
         ]);
 
@@ -105,11 +102,14 @@ const MainPage = () => {
             </div>
       
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {console.log('categories', categories)}
               {categories.map((category) => (
                 <div
                   key={category._id}
-                  className={`category-card text-center bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300
-                              ${activeCategory === category._id ? 'bg-blue-100' : ''}`}
+                  className={`category-card text-center hover:shadow-xl transition-all duration-300
+                             card no-hover gap-5 !p-5 mb-8 md:mb-[30px] md:!p-[30px] lg:!py-5
+                            bg-white shadow-lg rounded-lg
+                    ${activeCategory === category._id ? 'bg-blue-100' : ''}`}
                 >
                   <a
                     href={`${WEB_DOMAIN}/search?category=${category._id}`}
@@ -137,8 +137,13 @@ const MainPage = () => {
             <SellerProfilesGrid numberOfSellers={6} fullGrid={false} />
           </div>
 
-          <div className="my-5 p-6 bg-gray-100 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Tất cả sản phẩm</h2>
+          <div className="bg-gray-100 rounded-lg">
+          <div
+              className="card no-hover flex flex-col gap-5 !p-5 mb-5 md:mb-[26px] md:!p-[26px] lg:!py-5 lg:flex-row
+                       lg:items-center lg:gap-4"
+            >
+              <h1 className="text-3xl flex-1 text-center lg:text-left">Tất cả sản phẩm</h1>
+            </div>
             <div className="grid grid-cols-6 gap-5">
               {filteredProducts.map((product, index) => (
                 <ProductCard key={index} product={product} />
