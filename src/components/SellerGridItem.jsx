@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 const SellerGridItem = ({ seller, index, id }) => {
   const navigate = useNavigate();
   const handleLogoClick = () => navigate(`/shop/${id}`);
-  console.log("seller", seller);
 
   return (
     <Spring
@@ -31,7 +30,8 @@ const SellerGridItem = ({ seller, index, id }) => {
       </div>
 
       {/* Shop Info */}
-      <div className="w-full p-4 text-center">
+     <div className="card-custom ">
+      <div className="w-full p-4 text-center ">
         {/* Shop Name */}
         <h2 className="text-lg font-semibold text-gray-800 mb-2">
           {seller?.shop_name}
@@ -52,7 +52,6 @@ const SellerGridItem = ({ seller, index, id }) => {
         {/* Description */}
         <p className="text-sm text-gray-500 mt-2">{seller?.description}</p>
       </div>
-
       {/* Action Button */}
       <div className="w-full bg-gray-50 p-3 border-t border-gray-200 flex justify-center">
         <button
@@ -62,6 +61,7 @@ const SellerGridItem = ({ seller, index, id }) => {
           Xem cửa hàng
         </button>
       </div>
+     </div>
     </Spring>
   );
 };

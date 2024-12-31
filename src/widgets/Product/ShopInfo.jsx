@@ -3,7 +3,7 @@ import React from "react";
 const ShopInfo = ({ shopData }) => {
   console.log("shopData", shopData);
   return (
-    <div className="flex items-center p-6 border border-gray-200 shadow-md rounded-lg bg-white w-full hover:shadow-lg transition-shadow duration-300">
+    <div className="card flex items-center p-6 border border-gray-200 shadow-md rounded-lg bg-white w-full hover:shadow-lg transition-shadow duration-300">
       {/* Shop Thumbnail and Badge */}
       <a
         className="flex flex-col items-center flex-[1] group"

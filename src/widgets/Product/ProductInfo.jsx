@@ -77,7 +77,7 @@ const ProductInfo = ({ product, shopData }) => {
   }
 
   return (
-    <div className="w-full mt-12 px-4 xl:px-8">
+    <div className=" card w-full mt-12 px-4 xl:px-8">
       <div className="flex flex-row xl:flex-row gap-8">
         {/* Product Images */}
         <div className="xl:w-1/2 w-full max-h-80 flex flex-col items-center justify-center gap-8 relative">
@@ -85,7 +85,7 @@ const ProductInfo = ({ product, shopData }) => {
             {/* Left Arrow for Previous Image */}
             <button
               onClick={handlePrevImage}
-              className="z-30 absolute left-0 top-1/2 transform -translate-y-1/2 hover:bg-slate-100 p-2 rounded-full bg-slate-200"
+              className="text z-30 absolute left-0 top-1/2 transform -translate-y-1/2 hover:bg-slate-100 p-2 rounded-full bg-slate-200"
             >
               <LeftOutlined style={{ fontSize: "24px" }} />
             </button>
@@ -110,7 +110,7 @@ const ProductInfo = ({ product, shopData }) => {
             {/* Right Arrow for Next Image */}
             <button
               onClick={handleNextImage}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 hover:bg-slate-100 p-2 rounded-full bg-slate-200"
+              className="text absolute right-0 top-1/2 transform -translate-y-1/2 hover:bg-slate-100 p-2 rounded-full bg-slate-200"
             >
               <RightOutlined style={{ fontSize: "24px" }} />
             </button>
