@@ -16,7 +16,7 @@ export const signInWithGoogle = async () => {
 export const signIn = async (email, password) => {
   try {
     console.log("VITE_URL_API", URL_API);
-    const result = await axiosInstance.post(`${URL_API}/signin`, {
+    const result = await axiosInstance.post(`${URL_API}signin`, {
       email: email,
       password: password,
     });
