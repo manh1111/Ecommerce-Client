@@ -65,7 +65,7 @@
   },
   "scripts": {
     "start": "cross-env NODE_ENV=pro vite --host",
-    "build": "vite build",
+    "build": "cross-env NODE_ENV=aws vite build",
     "serve": "vite preview",
     "dev": "cross-env NODE_ENV=dev vite --host",
     "aws": "cross-env NODE_ENV=aws vite --host"
