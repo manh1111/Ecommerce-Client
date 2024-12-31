@@ -9,7 +9,7 @@ import eslint from 'vite-plugin-eslint'
 export default defineConfig({
   plugins: [react(), eslint(), svgrPlugin(), macrosPlugin()],
   build: {
-    outDir: "build",
+    outDir: "dist",
     rollupOptions: {
       treeshake: "recommended",
       output: {
