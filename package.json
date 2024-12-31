@@ -67,7 +67,8 @@
     "start": "cross-env NODE_ENV=pro vite --host",
     "build": "vite build",
     "serve": "vite preview",
-    "dev": "cross-env NODE_ENV=dev vite --host"
+    "dev": "cross-env NODE_ENV=dev vite --host",
+    "aws": "cross-env NODE_ENV=aws vite --host"
   },
   "eslintConfig": {
     "extends": [
