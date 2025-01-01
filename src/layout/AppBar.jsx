@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Search from "@ui/Search";
+import Headroom from "react-headroom";
+import CustomTooltip from "@ui/CustomTooltip";
 import CartPanel from "@components/CartPanel";
 import OrdersPanel from "@components/OrdersPanel";
 import Logo from "@components/Logo";
 import ModalBase from "@ui/ModalBase";
 import { useTheme } from "@contexts/themeContext";
+import { useSidebar } from "@contexts/sidebarContext";
 import { useWindowSize } from "react-use";
 import { Outlet, useNavigate } from "react-router-dom";
 import { LOCALES } from "@constants/options";
@@ -14,7 +17,13 @@ import { checkAvailableLogin } from "@utils/auth";
 import { getCookie } from "@utils/cookie";
 import { jwtDecode } from "jwt-decode";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { useAppSelector } from "@redux/store";
+import axiosInstance from "@api/axiosInstance";
+import { checkToken } from "@utils/auth";
+
+import { URL_API } from "../../src/config/config";
+import { useAppDispatch, useAppSelector } from "@redux/store";
+import { useSelector } from "react-redux";
+import { setCountCart } from "@redux/slice/app/appSlice";
 
 const LocaleMenu = ({ active, setActive }) => {
   return (

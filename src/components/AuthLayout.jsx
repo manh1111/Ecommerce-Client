@@ -18,7 +18,7 @@ import {
 } from "@redux/slice/auth/authSlice";
 import Loader from "@components/Loader";
 import { useAppDispatch } from "@redux/store";
-import { VerifyUser } from "@api/otp";
+import { VerifyUser, SendOTP } from "@api/otp";
 
 const AuthLayout = () => {
   const { width } = useWindowSize();
@@ -47,34 +47,33 @@ const AuthLayout = () => {
   });
 
   const onSubmit = async (data) => {
+    setUserEmail(data.email); 
     setLoader(true);
     try {
-      console.log("data", data);
       const response = await signIn(data.email, data.password);
-
       const { accessToken, refreshToken } = response?.data?.metadata?.tokens;
-
+  
       dispatch(CHANGE_STATUS_AUTH(true));
       dispatch(CHANGE_VALUE_TOKEN(accessToken));
-
+  
       setCookie("token", accessToken, expirationHours);
       setCookie("refresh_token", refreshToken, expirationHours);
       setCookie("user_login", accessToken);
       navigate("/");
-      
     } catch (err) {
-      {console.log("err", err)}
+      console.log("err", err);
       setIsConfirming(true);
       if (err?.data?.status === "error" && err?.data?.code === 400) {
         setIsConfirming(true);
-        setUserEmail(data.email); 
-      }else{
+        SendOTP(data.email); 
+      } else {
+        SendOTP(data.email); 
         toast.error("Đăng nhập thất bại! Vui lòng xác thực mã otp.");
       }
     } finally {
       setLoader(false);
     }
-  };
+  };  
 
   const handleLoginWithGoogle = async () => {
     const googleAuthUrl = `${URL_API}auth/google`;
@@ -86,7 +85,9 @@ const AuthLayout = () => {
   };
 
   const handleConfirmation = async () => {
+    setLoader(true);
     try {
+      console.log("setUserEmail(data.email); ", userEmail, confirmationCode);
       const verifyResponse = await VerifyUser(userEmail, confirmationCode);
       if (verifyResponse.status === 200) {
         toast.success("Xác thực thành công! Đang chuyển hướng...");
@@ -96,8 +97,10 @@ const AuthLayout = () => {
       }
     } catch (err) {
       toast.error("Xác thực thất bại, vui lòng thử lại.");
+    } finally {
+      setLoader(false);
     }
-  };
+  };  
 
   if (loading) return <Loader />;
 
