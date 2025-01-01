@@ -8,7 +8,7 @@ const ProductCard = ({ product }) => {
       onClick={() => navigate(`/product/${product.id}`)}
       className="card flex flex-col bg-white cursor-pointer h-full border-2 border-gray-200 rounded-lg hover:border-blue-500"
     >
-      <div className="relative w-full">
+      <div className="relative w-full flex items-center justify-center">
        {product?.imageSrc ?  <img
           src={product?.imageSrc}
           className=" text-btn absolute inset-0  h-52 w-52 object-cover rounded-t-lg"

@@ -1,17 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Logo from "@components/Logo";
 import { toast } from "react-toastify";
 import Spring from "@components/Spring";
 import PasswordInput from "@components/PasswordInput";
 import { useForm, Controller } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useWindowSize } from "react-use";
 import classNames from "classnames";
 import media from "@assets/login.webp";
 import google from "@assets/icons/google.png";
 import { signIn } from "@api/auth";
 import { setCookie } from "@utils/cookie";
-import { useDispatch } from "react-redux";
 import { URL_API } from "../../src/config/config";
 import {
   CHANGE_STATUS_AUTH,
@@ -22,11 +21,9 @@ import { useAppDispatch } from "@redux/store";
 
 const AuthLayout = () => {
   const { width } = useWindowSize();
-  const [googleLoginAttempt, setGoogleLoginAttempt] = useState(false);
   const [loading, setLoader] = useState(false);
   const expirationHours = 3;
   const dispatch = useAppDispatch();
-  const location = useLocation();
   const navigate = useNavigate();
   const handleNavigation = (path) => {
     navigate(path);

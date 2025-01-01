@@ -23,6 +23,9 @@
     height: 65%;
     width: 100%;
     transition: box-shadow var(--transition);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     &:not(.no-hover) {
         &:hover {

@@ -65,30 +65,6 @@ axiosInstance.interceptors.response.use(
 
       originalRequest._retry = true; 
       isRefreshing = true;
-
-      // try {
-      //   let refreshTokenSend = null
-      //   const refreshTokenCookie = getCookie("refresh_token");
-      //   if (refreshTokenCookie) {
-      //     refreshTokenSend = JSON.parse(refreshTokenCookie);
-      //   }
-      //   const { accessToken, refreshToken } = await refreshAccessToken(
-      //     refreshTokenSend
-      //   ); 
-
-      //   setCookie("token", accessToken, 3); 
-      //   setCookie(refreshToken, 3); 
-
-      //   processQueue(null, accessToken); 
-
-      //   originalRequest.headers.Authorization = `Bearer ${accessToken}`; // Thêm token mới
-      //   return axiosInstance(originalRequest); 
-      // } catch (err) {
-      //   processQueue(err, null);
-      //   return Promise.reject(err);
-      // } finally {
-      //   isRefreshing = false;
-      // }
     }
 
     return Promise.reject(error); 

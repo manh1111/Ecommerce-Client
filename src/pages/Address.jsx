@@ -203,7 +203,7 @@ const Address = () => {
       {addresses && !loading && addresses.map((address) => (
         <div
           key={address._id}
-          className="flex flex-row justify-between border-2 border-slate-200 bg-slate-50 mb-4 p-4 rounded-xl"
+          className="card flex flex-row justify-between border-2 border-slate-200 bg-slate-50 mb-4 p-4 rounded-xl"
         >
           <div>
             <h3 className="text-lg font-semibold">{address.recipient_name}</h3>
