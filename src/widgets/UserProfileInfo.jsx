@@ -86,18 +86,18 @@ const UserProfileInfo = () => {
             <div className="flex flex-col gap-5 w-full">
                 {/* Email */}
                 <div className="flex items-center gap-4 w-full text-white py-2 px-4">
-                    <span className="icon-wrapper mt-1">
+                    <span className="icon-wrapper mt-1 text-black">
                         <i className="icon icon-envelope-solid" />
                     </span>
-                    <span>{userInfo?.email || "Email not available"}</span>
+                    <span className="text-black">{userInfo?.email || "Email not available"}</span>
                 </div>
 
                 {/* Address */}
                 <div className="flex items-start gap-4 w-full text-white py-2 px-4">
-                    <span className="icon-wrapper mt-1.5">
+                    <span className="icon-wrapper mt-1 text-black.5">
                         <i className="icon icon-location-dot-solid" />
                     </span>
-                    <span>
+                    <span  className="text-black"> 
                         {userInfo?.address?.find((item) => item.isDefault)?.address || 
                          userInfo?.address?.[0]?.address || 
                          "Address not available"}
@@ -106,19 +106,19 @@ const UserProfileInfo = () => {
 
                 {/* Phone Number */}
                 <div className="flex items-center gap-4 w-full text-white py-2 px-4">
-                    <span className="icon-wrapper mt-1">
+                    <span className="icon-wrapper mt-1 text-black">
                         <i className="icon icon-mobile-solid" />
                     </span>
-                    <span>{userInfo?.phoneNumber || "Phone number not available"}</span>
+                    <span className="text-black">{userInfo?.phoneNumber || "Phone number not available"}</span>
                 </div>
 
                 {/* Download Button */}
                 <button 
-                    className="flex items-center gap-4 w-full text-white py-2 px-4 hover:bg-blue-500 rounded-md  disabled:bg-gray-300" 
+                    className="flex items-center gap-4 w-full text-black py-2 px-4 hover:bg-blue-500 rounded-md  disabled:bg-gray-300" 
                     onClick={handleDownloadExcel}
                     disabled={!userInfo || Object.keys(userInfo).length === 0}
                 >
-                    <span className="icon-wrapper mt-1">
+                    <span className="icon-wrapper mt-1 text-black">
                         <i className="icon icon-file-arrow-down-solid" />
                     </span>
                     Download Excel File

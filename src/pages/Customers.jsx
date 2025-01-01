@@ -1,20 +1,23 @@
 import { useEffect, useState } from "react";
-import { Table, Alert } from "antd";
-import Loader from "@components/Loader";
-import { getCustomer } from "@api/customer";
-import PageHeader from "@layout/PageHeader";
+import { Alert, Empty, Pagination } from "antd";
+import Loader from "../components/Loader";
+import { getCustomer } from "../api/customer";
+import PageHeader from "../layout/PageHeader";
+import StyledTable from "../widgets/OrdersTable/styles";
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-  const [pageSize, setPageSize] = useState(10); // Số bản ghi mỗi trang
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageSize: 10,
+  });
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const data = await getCustomer(); // Giả sử API trả về tất cả khách hàng
+        const data = await getCustomer();
         setCustomers(data);
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu khách hàng:", error);
@@ -27,8 +30,34 @@ const Customers = () => {
     fetchCustomers();
   }, []);
 
-  // Cấu hình các cột trong bảng
-  const columns = [
+  const handlePageChange = (page, pageSize) => {
+    setPagination({ currentPage: page, pageSize });
+  };
+
+  const renderStatus = (status) => {
+    let statusText = "";
+    let statusColor = "";
+    switch (status) {
+      case "active":
+        statusText = "Hoạt động";
+        statusColor = "text-green-darker";
+        break;
+      case "pending":
+        statusText = "Chờ xử lý";
+        statusColor = "text-amber-400";
+        break;
+      case "block":
+        statusText = "Bị khóa";
+        statusColor = "text-rose-500";
+        break;
+      default:
+        statusText = "Không xác định";
+        statusColor = "text-gray-500";
+    }
+    return <span className={statusColor}>{statusText}</span>;
+  };
+
+  const TRANSACTIONS_COLUMN_DEFS = [
     {
       title: "Ảnh đại diện",
       dataIndex: "avatar",
@@ -60,48 +89,47 @@ const Customers = () => {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      render: (status) => (
-        <span
-          className={status === "active" ? "text-green-500" : "text-red-500"}
-        >
-          {status === "active" ? "Đang hoạt động" : "Không hoạt động"}
-        </span>
-      ),
+      render: (status) => renderStatus(status),
     },
   ];
 
-  // Xử lý sự kiện phân trang
-  const handleTableChange = (pagination) => {
-    setCurrentPage(pagination.current);
-    setPageSize(pagination.pageSize);
-  };
+  const paginationData = customers.slice(
+    (pagination.currentPage - 1) * pagination.pageSize,
+    pagination.currentPage * pagination.pageSize
+  );
 
   return (
-    <>
-      <PageHeader title="Khách hàng" />
-      <div className="container mx-auto my-6 bg-white rounded-lg ">
+    <div className="w-full">
+      <PageHeader title="Người dùng" />
+      <div className="bg-white rounded-lg w-full min-h-80">
         {loading ? (
           <Loader />
         ) : error ? (
           <Alert message={error} type="error" showIcon />
         ) : (
-          <Table
-            columns={columns}
-            dataSource={customers}
-            rowKey="_id"
-            pagination={{
-              current: currentPage,
-              pageSize: pageSize,
-              total: customers.length, // Tổng số bản ghi
-              showSizeChanger: true, // Hiển thị tùy chọn thay đổi số bản ghi
-              pageSizeOptions: ["5", "10", "20", "50"], // Các lựa chọn số bản ghi
-            }}
-            onChange={handleTableChange}
-            className="rounded-lg shadow-lg ant-customers"
-          />
+          <>
+            <StyledTable
+              columns={TRANSACTIONS_COLUMN_DEFS}
+              dataSource={paginationData}
+              rowKey={(record) => record._id}
+              locale={{
+                emptyText: <Empty text="Không tìm thấy khách hàng nào" />,
+              }}
+              pagination={false}
+            />
+            <div className="flex justify-end mt-4">
+              <Pagination
+                current={pagination.currentPage}
+                pageSize={pagination.pageSize}
+                total={customers.length}
+                onChange={handlePageChange}
+                showSizeChanger
+              />
+            </div>
+          </>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
