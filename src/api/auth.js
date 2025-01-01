@@ -22,6 +22,7 @@ export const signIn = async (email, password) => {
     });
     return result;
   } catch (err) {
+    console.log("errApi", err);
     throw new Error("Failed to sign in");
   }
 };
