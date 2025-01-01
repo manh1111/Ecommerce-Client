@@ -6,6 +6,8 @@ import UserProfilePanel from '@widgets/UserProfilePanel';
 import UserProfileInfo from '@widgets/UserProfileInfo';
 
 const GeneralSettings = () => {
+    console.log(123)
+    
     return (
         <>
             <PageHeader title="Cài đặt"/>

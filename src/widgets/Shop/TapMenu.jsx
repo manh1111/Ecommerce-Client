@@ -10,7 +10,7 @@ const TabMenu = ({ categories }) => {
   };
 
   return (
-    <div className="bg-white shadow-md">
+    <div className="bg-white shadow-md card">
       <div className="flex space-x-4 overflow-x-auto whitespace-nowrap py-4 px-4">
         {categories?.map((category) => (
           <a

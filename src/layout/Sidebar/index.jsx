@@ -42,7 +42,7 @@ const Sidebar = () => {
                       >
                         <div className="flex items-center gap-2.5">
                           <i className={`icon icon-${route.icon}`} />
-                          <span className="text">{route.name}</span>
+                          <span className="text text-black">{route.name}</span>
                         </div>
                         <button
                           className="xl:hidden 4xl:block"

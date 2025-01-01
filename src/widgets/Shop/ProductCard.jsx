@@ -11,7 +11,7 @@ const ProductCard = ({ product }) => {
       <div className="relative w-full">
        {product?.imageSrc ?  <img
           src={product?.imageSrc}
-          className=" text-btn absolute inset-0 w-full h-full object-cover rounded-t-lg"
+          className=" text-btn absolute inset-0  h-52 w-52 object-cover rounded-t-lg"
         /> : <div   className="text-btn absolute inset-0 w-44 h-44 object-cover rounded-t-lg"></div>}
         <div className="absolute bottom-0 right-0 flex pr-1 pb-1">
           <div

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { Button, Image, Modal, Skeleton, Spin } from "antd";
+import { Button, Image, Modal, Skeleton } from "antd";
 import { toast } from "react-toastify";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"; // Import icons
 import { addCart } from "@api/cart";
-import Loader from "@components/Loader";
-import { increaseCart, setCountCart } from "@redux/slice/app/appSlice";
+import { setCountCart } from "@redux/slice/app/appSlice";
 import { useAppDispatch } from "@redux/store";
 
 const VND = new Intl.NumberFormat("vi-VN", {

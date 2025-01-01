@@ -44,7 +44,7 @@ const SellerOverview = ({
     return () => clearInterval(interval);
   }, [joinDate]);
   return (
-    <div className=" widgets-grid grid-cols-1 md:grid-cols-2 items-center p-6 bg-white shadow-lg rounded-lg mx-auto">
+    <div className="card widgets-grid grid-cols-1 md:grid-cols-2 items-center p-6 bg-white shadow-lg rounded-lg mx-auto">
       {/* Header Section */}
       <div
         className="relative w-full h-40 bg-cover bg-center rounded-t-lg overflow-hidden"

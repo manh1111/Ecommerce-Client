@@ -5,7 +5,7 @@ import { URL_API } from "../../src/config/config";
 
 export const GetAllProduct = async (isPublic = true, isDraft, isDeleted) => {
   try {
-    // const config = checkToken("application/json");
+    const config = checkToken("application/json");
     const queryParams = new URLSearchParams();
 
     if (isPublic !== undefined && isPublic !== null) {
@@ -27,7 +27,7 @@ export const GetAllProduct = async (isPublic = true, isDraft, isDeleted) => {
     // Construct the API URL with the query parameters
     const response = await axiosInstance.get(
       `${URL_API}product/shop-owners?${queryParams.toString()}`,
-      // config
+      config
     );
 
     return response;
