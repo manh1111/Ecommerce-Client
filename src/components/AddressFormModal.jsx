@@ -28,16 +28,18 @@ export const AddressFormModal = ({
   }, [editingAddress])
 
   const setFormData = async () => {
-    const province = locationData.provinces.find(p => p.name === editingAddress?.province)
+    const addresses = editingAddress.address.split(", ")
+    const province = locationData.provinces.find(p => p.name === addresses.pop())
+    if (!province) return;
     const { data } = await axios.get(
       `https://provinces.open-api.vn/api/p/${province.code}?depth=2`
     );
-    const district = data.districts.find(d => d.name === editingAddress?.district)
-    // if (!district) return;
+    const district = data.districts.find(d => d.name === addresses.pop())
+    if (!district) return;
     const { data: wardsData } = await axios.get(
       `https://provinces.open-api.vn/api/d/${district.code}?depth=2`
     );
-    const ward = wardsData.wards.find(w => w.name === editingAddress?.ward)
+    const ward = wardsData.wards.find(w => w.name === addresses.pop())
 
     setLocationData((prev) => ({
       ...prev,
