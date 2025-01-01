@@ -114,6 +114,24 @@ const OrdersTable = ({ initialOrders = [] }) => {
     }
   };
 
+  const groupedOrders = filteredOrders.reduce((acc, order) => {
+    if (order.order_status === "waiting") {
+      if (!acc[order.order_transactionNo]) {
+        acc[order.order_transactionNo] = [];
+      }
+      acc[order.order_transactionNo].push(order);
+    }
+    return acc;
+  }, {});
+  
+  // Chuyển đổi nhóm thành danh sách
+  const groupedOrderList = Object.values(groupedOrders);
+  
+  // Lọc các đơn hàng không có trạng thái `waiting`
+  const otherOrders = filteredOrders.filter((order) => order.order_status !== "waiting");
+  
+
+  
   return (
     <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
       {/* Date range filter */}
@@ -156,57 +174,214 @@ const OrdersTable = ({ initialOrders = [] }) => {
           Không có đơn hàng nào để hiển thị.
         </p>
       ) : (
-        filteredOrders.map((order) => (
-          <div
-            key={order._id}
-            className="border-b py-4 px-6 bg-white rounded-lg shadow-md"
-          >
-            {console.log("order.order_shipping_address", order)}
-            <div className="flex justify-between items-start">
-              <div className="w-full">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Mã đơn hàng:{" "}
-                  <span className="text-blue-600">
-                    {order.order_trackingNumber}
-                  </span>
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Ngày tạo: {dayjs(order.createdAt).format("DD/MM/YYYY")}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Địa chỉ giao hàng: {order.order_shipping_address}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Phương thức thanh toán:{" "}
-                  <span className="font-medium">
-                    {order.order_payment_method.toUpperCase()}
-                  </span>
-                </p>
-                <p className="text-sm font-semibold text-gray-800">
-                  Tổng tiền:{" "}
-                  <span className="text-red-600">
-                    {order.order_total_price.toLocaleString()}₫
-                  </span>
-                </p>
+        <>
+        <div className="flex flex-col">
+          {groupedOrderList.map((group, index) => (
+            <div key={index} className="grouped-order my-6">
+              {console.log("group", group)}
+
+              {group.map((order) => (
+                <div
+                  key={order._id}
+                  className="card flex flex-row border-b py-4 px-6 bg-white rounded-lg shadow-md"
+                >
+                <div className="flex flex-col w-full">
+                  <div className="flex justify-between items-start">
+                    <div className="w-full">
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        Mã đơn hàng:{" "}
+                        <span className="text-blue-600">{order.order_trackingNumber}</span>
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        Ngày tạo: {dayjs(order.createdAt).format("DD/MM/YYYY")}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Địa chỉ giao hàng: {order.order_shipping_address}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Phương thức thanh toán:{" "}
+                        <span className="font-medium">
+                          {order.order_payment_method.toUpperCase()}
+                        </span>
+                      </p>
+                      <p className="text-sm font-semibold text-gray-800">
+                        Tổng tiền:{" "}
+                        <span className="text-red-600">
+                          {order.order_total_price.toLocaleString()}₫
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Hiển thị các sản phẩm trong đơn */}
+                  <div className="mt-4 space-y-2">
+                    {order.order_products.map((product) => (
+                      <div key={product._id} className="flex items-center my-2">
+                        <img
+                          src={product.product_thumb}
+                          alt={product.product_name}
+                          className="w-14 h-14 object-cover rounded-md shadow"
+                        />
+                        <div className="ml-4">
+                          <h4 className="text-sm font-semibold text-gray-800">
+                            {product.product_name}
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            Số lượng:{" "}
+                            <span className="font-medium">{product.quantity}</span> x{" "}
+                            <span className="font-medium">
+                              {product.price.toLocaleString()}₫
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
+              ))}
+
+                  {/* Các button hành động */}
+              {/* <div className="flex flex-row gap-4 mt-6">
+                <button
+                  onClick={() => handleButtonClick(group, "pay")}
+                  className="w-40 py-2 px-4 bg-blue-500 text-white rounded-md"
+                >
+                  Thanh toán lại
+                </button>
+                <button
+                  onClick={() => handleCancelOrder(group._id)}
+                  className="w-40 py-2 px-4 bg-rose-500 text-white rounded-md"
+                >
+                  Hủy đơn
+                </button>
+                <button
+                  onClick={() => handleButtonClick(group, "changePaymentMethod")}
+                  className="w-40 py-2 px-4 bg-emerald-500 text-white rounded-md"
+                >
+                  Đổi phương thức
+                </button>
+              </div> */}
+            </div>
+          ))}
+
+          {otherOrders.map((order) => (
+            <div
+              key={order._id}
+              className="card border-b py-4 px-6 bg-white rounded-lg shadow-md"
+            >
+              <div className="flex justify-between items-start">
+                <div className="w-full">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Mã đơn hàng:{" "}
+                    <span className="text-blue-600">{order.order_trackingNumber}</span>
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Ngày tạo: {dayjs(order.createdAt).format("DD/MM/YYYY")}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Địa chỉ giao hàng: {order.order_shipping_address}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Phương thức thanh toán:{" "}
+                    <span className="font-medium">
+                      {order.order_payment_method.toUpperCase()}
+                    </span>
+                  </p>
+                  <p className="text-sm font-semibold text-gray-800">
+                    Tổng tiền:{" "}
+                    <span className="text-red-600">
+                      {order.order_total_price.toLocaleString()}₫
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Các button hành động */}
               <div className="flex flex-col w-[250px] items-center justify-end">
-                {order.order_status === 'pending' &&
+                {order.order_status === "pending" && (
                   <button
-                    className={`text-white w-10/12 bg-rose-500 rounded-xl px-4 py-2 ${order.order_status === "pending"
+                    className={`text-white w-10/12 bg-rose-500 rounded-xl px-4 py-2 ${
+                      order.order_status === "pending"
                         ? "hover:opacity-80"
                         : "opacity-50 cursor-not-allowed"
-                      }`}
+                    }`}
                     onClick={() => handleCancelOrder(order._id)}
                     disabled={order.order_status !== "pending"}
                   >
                     Hủy đơn hàng
                   </button>
-                }
-                {console.log("order.order_status", order.order_status)}
+                )}
 
-                 {/* Handle 'waiting' status */}
+                {order.order_status === "completed" &&
+                  order.order_products.map((product) => (
+                    <button
+                      key={product._id}
+                      className="mt-2 w-10/12 text-white bg-blue-500 rounded-xl px-4 py-2"
+                      onClick={() => {
+                        setSelectedOrder(order);
+                        setSelectedProduct(product);
+                        setIsReviewModalOpen(true);
+                      }}
+                    >
+                      Đánh giá
+                    </button>
+                  ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div>
+          {otherOrders.map((order) => (
+            <div
+              key={order._id}
+              className="card border-b py-4 px-6 bg-white rounded-lg shadow-md"
+            >
+              <div className="flex justify-between items-start">
+                <div className="w-full">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Mã đơn hàng:{" "}
+                    <span className="text-blue-600">{order.order_trackingNumber}</span>
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Ngày tạo: {dayjs(order.createdAt).format("DD/MM/YYYY")}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Địa chỉ giao hàng: {order.order_shipping_address}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Phương thức thanh toán:{" "}
+                    <span className="font-medium">
+                      {order.order_payment_method.toUpperCase()}
+                    </span>
+                  </p>
+                  <p className="text-sm font-semibold text-gray-800">
+                    Tổng tiền:{" "}
+                    <span className="text-red-600">
+                      {order.order_total_price.toLocaleString()}₫
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Các button hành động */}
+              <div className="flex flex-col w-[250px] items-center justify-end">
+                {order.order_status === "pending" && (
+                  <button
+                    className={`text-white w-10/12 bg-rose-500 rounded-xl px-4 py-2 ${
+                      order.order_status === "pending"
+                        ? "hover:opacity-80"
+                        : "opacity-50 cursor-not-allowed"
+                    }`}
+                    onClick={() => handleCancelOrder(order._id)}
+                    disabled={order.order_status !== "pending"}
+                  >
+                    Hủy đơn hàng
+                  </button>
+                )}
+
                 {order.order_status === "waiting" && (
-                    <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-4">
                     <button
                       onClick={() => handleButtonClick(order, "pay")}
                       className="w-40 py-2 px-4 bg-blue-500 text-white rounded-md"
@@ -226,7 +401,6 @@ const OrdersTable = ({ initialOrders = [] }) => {
                       Đổi phương thức
                     </button>
                   </div>
-                  
                 )}
 
                 {order.order_status === "completed" &&
@@ -236,7 +410,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
                       className="mt-2 w-10/12 text-white bg-blue-500 rounded-xl px-4 py-2"
                       onClick={() => {
                         setSelectedOrder(order);
-                        setSelectedProduct(product); // Set selected product here
+                        setSelectedProduct(product);
                         setIsReviewModalOpen(true);
                       }}
                     >
@@ -245,33 +419,9 @@ const OrdersTable = ({ initialOrders = [] }) => {
                   ))}
               </div>
             </div>
-
-            {/* Display products in order */}
-            <div className="mt-4 space-y-2">
-              {order.order_products.map((product) => (
-                <div key={product._id} className="flex items-center">
-                  <img
-                    src={product.product_thumb}
-                    alt={product.product_name}
-                    className="w-14 h-14 object-cover rounded-md shadow"
-                  />
-                  <div className="ml-4">
-                    <h4 className="text-sm font-semibold text-gray-800">
-                      {product.product_name}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      Số lượng:{" "}
-                      <span className="font-medium">{product.quantity}</span> x{" "}
-                      <span className="font-medium">
-                        {product.price.toLocaleString()}₫
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))
+          ))}        
+        </div>
+        </>
       )}
 
       {isReviewModalOpen && (

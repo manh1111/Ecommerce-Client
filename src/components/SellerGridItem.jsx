@@ -10,7 +10,7 @@ const SellerGridItem = ({ seller, index, id }) => {
 
   return (
     <Spring
-      className="flex justify-between  flex-col items-center bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+      className="flex justify-between flex-col items-center bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
       type="slideUp"
       index={index}
     >

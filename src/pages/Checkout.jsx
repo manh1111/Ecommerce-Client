@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import vnpayLogo from '../assets/vnpay_logo.png';
 import momoLogo from '../assets/momo_logo.png';
 import { useNavigate } from "react-router-dom";
+import { WEB_DOMAIN } from "../config/config";
 
 // Component to display shop information
 const ShopInfo = ({ shopName, shopLogo }) => {
@@ -146,6 +147,7 @@ const Checkout = ({ listProduct = [], selectedIds = [] }) => {
           }
         } else {
           toast.success("Đặt đơn hàng thành công");
+          window.open(`${WEB_DOMAIN}`, '_blank')
         }
       }
     } catch (error) {

@@ -46,6 +46,9 @@ const GeneralSettings = lazy(() => import("@pages/GeneralSettings"));
 const ConnectedApps = lazy(() => import("@pages/ConnectedApps"));
 const PageNotFound = lazy(() => import("@pages/PageNotFound"));
 
+console.log(GeneralSettings)
+console.log(MainPage)
+
 const App = () => {
   const { width } = useWindowSize();
   const appRef = useRef(null);
