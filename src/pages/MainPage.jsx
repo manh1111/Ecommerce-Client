@@ -101,7 +101,7 @@ const MainPage = () => {
               <h1 className="text-3xl font-semibold flex-1 text-center lg:text-left text-gray-800">Danh mục</h1>
             </div>
       
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6">
               {console.log('categories', categories)}
               {categories.map((category) => (
                 <div

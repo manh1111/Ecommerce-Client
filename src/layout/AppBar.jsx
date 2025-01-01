@@ -58,10 +58,8 @@ const AppBar = () => {
   const [messagesPanelOpen, setOrdersPanelOpen] = useState(false);
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [locale, setLocale] = useState("en-EN");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { width } = useWindowSize();
   const { theme, toggleTheme } = useTheme();
-  const { setOpen } = useSidebar();
   const isAuthenticated = checkAvailableLogin();
   const activeLocale = LOCALES.find((l) => l.value === locale);
   const { countCart } = useAppSelector(state => state.app)
@@ -220,7 +218,7 @@ const AppBar = () => {
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
                 onClick={() => {
                   setLoginPromptOpen(false);
-                  navigate("/login"); // Redirect to login page
+                  navigate("/login"); 
                 }}
               >
                 Đăng nhập

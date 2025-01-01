@@ -4,13 +4,11 @@ import { useForm, Controller } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { getCookie } from "@utils/cookie";
 import { GetOwnShop } from "@api/shop";
 import { changePassword, getProfileOwn, updateProfile } from "@api/profile";
-import { WEB_DOMAIN, URL_API } from "../config/config";
-import axiosInstance from "@api/axiosInstance";
+import { WEB_DOMAIN } from "../config/config";
 
 const UserProfileDetails = () => {
   const [shopData, setShopData] = useState(null);

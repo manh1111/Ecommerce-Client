@@ -1,18 +1,9 @@
-// components
 import DocumentTitle from "@components/DocumentTitle";
-
-// hooks
 import { useState, useEffect } from "react";
-import { useWindowSize } from "react-use";
-
-// utils
 import PropTypes from "prop-types";
-import dayjs from "dayjs";
 
 const PageHeader = ({ title, changePageName = true }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const { width } = useWindowSize();
-  const dateFormat = width < 768 ? "MM.DD.YYYY" : "MMMM DD, YYYY";
 
   useEffect(() => {
     const interval = setInterval(() => {

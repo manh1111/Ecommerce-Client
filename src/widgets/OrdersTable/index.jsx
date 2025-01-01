@@ -268,7 +268,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
           {otherOrders.map((order) => (
             <div
               key={order._id}
-              className="card border-b py-4 px-6 bg-white rounded-lg shadow-md"
+              className="card border-b flex flex-row items-center  py-4 px-6 bg-white rounded-lg shadow-md"
             >
               <div className="flex justify-between items-start">
                 <div className="w-full">
@@ -298,7 +298,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
               </div>
 
               {/* Các button hành động */}
-              <div className="flex flex-col w-[250px] items-center justify-end">
+              <div className="flex flex-col w-[250px] min-w-[250px] items-center justify-end">
                 {order.order_status === "pending" && (
                   <button
                     className={`text-white w-10/12 bg-rose-500 rounded-xl px-4 py-2 ${
@@ -335,7 +335,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
           {otherOrders.map((order) => (
             <div
               key={order._id}
-              className="card border-b py-4 px-6 bg-white rounded-lg shadow-md"
+              className="card border-b flex items-center py-4 px-6 bg-white rounded-lg shadow-md"
             >
               <div className="flex justify-between items-start">
                 <div className="w-full">
@@ -365,7 +365,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
               </div>
 
               {/* Các button hành động */}
-              <div className="flex flex-col w-[250px] items-center justify-end">
+              <div className="flex flex-col w-[250px] min-w-[250px] items-center justify-end">
                 {order.order_status === "pending" && (
                   <button
                     className={`text-white w-10/12 bg-rose-500 rounded-xl px-4 py-2 ${
