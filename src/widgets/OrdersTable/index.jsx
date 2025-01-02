@@ -31,12 +31,14 @@ const OrdersTable = ({ initialOrders = [] }) => {
     };
   }, [isReviewModalOpen]);
 
+
   const comment = [
     "Sản phẩm rất tốt",
     "Chất lượng tuyệt vời", 
     "Giao hàng nhanh chóng",
     "Đóng gói cẩn thận", 
     "Hài lòng với sản phẩm"]
+    
   const handleCancelOrder = async (orderId) => {
     const updatedOrders = orders.filter((order) => order._id !== orderId);
     setOrders(updatedOrders);
@@ -178,8 +180,6 @@ const OrdersTable = ({ initialOrders = [] }) => {
         <div className="flex flex-col">
           {groupedOrderList.map((group, index) => (
             <div key={index} className="grouped-order my-6">
-              {console.log("group", group)}
-
               {group.map((order) => (
                 <div
                   key={order._id}
@@ -268,9 +268,8 @@ const OrdersTable = ({ initialOrders = [] }) => {
           {otherOrders.map((order) => (
             <div
               key={order._id}
-              className="card border-b flex flex-row items-center  py-4 px-6 bg-white rounded-lg shadow-md"
+              className="card border-b flex flex-row items-center mb-4 py-4 px-6 bg-white rounded-lg shadow-md"
             >
-              console.loga
               <div className="flex justify-between items-start">
                 <div className="w-full">
                   <h3 className="text-lg font-semibold text-gray-800">
@@ -331,96 +330,6 @@ const OrdersTable = ({ initialOrders = [] }) => {
               </div>
             </div>
           ))}
-        </div>
-        <div>
-          {otherOrders.map((order) => (
-            <div
-              key={order._id}
-              className="card border-b flex items-center py-4 px-6 bg-white rounded-lg shadow-md"
-            >
-              <div className="flex justify-between items-start">
-                <div className="w-full">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    Mã đơn hàng:{" "}
-                    <span className="text-blue-600">{order.order_trackingNumber}</span>
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Ngày tạo: {dayjs(order.createdAt).format("DD/MM/YYYY")}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Địa chỉ giao hàng: {order.order_shipping_address}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Phương thức thanh toán:{" "}
-                    <span className="font-medium">
-                      {order.order_payment_method.toUpperCase()}
-                    </span>
-                  </p>
-                  <p className="text-sm font-semibold text-gray-800">
-                    Tổng tiền:{" "}
-                    <span className="text-red-600">
-                      {order.order_total_price.toLocaleString()}₫
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Các button hành động */}
-              <div className="flex flex-col w-[250px] min-w-[250px] items-center justify-end">
-                {order.order_status === "pending" && (
-                  <button
-                    className={`text-white w-10/12 bg-rose-500 rounded-xl px-4 py-2 ${
-                      order.order_status === "pending"
-                        ? "hover:opacity-80"
-                        : "opacity-50 cursor-not-allowed"
-                    }`}
-                    onClick={() => handleCancelOrder(order._id)}
-                    disabled={order.order_status !== "pending"}
-                  >
-                    Hủy đơn hàng
-                  </button>
-                )}
-
-                {order.order_status === "waiting" && (
-                  <div className="flex flex-col gap-4">
-                    <button
-                      onClick={() => handleButtonClick(order, "pay")}
-                      className="w-40 py-2 px-4 bg-blue-500 text-white rounded-md"
-                    >
-                      Thanh toán lại
-                    </button>
-                    <button
-                      onClick={() => handleCancelOrder(order._id)}
-                      className="w-40 py-2 px-4 bg-rose-500 text-white rounded-md"
-                    >
-                      Hủy đơn
-                    </button>
-                    <button
-                      onClick={() => handleButtonClick(order, "changePaymentMethod")}
-                      className="w-40 py-2 px-4 bg-emerald-500 text-white rounded-md"
-                    >
-                      Đổi phương thức
-                    </button>
-                  </div>
-                )}
-
-                {order.order_status === "completed" &&
-                  order.order_products.map((product) => (
-                    <button
-                      key={product._id}
-                      className="mt-2 w-10/12 text-white bg-blue-500 rounded-xl px-4 py-2"
-                      onClick={() => {
-                        setSelectedOrder(order);
-                        setSelectedProduct(product);
-                        setIsReviewModalOpen(true);
-                      }}
-                    >
-                      Đánh giá
-                    </button>
-                  ))}
-              </div>
-            </div>
-          ))}        
         </div>
         </>
       )}
