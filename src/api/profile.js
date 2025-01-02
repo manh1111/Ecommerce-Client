@@ -40,6 +40,7 @@ export const addNewAddress = async (newAddress) => {
   const result = await axiosInstance.post(
     `${URL_API}profile/address`,
     {
+      ...newAddress,
       recipient_name: newAddress.recipient_name,
       recipient_phone: newAddress.recipient_phone,
       address: newAddress.address,
