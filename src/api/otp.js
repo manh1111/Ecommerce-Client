@@ -14,6 +14,7 @@ export const VerifyUser = async (email, otp) => {
 export const SendOTP = async (email) => {
   const result = await axiosInstance.post(`${URL_API}otp/send-otp`, {
     email: email,
+    templateName: "register"
   });
   return result;
 };

@@ -146,7 +146,7 @@ const SellerProfile = () => {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-600 uppercase">Số sản phẩm</h3>
-              <p className="text-base text-gray-800">{shopData.productsCount}</p>
+              {shopData.productsCount ? <p className="text-base text-gray-800">{shopData.productsCount}</p> : <p className="text-center text-rose-500">Chưa có sản phẩm</p>}
             </div>
           </div>
 
@@ -157,7 +157,7 @@ const SellerProfile = () => {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-600 uppercase">Số đánh giá</h3>
-              <p className="text-base text-gray-800">{shopData.reviewsCount}</p>
+              {shopData.reviewsCount ? <p className="text-base text-gray-800">{shopData.reviewsCount}</p>: <p className="text-center text-rose-500">Chưa có đánh giá</p>}
             </div>
           </div>
         </div>

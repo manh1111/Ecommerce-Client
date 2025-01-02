@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom"; // Ensure react-router-dom is installed
-import { forgotPassword, resetPassword } from "@api/profile"; // Adjust the import based on your file structure
+import { useLocation } from "react-router-dom"; 
+import { forgotPassword, resetPassword } from "@api/profile"; 
 import { toast } from "react-toastify";
+import { WEB_DOMAIN } from "../config/config";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -56,7 +57,7 @@ const ResetPassword = () => {
       const response = await resetPassword({ password: newPassword, token });
       toast.success("Mật khẩu đã được đặt lại thành công!");
 
-      // Reset the password fields
+      window.open(`${WEB_DOMAIN}`, '_blank')
       setNewPassword("");
       setConfirmPassword("");
     } catch (err) {

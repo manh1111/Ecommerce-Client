@@ -8,7 +8,7 @@ const ProductCard = ({ product }) => {
       onClick={() => navigate(`/product/${product.id}`)}
       className="card flex flex-col bg-white cursor-pointer h-full border-2 border-gray-200 rounded-lg hover:border-blue-500"
     >
-      <div className="relative w-full">
+      <div className="relative w-full flex items-center justify-center">
        {product?.imageSrc ?  <img
           src={product?.imageSrc}
           className=" text-btn absolute inset-0  h-52 w-52 object-cover rounded-t-lg"
@@ -83,12 +83,12 @@ const ProductCard = ({ product }) => {
                 <div className="text-base flex-none">{product?.rating}</div>
               </div>
             )}
-            <div className="ml-1 h-sp10 scale-x-50 border-l border-shopee-black9"></div>
-            <div className="w-fit flex flex-row justify-between">
+            {/* <div className="ml-1 h-sp10 scale-x-50 border-l border-shopee-black9"></div> */}
+            {/* <div className="w-fit flex flex-row justify-between">
               <div className="text-base flex-none truncate text-shopee-black87 min-h-4">
                 Đã bán {product?.soldCount}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

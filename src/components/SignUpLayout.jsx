@@ -62,7 +62,8 @@ const SignUpLayout = () => {
      if (response.status === 201) {
        setUserEmail(data.email);
      } else if (response.status === 409) {
-       toast.error("Tài khoản đã tồn tại.");
+       toast.error("Tài khoản đã tồn tại.");  
+       setIsConfirming(true);
      } else if (response.status === 500) {
        toast.error("Không đăng kí được tài khoản. Vui lòng thử lại.");
      }
@@ -275,7 +276,7 @@ const SignUpLayout = () => {
               </div>
               <div className="flex flex-col items-center gap-6 mt-4 mb-10">
                 <button className="btn btn--primary w-full mt-5" type="submit">
-                  Sign Up
+                  Đăng ký 
                 </button>
               </div>
             </form>
