@@ -135,6 +135,9 @@ const Address = () => {
     const fullAddress = `${data.specific_address}, ${selectedWard.name}, ${selectedDistrict.name}, ${selectedProvince.name}`;
     const payload = {
       ...data,
+      province: selectedProvince.name,
+      district: selectedDistrict.name,
+      ward: selectedWard.name,
       address: fullAddress
     };
 
