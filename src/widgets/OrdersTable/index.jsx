@@ -10,6 +10,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
   const [endDate, setEndDate] = useState("");
   const [reviewData, setReviewData] = useState({});
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // Trạng thái modal chi tiết
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const modalRef = useRef(null);
@@ -19,6 +20,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setIsReviewModalOpen(false);
+        setIsDetailModalOpen(false);
       }
     };
 
@@ -132,7 +134,10 @@ const OrdersTable = ({ initialOrders = [] }) => {
   // Lọc các đơn hàng không có trạng thái `waiting`
   const otherOrders = filteredOrders.filter((order) => order.order_status !== "waiting");
   
-
+  const handleViewOrderDetails = (order) => {
+    setSelectedOrder(order);
+    setIsDetailModalOpen(true); // Mở modal chi tiết
+  };
   
   return (
     <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
@@ -327,6 +332,14 @@ const OrdersTable = ({ initialOrders = [] }) => {
                       Đánh giá
                     </button>
                   ))}
+
+                  
+                <button
+                  className="mt-4 w-10/12 text-white bg-lime-500 rounded-xl px-4 py-2"
+                  onClick={() => handleViewOrderDetails(order)}
+                >
+                  Xem chi tiết
+                </button>
               </div>
             </div>
           ))}
@@ -422,8 +435,64 @@ const OrdersTable = ({ initialOrders = [] }) => {
           </div>
         </div>
       )}
+
+     {isDetailModalOpen && selectedOrder && (
+   <div className="modal-overlay fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+   <div className="modal-container w-11/12 sm:w-4/5 md:w-1/2 bg-white p-6 rounded-lg shadow-lg max-h-[500px] overflow-y-auto" ref={modalRef}>
+     <div className="modal-header flex justify-between items-center border-b pb-4">
+       <h2 className="text-2xl font-semibold">Chi tiết đơn hàng</h2>
+       <button
+         className="text-xl text-gray-600 hover:text-red-600"
+         onClick={() => setIsDetailModalOpen(false)}
+       >
+         ×
+       </button>
+     </div>
+     <div className="modal-body mt-4 space-y-4">
+       <p><strong>Mã đơn hàng:</strong> {selectedOrder.order_trackingNumber}</p>
+       <p><strong>Địa chỉ giao hàng:</strong> {selectedOrder.order_shipping_address}</p>
+       <p><strong>Phương thức thanh toán:</strong> {selectedOrder.order_payment_method === "online" ? "Thanh toán trực tuyến" : "Thanh toán khi nhận hàng"}</p>
+       <p><strong>Trạng thái:</strong> <span className={`font-semibold ${selectedOrder.order_status === 'completed' ? 'text-green-500' : 'text-red-500'}`}>{selectedOrder.order_status}</span></p>
+ 
+       <h3 className="mt-4 font-medium text-lg">Sản phẩm:</h3>
+       <ul className="space-y-3">
+         {selectedOrder.order_products.map((product) => (
+           <li key={product._id} className="flex items-center space-x-4 border-b pb-3">
+             <img
+               src={product.product_thumb}
+               alt={product.product_name}
+               className="w-24 h-24 object-cover rounded-md"
+             />
+             <div>
+               <p className="font-medium">{product.product_name}</p>
+               <p>Số lượng: {product.quantity}</p>
+               <p>Giá: {product.price.toLocaleString()}₫</p>
+             </div>
+           </li>
+         ))}
+       </ul>
+     </div>
+     <div className="modal-footer mt-6 flex justify-between w-full">
+       <p><strong>Tổng tiền:</strong> {selectedOrder.order_total_price.toLocaleString()}₫</p>
+ 
+       <button
+         className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+         onClick={() => setIsDetailModalOpen(false)}
+       >
+         Đóng
+       </button>
+     </div>
+   </div>
+ </div>
+ 
+     )}
     </div>
   );
+  
 };
 
+
+
 export default OrdersTable;
+
+
