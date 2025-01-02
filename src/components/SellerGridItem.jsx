@@ -50,7 +50,11 @@ const SellerGridItem = ({ seller, index, id }) => {
         </p>
 
         {/* Description */}
-        <p className="text-sm text-gray-500 mt-2">{seller?.description}</p>
+        <p className="font-bold text-orange-500 text-sm text-gray-500 mt-2">
+          {seller?.description?.length > 50 
+            ? `${seller.description.substring(0, 50)}...` 
+            : seller?.description}
+        </p>
       </div>
       {/* Action Button */}
       <div className="w-full bg-gray-50 p-3 border-t border-gray-200 flex justify-center">
