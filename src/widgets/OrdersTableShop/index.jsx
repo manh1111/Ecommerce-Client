@@ -1,10 +1,11 @@
-import dayjs from "dayjs";
 import { useState } from "react";
 import { updateOrderStatus } from "@api/order";
 import { Pagination } from "antd";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "antd/dist/reset.css"; 
+import dayjs from "dayjs";
+import OrderDetailModal from "./OrderDetailModal"; // New modal component
 
 const OrdersTable = ({ initialOrders }) => {
   const [orders, setOrders] = useState(initialOrders);
@@ -13,6 +14,8 @@ const OrdersTable = ({ initialOrders }) => {
   const [isCancelling, setIsCancelling] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const [selectedOrder, setSelectedOrder] = useState(null); // New state for selected order
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // New state to manage modal visibility
 
   const handleCancelOrderForShop = async (orderId) => {
     try {
@@ -82,6 +85,11 @@ const OrdersTable = ({ initialOrders }) => {
     }
   };
 
+  const handleViewDetails = (order) => {
+    setSelectedOrder(order);
+    setIsDetailModalOpen(true);
+  };
+
   const filteredOrders = orders.filter((order) => {
     const orderDate = dayjs(order.createdAt);
     const isAfterStartDate = startDate
@@ -93,12 +101,8 @@ const OrdersTable = ({ initialOrders }) => {
     return isAfterStartDate && isBeforeEndDate;
   });
 
-  // Pagination logic
   const startIndex = (currentPage - 1) * pageSize;
-  const paginatedOrders = filteredOrders.slice(
-    startIndex,
-    startIndex + pageSize
-  );
+  const paginatedOrders = filteredOrders.slice(startIndex, startIndex + pageSize);
 
   const handlePageChange = (page, size) => {
     setCurrentPage(page);
@@ -137,9 +141,7 @@ const OrdersTable = ({ initialOrders }) => {
 
       {/* Orders List */}
       {paginatedOrders.length === 0 ? (
-        <p className="text-gray-600 text-center h-60">
-          Không có đơn hàng nào để hiển thị.
-        </p>
+        <p className="text-gray-600 text-center h-60">Không có đơn hàng nào để hiển thị.</p>
       ) : (
         paginatedOrders.map((order) => (
           <div
@@ -159,6 +161,14 @@ const OrdersTable = ({ initialOrders }) => {
                 <p>Trạng thái: {order.order_status}</p>
               </div>
               <div className="flex flex-col gap-5">
+                {/* View Details Button */}
+                <button
+                  className="text-white bg-lime-500 rounded-xl px-4 py-2 hover:opacity-80"
+                  onClick={() => handleViewDetails(order)}
+                >
+                  Xem chi tiết
+                </button>
+
                 {/* Hủy đơn hàng */}
                 {order.order_status !== "cancel" &&
                   order.order_status !== "canceled" && (
@@ -204,6 +214,14 @@ const OrdersTable = ({ initialOrders }) => {
       />
 
       <ToastContainer />
+
+      {/* Order Details Modal */}
+      {isDetailModalOpen && selectedOrder && (
+        <OrderDetailModal
+          order={selectedOrder}
+          onClose={() => setIsDetailModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
