@@ -138,32 +138,6 @@ const SearchPage = () => {
       {/* Main Content */}
       <div className="w-full flex flex-col justify-between">
         <div>
-        <fieldset className="border-0 p-0 m-0">
-          <div className="font-bold mb-2 text-xl">Sắp xếp theo</div>
-          <div className="flex gap-2 mb-4">
-            <section className="flex gap-2">
-              {[
-                "Phổ biến",
-                "Mới nhất",
-                "Giá thấp đến cao",
-                "Giá cao đến thấp",
-              ].map((option) => (
-                <button
-                  key={option}
-                  className={`px-4 py-2 border rounded transition-colors duration-300 ${
-                    selectedSortOption === option
-                      ? "bg-red text-white border-red"
-                      : "bg-transparent border-gray-300 text-gray-700"
-                  }`}
-                  onClick={() => setSelectedSortOption(option)}
-                >
-                  <span aria-hidden="true">{option}</span>
-                </button>
-              ))}
-            </section>
-          </div>
-        </fieldset>
-
         {/* Product List */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredProducts

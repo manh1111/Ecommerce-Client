@@ -53,25 +53,21 @@ export const addNewAddress = async (newAddress) => {
 };
 
 export const forgotPassword = async (email) => {
-  const config = checkToken("application/json");
   const result = await axiosInstance.post(
     `${URL_API}forgot-password`,
     {
       email,
     },
-    config
   );
   return result.data;
 };
 
 export const resetPassword = async ({ password, token }) => {
-  const config = checkToken("application/json");
   const result = await axiosInstance.post(
     `${URL_API}reset-password?token=${token}`,
     {
       password,
-    },
-    config
+    }
   );
   return result.data;
 };
