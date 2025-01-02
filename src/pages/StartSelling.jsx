@@ -5,7 +5,7 @@ import AddShop from '@widgets/AddShop';
 const StartSelling = () => {
     return (
       <>
-        <PageHeader title="Start Selling" />
+        <PageHeader title="Bắt đầu bán hàng" />
         <AddShop />
       </>
     );

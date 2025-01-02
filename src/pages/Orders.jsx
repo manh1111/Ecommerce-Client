@@ -58,17 +58,8 @@ const Orders = () => {
 
   // Count orders by status
   const countOrdersByStatus = (status) => {
-    return AllOrders.filter((order) => order.order_status === status) // Lọc các đơn hàng có trạng thái phù hợp
-      .reduce((total, order) => {
-        // Tính tổng số lượng sản phẩm trong các đơn hàng đã lọc
-        return (
-          total +
-          order.order_products.reduce(
-            (productTotal, product) => productTotal + product.quantity,
-            0
-          )
-        );
-      }, 0);
+    const order= AllOrders.filter((order) => order.order_status === status);
+    return order.length;
   };
 
   const renderStatusTabs = () =>
