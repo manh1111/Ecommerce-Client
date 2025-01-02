@@ -120,17 +120,6 @@ const Address = () => {
     }
   };
 
-  // const handleWardChange = (wardCode) => {
-  //   const selectedWard = locationData.wards.find(
-  //     (ward) => ward.code === Number(wardCode)
-  //   );
-  //   setNewAddress((prev) => ({
-  //     ...prev,
-  //     ward: wardCode,
-  //     wardName: selectedWard ? selectedWard.name : "",
-  //   }));
-  // };
-
   const handleAddOrUpdateAddress = async (data) => {
     const selectedWard = locationData.wards.find(
       (ward) => ward.code === data.ward
@@ -208,7 +197,7 @@ const Address = () => {
           <div>
             <h3 className="text-lg font-semibold">{address.recipient_name}</h3>
             <p>{address.recipient_phone}</p>
-            <p>{address.specific_address}, {address.address}</p>
+            <p>{address.address}</p>
           </div>
           <div>
             <button
