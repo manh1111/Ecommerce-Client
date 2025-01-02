@@ -7,7 +7,7 @@ import Loader from "../components/Loader";
 import { useState, useEffect } from "react";
 
 import { PRODUCT_CATEGORIES, ORDER_SORT_OPTIONS } from "../constants/options";
-import { getAllOrder } from "../api/order";
+import { getOrdersForShop } from "../api/order";
 
 const Orders = () => {
   const [category, setCategory] = useState(PRODUCT_CATEGORIES[0]);
@@ -33,8 +33,8 @@ const Orders = () => {
     const fetchOrders = async () => {
       setLoader(true);
       try {
-        const data = await getAllOrder(activeTab);
-        const allData = await getAllOrder();
+        const data = await getOrdersForShop(activeTab);
+        const allData = await getOrdersForShop();
         setOrders(data);
         setAllOrders(allData);
       } catch (error) {
