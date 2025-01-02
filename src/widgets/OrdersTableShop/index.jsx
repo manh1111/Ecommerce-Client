@@ -17,11 +17,11 @@ const OrdersTable = ({ initialOrders }) => {
   const handleCancelOrderForShop = async (orderId) => {
     try {
       setIsCancelling(true);
-      const success = await updateOrderStatus(orderId, "cancelled");
+      const success = await updateOrderStatus(orderId, "canceled");
       if (success) {
         const updatedOrders = orders.map((order) =>
           order._id === orderId
-            ? { ...order, order_status: "cancelled" }
+            ? { ...order, order_status: "canceled" }
             : order
         );
         setOrders(updatedOrders);
@@ -29,7 +29,7 @@ const OrdersTable = ({ initialOrders }) => {
           toastId: `cancel_${orderId}`,
         });
       } else {
-        throw new Error("Failed to update order status to 'cancelled'");
+        throw new Error("Failed to update order status to 'canceled'");
       }
     } catch (error) {
       console.error("Error updating order status:", error);
@@ -161,7 +161,7 @@ const OrdersTable = ({ initialOrders }) => {
               <div className="flex flex-col gap-5">
                 {/* Hủy đơn hàng */}
                 {order.order_status !== "cancel" &&
-                  order.order_status !== "cancelled" && (
+                  order.order_status !== "canceled" && (
                     <button
                       className={`text-white bg-rose-500 rounded-xl px-4 py-2 ${
                         order.order_status === "pending"
@@ -180,7 +180,7 @@ const OrdersTable = ({ initialOrders }) => {
                 {/* Cập nhật trạng thái */}
                 {order.order_status !== "completed" &&
                   order.order_status !== "cancel" &&
-                  order.order_status !== "cancelled" && (
+                  order.order_status !== "canceled" && (
                     <button
                       className="text-white bg-blue-500 rounded-xl px-4 py-2 hover:opacity-80"
                       onClick={() => handleUpdateStatus(order._id)}

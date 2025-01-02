@@ -25,7 +25,7 @@ const Orders = () => {
     { value: "confirmed", name: "Đã xác nhận" },
     { value: "shipped", name: "Đang vận chuyển" },
     { value: "completed", name: "Đã giao hàng" },
-    { value: "cancelled", name: "Đã hủy" },
+    { value: "cancelsed", name: "Đã hủy" },
     { value: "waiting", name: "Thanh toán" },
   ];
 
@@ -100,7 +100,7 @@ const Orders = () => {
       />
       <OrdersInfobox
         title="Đã hủy"
-        count={countOrdersByStatus("cancelled")}
+        count={countOrdersByStatus("canceled")}
         color="red"
         icon={<i className="icon-ban-solid" />}
       />
