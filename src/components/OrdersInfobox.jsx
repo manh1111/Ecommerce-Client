@@ -16,7 +16,7 @@ const OrdersInfobox = ({icon, color = 'accent', title = 'Lorem ipsum', count = 0
                 <SubmenuTrigger />
             </div>
             <h6 className="mt-[28px] mb-2.5">
-                <span className="xl:hidden 2xl:inline">Orders </span>
+                <span className="xl:hidden 2xl:inline">ĐƠn hàng </span>
                 {title}
             </h6>
             <Counter className="h3" num={count} />

@@ -4,13 +4,11 @@ import { useForm, Controller } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { getCookie } from "@utils/cookie";
 import { GetOwnShop } from "@api/shop";
 import { changePassword, getProfileOwn, updateProfile } from "@api/profile";
-import { WEB_DOMAIN, URL_API } from "../config/config";
-import axiosInstance from "@api/axiosInstance";
+import { WEB_DOMAIN } from "../config/config";
 
 const UserProfileDetails = () => {
   const [shopData, setShopData] = useState(null);
@@ -45,7 +43,7 @@ const UserProfileDetails = () => {
     defaultValues: {
       userName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       country: null,
       city: "",
       shopName: "",
@@ -88,7 +86,7 @@ const UserProfileDetails = () => {
     setValue("sellerPhone", shopData.phone_number || "");
     setValue("userName", shopData.owner_id.userName || "");
     setValue("email", shopData.owner_id.email || "");
-    setValue("phone", shopData.owner_id.phoneNumber || "");
+    setValue("phoneNumber", shopData.owner_id.phoneNumber || "");
     setValue("gender", userInfo.gender || "");
     setValue("dob", userInfo.dateOfBirth || "");
   };
@@ -96,7 +94,7 @@ const UserProfileDetails = () => {
   const populateUserFields = (userInfo) => {
     setValue("userName", userInfo.userName || "");
     setValue("email", userInfo.email || "");
-    setValue("phone", userInfo.phoneNumber || "");
+    setValue("phoneNumber", userInfo.phoneNumber || "");
     setValue("gender", userInfo.gender || "");
     setValue("dob", userInfo.dateOfBirth || "");
     setValue("shopName", "");
@@ -106,7 +104,8 @@ const UserProfileDetails = () => {
   }
 
   const onSubmit = async (data) => {
-    await updateProfile({ ...data, dateOfBirth: data.dob })
+    console.log("data.phoneNumber", data.phoneNumber)
+    await updateProfile({ ...data, phoneNumber: data.phoneNumber,dateOfBirth: data.dob })
     toast.success("Hồ sơ được cập nhật thành công");
   };
 
@@ -135,6 +134,12 @@ const UserProfileDetails = () => {
 
   const roleNames = userInfo?.roles?.map((role) => role.roleName) || [];
 
+  useEffect(() => {
+    if (userInfo.phoneNumber) {
+      setValue("phoneNumber", userInfo.phoneNumber);
+    }
+  }, [userInfo.phoneNumber, setValue]);
+  
 
   const tabs = [
     {
@@ -186,22 +191,26 @@ const UserProfileDetails = () => {
               </div>
 
               <div className="field-wrapper">
-                <label className="field-label" htmlFor="phone">
+                <label className="field-label" htmlFor="phoneNumber">
                   Số điện thoại
                 </label>
                 <Controller
-                  name="phone"
+                  name="phoneNumber"
                   control={control}
                   render={({ field }) => (
                     <PatternFormat
                       value={field.value}
+                      onValueChange={(values) => {
+                        setValue("phoneNumber", values.value); // Cập nhật giá trị trong `useForm`
+                      }}
                       format="+#-###-###-####"
                       placeholder={userInfo.phoneNumber || "Phone Number"}
                       className={classNames("field-input", {
-                        "field-input--error": errors.phone,
+                        "field-input--error": errors.phoneNumber,
                       })}
-                      getInputRef={field.ref}
+                      {...field}
                     />
+
                   )}
                 />
                 {errors.phone && (

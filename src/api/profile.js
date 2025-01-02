@@ -115,6 +115,7 @@ export const deleteAddress = async (addressId) => {
 };
 
 export const updateProfile = async (data) => {
+  console.log('datata', data)
   const config = checkToken("application/json");
 
   const result = await axiosInstance.post(

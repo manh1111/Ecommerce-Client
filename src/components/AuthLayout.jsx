@@ -54,7 +54,7 @@ const AuthLayout = () => {
       setCookie("user_login", accessToken);
       navigate("/");
     } catch (err) {
-      toast.error("Đăng nhập thất bại! Vui lòng kiểm tra thông tin đăng nhập.");
+      // toast.error("Đăng nhập thất bại! Vui lòng kiểm tra thông tin đăng nhập.");
     } finally {
       setLoader(false);
     }
