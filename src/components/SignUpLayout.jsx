@@ -18,7 +18,7 @@ import media from "@assets/login.webp";
 //api
 // import { signUp } from "@api/auth";
 import { useState } from "react";
-import { VerifyUser } from "@api/otp";
+import { SendOTP, VerifyUser } from "@api/otp";
 import { signUp } from "@api/auth";
 
 const SignUpLayout = () => {

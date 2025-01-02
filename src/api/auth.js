@@ -44,6 +44,7 @@ export const signUp = async (
     });
     return result;
   } catch (err) {
+    console.log("errApi", err);
     throw new Error("Failed to sign up");
   }
 };
