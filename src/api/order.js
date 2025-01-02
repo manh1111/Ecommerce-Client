@@ -53,6 +53,20 @@ export const getAllOrder = async (status) => {
   }
 };
 
+export const getAllForShop = async (status) => {
+  try {
+    const config = checkToken("application/json");
+
+    const url = `${URL_API}order/shop-owners${status ? `?status=${status}` : ""}`;
+
+    const response = await axiosInstance.get(url, config);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch orders:", error);
+    throw error;
+  }
+};
+
 export const deleteOrderById = async (orderId) => {
   try {
     const config = checkToken("application/json");

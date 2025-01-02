@@ -270,6 +270,7 @@ const OrdersTable = ({ initialOrders = [] }) => {
               key={order._id}
               className="card border-b flex flex-row items-center  py-4 px-6 bg-white rounded-lg shadow-md"
             >
+              console.loga
               <div className="flex justify-between items-start">
                 <div className="w-full">
                   <h3 className="text-lg font-semibold text-gray-800">

@@ -108,7 +108,7 @@ export const getStatusColor = status => {
         case 'waiting':
         case 'confirmed':
             return 'green';
-        case 'cancelled':
+        case 'canceled':
             return 'red';
         case 'rejected':
         case 'refunded':

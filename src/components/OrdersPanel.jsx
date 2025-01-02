@@ -19,7 +19,7 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
     "confirmed",
     "shipped",
     "completed",
-    "cancelled",
+    "canceled",
   ];
 
   const statusTranslation = {
@@ -28,7 +28,7 @@ const OrdersPanel = ({ open, onOpen, onClose }) => {
     waiting: "Chờ thanh toán",
     shipped: "Đang vận chuyển",
     completed: "Hoàn thành",
-    cancelled: "Đã hủy",
+    canceled: "Đã hủy",
   };
 
   useEffect(() => {

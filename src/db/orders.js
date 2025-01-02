@@ -46,7 +46,7 @@ const orders = [
     {
         orderNumber: 202587,
         sku: '485912TY',
-        status: 'cancelled',
+        status: 'canceled',
         rating: 4.5,
         category: 'electronics',
         payment: {
@@ -129,7 +129,7 @@ const orders = [
     {
         orderNumber: 900541,
         sku: '002315BN',
-        status: 'cancelled',
+        status: 'canceled',
         rating: 0,
         category: 'fashion',
         payment: {
