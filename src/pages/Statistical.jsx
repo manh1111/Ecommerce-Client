@@ -33,8 +33,8 @@ const SellerProfile = () => {
   const [statisticCategory, setStatisticCategory] = useState([]);
 
   const [selectedDates, setSelectedDates] = useState({
-    startDate: "2023-01-01",
-    endDate: "2024-12-31",
+    startDate: "2025-01-01",
+    endDate: "2025-12-31",
   });
 
   const calculateGroupBy = (startDate, endDate) => {
