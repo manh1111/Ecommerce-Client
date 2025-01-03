@@ -84,6 +84,8 @@ const SellerProfile = () => {
     });
   };
 
+  console.log('shopdata', shopData);
+
   if (loading) return <Loader />;
   if (error) return <div>{error}</div>;
 
@@ -93,23 +95,23 @@ const SellerProfile = () => {
         {/* Header */}
         <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6">
           <img
-            src={shopData?.logo}
-            alt={`${shopData?.shop_name} logo`}
+            src={shopData?.shop?.logo}
+            alt={`${shopData?.shop?.shop_name} logo`}
             className="absolute top-6 left-6 w-24 h-24 rounded-full border-4 border-white shadow-lg"
           />
           <div className="ml-32">
-            <h1 className="text-3xl font-bold">{shopData?.shop_name}</h1>
-            <p className="mt-1 text-sm italic">{shopData?.description}</p>
+            <h1 className="text-3xl font-bold">{shopData?.shop?.shop_name}</h1>
+            <p className="mt-1 text-sm italic">{shopData?.shop?.description}</p>
             <p className="mt-2 text-sm">
               <span className="font-medium">Trạng thái: </span>
               <span
                 className={`px-2 py-1 rounded-full ${
-                  shopData?.status === "active"
+                  shopData?.shop?.status === "active"
                     ? "bg-green-500 text-white"
                     : "bg-red-500 text-white"
                 }`}
               >
-                {shopData?.status === "active" ? "Hoạt động" : "Ngừng hoạt động"}
+                {shopData?.shop?.status === "active" ? "Hoạt động" : "Ngừng hoạt động"}
               </span>
             </p>
           </div>
@@ -124,7 +126,7 @@ const SellerProfile = () => {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-600 uppercase">Địa chỉ</h3>
-              <p className="text-base text-gray-800">{shopData?.address}</p>
+              <p className="text-base text-gray-800">{shopData?.shop?.address}</p>
             </div>
           </div>
 
@@ -135,7 +137,7 @@ const SellerProfile = () => {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-600 uppercase">Số điện thoại</h3>
-              <p className="text-base text-gray-800">{shopData?.phone_number}</p>
+              <p className="text-base text-gray-800">{shopData?.shop?.phone_number}</p>
             </div>
           </div>
 
@@ -163,14 +165,14 @@ const SellerProfile = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 mb-5 md:mb-[26px] md:gap-5 lg:flex-row lg:justify-between">
+      {/* <div className="flex flex-col gap-4 mb-5 md:mb-[26px] md:gap-5 lg:flex-row lg:justify-between">
         <CalendarSelector
           wrapperClass="md:max-w-[275px]"
           id="sellerPeriodSelector"
           onDateChange={handleDateChange}
           selectedDates={selectedDates}
         />
-      </div>
+      </div> */}
       <div className="widgets-grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-6 mb-10">
         <div className="widgets-grid grid-cols-1 md:col-span-3 lg:grid-cols-2 2xl:col-span-6">
           <PeriodSalesRevenue revenueData={revenueData} />
